@@ -9,18 +9,26 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "axios": "^1.13.6",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "clsx": "^2.1.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
-    "tailwindcss": "^4",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.8.0",
+    "postcss": "^8.5.10",
+    "react-router-dom": "^6.30.3",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.4",
     "typescript": "^5"
   }
 }
