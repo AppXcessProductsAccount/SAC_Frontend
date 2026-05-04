@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from "./config";
+import { getApiBaseUrl } from "./config";
 
 export interface AuthUser {
     id: string;
@@ -32,7 +32,7 @@ export interface LoginResponse {
 
 export const authApi = {
     sendOtp: async (email: string) => {
-        const res = await fetch(`${API_URL}/api/auth/send-otp`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/auth/send-otp`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email }),
@@ -43,7 +43,7 @@ export const authApi = {
     },
 
     verifyOtp: async (email: string, otp: string): Promise<LoginResponse> => {
-        const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/auth/verify-otp`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, otp }),

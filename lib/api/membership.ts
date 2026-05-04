@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from "./config";
+import { getApiBaseUrl } from "./config";
 
 export interface MembershipType {
     name: string;
@@ -54,19 +54,19 @@ export interface MembershipRegistration {
 export const membershipApi = {
     // Public
     listActive: async (): Promise<Membership[]> => {
-        const res = await fetch(`${API_URL}/api/memberships`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/memberships`, { cache: 'no-store' });
         if (!res.ok) throw new Error("Failed to fetch memberships");
         return res.json();
     },
 
     getDetails: async (id: string): Promise<Membership> => {
-        const res = await fetch(`${API_URL}/api/memberships/${id}`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/memberships/${id}`, { cache: 'no-store' });
         if (!res.ok) throw new Error("Failed to fetch membership details");
         return res.json();
     },
 
     apply: async (id: string, token: string, data: MembershipRegistrationPayload): Promise<MembershipRegistration> => {
-        const res = await fetch(`${API_URL}/api/memberships/${id}/apply`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/memberships/${id}/apply`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -80,7 +80,7 @@ export const membershipApi = {
     },
 
     getMyApplications: async (token: string): Promise<MembershipRegistration[]> => {
-        const res = await fetch(`${API_URL}/api/memberships/my-applications`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/memberships/my-applications`, {
             headers: { "Authorization": `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch your applications");
@@ -89,7 +89,7 @@ export const membershipApi = {
 
     // Admin
     adminListAll: async (token: string): Promise<Membership[]> => {
-        const res = await fetch(`${API_URL}/api/admin/memberships`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships`, {
             headers: { "Authorization": `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch memberships (admin)");
@@ -97,7 +97,7 @@ export const membershipApi = {
     },
 
     adminCreate: async (token: string, data: Partial<Membership>): Promise<Membership> => {
-        const res = await fetch(`${API_URL}/api/admin/memberships`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -110,7 +110,7 @@ export const membershipApi = {
     },
 
     adminUpdate: async (id: string, token: string, data: Partial<Membership>): Promise<Membership> => {
-        const res = await fetch(`${API_URL}/api/admin/memberships/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships/${id}`, {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -123,7 +123,7 @@ export const membershipApi = {
     },
 
     adminListApplications: async (token: string, membershipId?: string): Promise<MembershipRegistration[]> => {
-        let url = `${API_URL}/api/admin/memberships/applications`;
+        let url = `${getApiBaseUrl()}/api/admin/memberships/applications`;
         if (membershipId) url += `?membership_id=${membershipId}`;
         const res = await fetch(url, {
             headers: { "Authorization": `Bearer ${token}` },
@@ -133,7 +133,7 @@ export const membershipApi = {
     },
 
     adminUpdateStatus: async (applicationId: string, token: string, status: string): Promise<MembershipRegistration> => {
-        const res = await fetch(`${API_URL}/api/admin/memberships/applications/${applicationId}/status?status=${status}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships/applications/${applicationId}/status?status=${status}`, {
             method: "PATCH",
             headers: { "Authorization": `Bearer ${token}` },
         });
@@ -142,7 +142,7 @@ export const membershipApi = {
     },
 
     adminDelete: async (id: string, token: string): Promise<void> => {
-        const res = await fetch(`${API_URL}/api/admin/memberships/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships/${id}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${token}` },
         });

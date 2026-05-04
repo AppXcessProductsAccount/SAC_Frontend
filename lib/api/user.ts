@@ -1,6 +1,6 @@
 import { AuthUser } from "./auth";
 
-import { API_BASE_URL as API_URL } from "./config";
+import { getApiBaseUrl } from "./config";
 
 export interface UserUpdatePayload {
     full_name?: string;
@@ -16,7 +16,7 @@ export interface UserUpdatePayload {
 
 export const userApi = {
     getMe: async (token: string): Promise<AuthUser> => {
-        const res = await fetch(`${API_URL}/api/user/me`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/user/me`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
@@ -38,7 +38,7 @@ export const userApi = {
         if (payload.address) formData.append("address", payload.address);
         if (payload.avatar) formData.append("avatar", payload.avatar);
 
-        const res = await fetch(`${API_URL}/api/user/me`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/user/me`, {
             method: "PUT",
             headers: {
                 "Authorization": `Bearer ${token}`,

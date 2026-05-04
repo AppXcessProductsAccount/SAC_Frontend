@@ -1,16 +1,16 @@
-import { API_BASE_URL as API_URL } from "./api/config";
+import { getApiBaseUrl } from "./api/config";
 
 export const cmsApi = {
     // 1. Discovery: List Pages
     getPages: async () => {
-        const res = await fetch(`${API_URL}/api/cms/website`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/website`, { cache: 'no-store' });
         if (!res.ok) throw new Error("Failed to fetch CMS pages");
         return await res.json();
     },
 
     // 2. Navigation: List Sections for a Page
     getPageSections: async (pageId: number) => {
-        const res = await fetch(`${API_URL}/api/cms/website?page_id=${pageId}`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/website?page_id=${pageId}`, { cache: 'no-store' });
         if (!res.ok) {
             console.warn(`CMS page sections not found for page: ${pageId}`);
             return [];
@@ -20,7 +20,7 @@ export const cmsApi = {
 
     // 3. Content: Get Specific Section Data (Lazy Loading/Refresh)
     getSpecificSection: async (pageId: number, sectionId: string) => {
-        const res = await fetch(`${API_URL}/api/cms/website/${pageId}/${sectionId}/content`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/website/${pageId}/${sectionId}/content`, { cache: 'no-store' });
         if (!res.ok) {
             console.warn(`CMS section detail not found: ${sectionId}`);
             return null;
@@ -31,7 +31,7 @@ export const cmsApi = {
 
     // Generic Section Content Fetcher (Legacy/Backward Compatibility)
     getSectionContent: async (sectionId: string) => {
-        const res = await fetch(`${API_URL}/api/cms/website/${sectionId}/content`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/website/${sectionId}/content`, { cache: 'no-store' });
         if (!res.ok) {
             console.warn(`CMS section not found: ${sectionId}`);
             return null;
@@ -135,7 +135,7 @@ export const cmsApi = {
 
     // Hero & Navigation (using their dedicated endpoints)
     updateHero: async (data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/hero`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/hero`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -145,7 +145,7 @@ export const cmsApi = {
     },
 
     updateNavigation: async (data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/navigation`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/navigation`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -157,7 +157,7 @@ export const cmsApi = {
     // --- Admin/Mutation Routes ---
     
     updateSection: async (sectionId: string, data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/sections/${sectionId}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/sections/${sectionId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -168,7 +168,7 @@ export const cmsApi = {
 
     // Events Management
     createEvent: async (data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/events`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -177,7 +177,7 @@ export const cmsApi = {
         return res.json();
     },
     updateEvent: async (id: number | string, data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/events/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -186,7 +186,7 @@ export const cmsApi = {
         return res.json();
     },
     deleteEvent: async (id: number | string) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/events/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events/${id}`, {
             method: "DELETE",
         });
         if (!res.ok) throw new Error("Failed to delete event");
@@ -195,7 +195,7 @@ export const cmsApi = {
 
     // Testimonials Management
     createTestimonial: async (data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/testimonials`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -204,7 +204,7 @@ export const cmsApi = {
         return res.json();
     },
     updateTestimonial: async (id: number | string, data: any) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/testimonials/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -213,7 +213,7 @@ export const cmsApi = {
         return res.json();
     },
     deleteTestimonial: async (id: number | string) => {
-        const res = await fetch(`${API_URL}/api/cms/admin/testimonials/${id}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials/${id}`, {
             method: "DELETE",
         });
         if (!res.ok) throw new Error("Failed to delete testimonial");
@@ -224,7 +224,7 @@ export const cmsApi = {
     uploadFile: async (file: File) => {
         const formData = new FormData();
         formData.append("file", file);
-        const res = await fetch(`${API_URL}/api/upload`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/upload`, {
             method: "POST",
             body: formData,
         });
@@ -234,14 +234,14 @@ export const cmsApi = {
 
     // Generic Section List
     getSectionList: async () => {
-        const res = await fetch(`${API_URL}/api/cms/website/section-list`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/cms/website/section-list`, { cache: 'no-store' });
         if (!res.ok) throw new Error("Failed to fetch section list");
         return res.json();
     },
 
     // Contact Form Submission
     submitContactForm: async (data: any) => {
-        const res = await fetch(`${API_URL}/api/contacts`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/contacts`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

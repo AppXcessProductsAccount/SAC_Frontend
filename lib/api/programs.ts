@@ -1,4 +1,4 @@
-import { API_BASE_URL as API_URL } from "./config";
+import { getApiBaseUrl } from "./config";
 
 export interface Program {
     id: string;
@@ -65,7 +65,7 @@ export interface RegistrationResponse {
 
 export const programsApi = {
     listPrograms: async (): Promise<Program[]> => {
-        const res = await fetch(`${API_URL}/api/programs`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/programs`, { cache: 'no-store' });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || "Failed to fetch programs");
         // Sort by order_id
@@ -73,7 +73,7 @@ export const programsApi = {
     },
 
     register: async (programId: string, token: string, payload: RegistrationPayload): Promise<RegistrationResponse> => {
-        const res = await fetch(`${API_URL}/api/programs/${programId}/register`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/programs/${programId}/register`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -95,7 +95,7 @@ export const programsApi = {
     },
 
     myRegistrations: async (token: string): Promise<RegistrationResponse[]> => {
-        const res = await fetch(`${API_URL}/api/programs/my-registrations`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/programs/my-registrations`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
             },
@@ -106,7 +106,7 @@ export const programsApi = {
     },
 
     payBalance: async (registrationId: string, token: string): Promise<{ payment_url: string }> => {
-        const res = await fetch(`${API_URL}/api/payments/pay-balance/${registrationId}`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/payments/pay-balance/${registrationId}`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
