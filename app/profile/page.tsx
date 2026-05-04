@@ -263,7 +263,7 @@ export default function ProfilePage() {
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
                                                 className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all"
-                                                placeholder="+91 9952800477"
+                                                placeholder="+91 phone number"
                                             />
                                         </div>
                                     </div>

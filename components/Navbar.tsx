@@ -44,6 +44,7 @@ export default function Navbar() {
         { label: "About", url: "/about", id: "about" },
         { label: "Community", url: "/community", id: "community" },
         { label: "Events", url: "/#events", id: "events" },
+        { label: "Membership", url: "/membership", id: "membership" },
         { label: "Contact", url: "/contact", id: "contact" },
     ]);
     const [logoUrl, setLogoUrl] = useState("/logo.png");
@@ -63,6 +64,17 @@ export default function Navbar() {
                                 { label: "Programs", url: "/programs", id: "programs" },
                                 { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
                             ];
+                        }
+
+                        // Ensure Membership is present if not in CMS
+                        if (!data.links.find((l: any) => l.label === "Membership")) {
+                            const contactIndex = data.links.findIndex((l: any) => l.label === "Contact");
+                            const newItem = { label: "Membership", url: "/membership", id: "membership" };
+                            if (contactIndex !== -1) {
+                                data.links.splice(contactIndex, 0, newItem);
+                            } else {
+                                data.links.push(newItem);
+                            }
                         }
                         setNavItems(data.links);
                     }

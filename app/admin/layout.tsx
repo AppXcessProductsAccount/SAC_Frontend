@@ -14,6 +14,7 @@ export default function AdminLayout({
         { label: "Navbar", href: "/admin/navbar" },
         { label: "Hero Section", href: "/admin/hero" },
         { label: "Programs", href: "/admin/programs" },
+        { label: "Memberships", href: "/admin/memberships" },
         { label: "Upcoming Events", href: "/admin/events" },
         { label: "Enlightenment", href: "/admin/enlightenment" },
         { label: "Testimonials", href: "/admin/testimonials" },
