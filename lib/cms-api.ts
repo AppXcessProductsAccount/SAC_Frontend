@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { API_BASE_URL as API_URL } from "./api/config";
 
 export const cmsApi = {
     // 1. Discovery: List Pages
