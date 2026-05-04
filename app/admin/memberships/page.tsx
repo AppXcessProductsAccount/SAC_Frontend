@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { membershipApi, Membership, MembershipType, CustomQuestion } from "@/lib/api/membership";
-import { useAuth } from "@/lib/api/auth"; // Assuming useAuth exists for token
+import { useAuth } from "@/hooks/useAuth";
 
 export default function AdminMembershipsPage() {
     const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -12,8 +12,8 @@ export default function AdminMembershipsPage() {
     const [activeTab, setActiveTab] = useState<"list" | "applications">("list");
     const [applications, setApplications] = useState<any[]>([]);
 
-    // Get token (mocking for now, will use actual auth if available)
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') || "" : "";
+    const { tokens, isAuthenticated } = useAuth();
+    const token = tokens?.access_token || "";
 
     useEffect(() => {
         fetchMemberships();

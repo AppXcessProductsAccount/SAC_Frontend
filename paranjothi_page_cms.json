@@ -1,0 +1,47 @@
+{
+  "page": {
+    "name": "paranjothi",
+    "title": "Gnanaguru Paranjothi Subramaniam",
+    "slug": "/paranjothi"
+  },
+  "sections": [
+    {
+      "section_id": "paranjothi-hero",
+      "name": "Hero Section",
+      "content": {
+        "subtitle": "ABOUT THE PROGRAM DIRECTOR",
+        "title": "Gnanaguru Paranjothi Subramaniam",
+        "image": "/director_paranjothi.png",
+        "description": "Gnanaguru Paranjothi Subramaniam is the Spiritual Master, Co-Founder & Program Director of Self Awareness Centre (SAC). Gnanaguru Paranjothi Subramaniam is a True Intellect. He holds an Honours Degree in Electrical and Electronics Engineering from University of Portsmouth, England. He had served with Tenaga Nasional Berhad (Malaysian Power Board) for 14 years (1978 – 1992) as a Senior Engineer."
+      }
+    },
+    {
+      "section_id": "paranjothi-bio",
+      "name": "Biography Details",
+      "content": {
+        "paragraphs": [
+          "In 1979, he was initiated into Tantric Kundalini Yoga Meditation practice by his Spiritual Master Gnanaguru Paranjothi Sivasankaran, the prime disciple of his Holiness Gnanavallal Paranjothi Mahan. In 1988, he was officially bestowed “Guru Status” by Gnanaguru Paranjothi Sivasankaran to become a Spiritual Master. As he embarked on the spiritual journey, he left his successful career as a Senior Engineer in 1992. He then embraced the latest Western concepts in Psychoanalysis and Psychotherapy which took him to the United States of America. There, he met his mentor Dr. W. Brugh Joy, M.D. who made him realise the wonderment of the Heart Centre (Anahatha) Meditation. Blending ancient teachings with the latest Western concepts, he created the “Best of the East and the West”.",
+          "He has more than 30 years of experience in the field of Psychoanalysis and Psychotherapy through conducting various Transformational, Motivational and Spiritual related programs both in Malaysia and Singapore. In 1988, Self Awareness Centre was established and a foundational program called the 7-Day Transformational Journey (7DTJ) that eliminates ignorance and bridges the gap between Science and Spirituality was developed.",
+          "To date, over 900 Transformational Journey programs have been conducted, benefitting and changing the lives of over 40,000 participants. This dynamic and effective program has benefitted all levels of seekers. He too conducts Advanced Spiritual Conferences dealing primarily in the Psych spiritual dimension and Transpersonal level of the human psyche. He is also an author of a book entitled ‘Spirituality Towards Self-Realisation’."
+        ],
+        "quote": "Build People Psychologically, Uplift Them Spiritually And The People Will Build the Nation"
+      }
+    },
+    {
+      "section_id": "paranjothi-videos",
+      "name": "Video Gallery",
+      "content": {
+        "title": "Transformational Insights",
+        "subtitle": "Watch Gnanaguru Paranjothi Subramaniam share profound wisdom and spiritual guidance.",
+        "videos": [
+          "https://www.youtube.com/embed/Qa8YGXFtaRU",
+          "https://www.youtube.com/embed/Qa8YGXFtaRU",
+          "https://www.youtube.com/embed/Qa8YGXFtaRU",
+          "https://www.youtube.com/embed/Qa8YGXFtaRU",
+          "https://www.youtube.com/embed/Qa8YGXFtaRU",
+          "https://www.youtube.com/embed/Qa8YGXFtaRU"
+        ]
+      }
+    }
+  ]
+}

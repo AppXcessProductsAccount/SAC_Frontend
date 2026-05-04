@@ -37,11 +37,12 @@ export default function Navbar() {
             url: "/", 
             id: "home",
             children: [
-                { label: "Programs", url: "/programs", id: "programs" },
                 { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
             ]
         },
         { label: "About", url: "/about", id: "about" },
+        { label: "Paranjothi", url: "/paranjothi", id: "paranjothi" },
+        { label: "Programs", url: "/programs", id: "programs" },
         { label: "Community", url: "/community", id: "community" },
         { label: "Events", url: "/#events", id: "events" },
         { label: "Membership", url: "/membership", id: "membership" },
@@ -61,9 +62,36 @@ export default function Navbar() {
                         const homeItem = data.links.find((l: any) => l.label === "Home");
                         if (homeItem) {
                             homeItem.children = [
-                                { label: "Programs", url: "/programs", id: "programs" },
                                 { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
                             ];
+                        }
+
+                        // Ensure Programs is present at top level if not in CMS
+                        if (!data.links.find((l: any) => l.label === "Programs")) {
+                            const aboutIndex = data.links.findIndex((l: any) => l.label === "About");
+                            const newItem = { label: "Programs", url: "/programs", id: "programs" };
+                            if (aboutIndex !== -1) {
+                                data.links.splice(aboutIndex + 1, 0, newItem);
+                            } else {
+                                data.links.push(newItem);
+                            }
+                        }
+
+                        // Logic for About (no children now)
+                        const aboutItem = data.links.find((l: any) => l.label === "About");
+                        if (aboutItem) {
+                            aboutItem.children = [];
+                        }
+
+                        // Ensure Paranjothi is present at top level if not in CMS
+                        if (!data.links.find((l: any) => l.label === "Paranjothi")) {
+                            const aboutIndex = data.links.findIndex((l: any) => l.label === "About");
+                            const newItem = { label: "Paranjothi", url: "/paranjothi", id: "paranjothi" };
+                            if (aboutIndex !== -1) {
+                                data.links.splice(aboutIndex + 1, 0, newItem);
+                            } else {
+                                data.links.push(newItem);
+                            }
                         }
 
                         // Ensure Membership is present if not in CMS
