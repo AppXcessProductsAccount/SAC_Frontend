@@ -53,3 +53,5 @@ export const authApi = {
         return data;
     },
 };
+
+export { useAuth } from "@/hooks/useAuth";
