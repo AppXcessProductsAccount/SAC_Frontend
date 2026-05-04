@@ -1,6 +1,6 @@
 import { AuthUser } from "./auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { API_BASE_URL as API_URL } from "./config";
 
 export interface UserUpdatePayload {
     full_name?: string;
