@@ -142,7 +142,7 @@ export default function ProgramsPage() {
 
             {/* Conditional Hero Section */}
             {theme === 'modern' ? (
-                <section className="relative pt-40 pb-20 overflow-hidden bg-white">
+                <section className="relative pt-28 md:pt-40 pb-20 overflow-hidden bg-white">
                     <div className="max-w-7xl mx-auto px-6 relative z-10">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -150,7 +150,7 @@ export default function ProgramsPage() {
                             className="space-y-6"
                         >
                             <span className="text-[10px] font-black text-[#1b1b2b]/30 uppercase tracking-[0.3em] block">Curated Experience</span>
-                            <h1 className="text-5xl md:text-8xl font-bold text-[#1b1b2b] tracking-tighter leading-[0.85]">
+                            <h1 className="text-3xl sm:text-5xl md:text-8xl font-bold text-[#1b1b2b] tracking-tighter leading-[0.85]">
                                 Upcoming <br />
                                 <span className="text-blue-600 relative">
                                     Programs
@@ -169,7 +169,7 @@ export default function ProgramsPage() {
                     </div>
                 </section>
             ) : (
-                <section className="relative pt-40 pb-24 overflow-hidden bg-[#101848]">
+                <section className="relative pt-28 md:pt-40 pb-24 overflow-hidden bg-[#101848]">
                     <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#3b82f6,transparent_50%)]" />
                         <img src="/upcoming_event.png" className="w-full h-full object-cover mix-blend-overlay" alt="" />
@@ -183,7 +183,7 @@ export default function ProgramsPage() {
                             <span className="px-6 py-2 bg-blue-500/10 text-blue-300 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-blue-500/20 inline-block">
                                 Transformative Journeys
                             </span>
-                            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white tracking-tight">
+                            <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif font-bold text-white tracking-tight">
                                 Upcoming Programs
                             </h1>
                             <div className="w-24 h-1 bg-blue-500/30 mx-auto rounded-full" />
@@ -217,40 +217,46 @@ export default function ProgramsPage() {
             {/* Registration Modal Overlay */}
             <AnimatePresence>
                 {showRegForm && selectedProgram && (
-                    <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+                    /* The dialog scrolls the OUTER container, not the panel: the form is
+                       three columns wide on desktop but stacks to one very tall column on
+                       mobile. Previously the panel was centred inside a non-scrolling
+                       `fixed inset-0`, so everything below the fold — including the
+                       submit button — was simply unreachable on a phone. */
+                    <div className="fixed inset-0 z-[1200] overflow-y-auto overscroll-contain">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => !regLoading && setShowRegForm(false)}
-                            className="absolute inset-0 bg-[#101848]/20 backdrop-blur-md"
+                            className="fixed inset-0 bg-[#101848]/20 backdrop-blur-md"
                         />
 
+                        <div className="relative min-h-full flex items-center justify-center p-3 sm:p-4">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-5xl bg-white rounded-[40px] shadow-2xl flex flex-col border border-black/5"
+                            className="relative w-full max-w-5xl bg-white rounded-[24px] sm:rounded-[40px] shadow-2xl flex flex-col border border-black/5"
                         >
                             <button
                                 onClick={() => setShowRegForm(false)}
-                                className="absolute right-8 top-8 p-2 text-black/20 hover:text-black/80 transition-colors rounded-full hover:bg-black/5 z-50"
+                                aria-label="Close registration form"
+                                className="absolute right-3 top-3 sm:right-8 sm:top-8 p-2 text-black/30 hover:text-black/80 transition-colors rounded-full hover:bg-black/5 z-50 bg-white/80 backdrop-blur-sm sm:bg-transparent"
                             >
-                                <X size={24} />
+                                <X size={22} />
                             </button>
 
-                            {/* Modal Content Wrapper - No Internal Scroll */}
-                            <div className="p-10 md:p-14">
+                            <div className="p-5 sm:p-10 md:p-14">
                                 {/* Modal Header - Minimalist */}
-                                <div className="text-center space-y-3 mb-10">
+                                <div className="text-center space-y-3 mb-8 md:mb-10 px-8 sm:px-0">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-black/5 text-black/40 text-[9px] font-black uppercase tracking-[0.2em]">
                                         <Sparkles size={10} />
                                         Program Registration
                                     </div>
-                                    <h2 className="text-3xl md:text-4xl font-serif font-bold text-[#101848] tracking-tight">
+                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-[#101848] tracking-tight text-balance">
                                         Join {selectedProgram.program_name}
                                     </h2>
-                                    <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase tracking-widest text-black/40">
+                                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[10px] font-black uppercase tracking-widest text-black/40">
                                         <div className="flex items-center gap-1.5">
                                             <Calendar size={14} className="text-[#101848]/20" />
                                             {selectedProgram.date_range}
@@ -280,7 +286,7 @@ export default function ProgramsPage() {
                                         {regStep === 1 ? (
                                             <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
                                                 {/* Step 1: Info Grid */}
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8">
                                                     {/* Column 1: Personal Preferences */}
                                                     <div className="space-y-6">
                                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-4 border-b border-black/5 pb-2">Preferences</h4>
@@ -455,11 +461,11 @@ export default function ProgramsPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex justify-end pt-4">
+                                                <div className="flex justify-stretch sm:justify-end pt-4">
                                                     <button
                                                         type="button"
                                                         onClick={() => setRegStep(2)}
-                                                        className="px-10 py-4 bg-[#101848] text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-xl hover:bg-black transition-all flex items-center gap-3"
+                                                        className="w-full sm:w-auto px-10 py-4 bg-[#101848] text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-xl hover:bg-black transition-all flex items-center justify-center gap-3"
                                                     >
                                                         Continue to Payment <ArrowRight size={16} />
                                                     </button>
@@ -468,8 +474,8 @@ export default function ProgramsPage() {
                                         ) : (
                                             <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500 max-w-2xl mx-auto">
                                                 {/* Step 2: Payment Selection */}
-                                                <div className="bg-[#101848]/5 rounded-[40px] p-10 border border-[#101848]/10">
-                                                    <div className="flex flex-col items-center text-center gap-8">
+                                                <div className="bg-[#101848]/5 rounded-[24px] sm:rounded-[40px] p-6 sm:p-10 border border-[#101848]/10">
+                                                    <div className="flex flex-col items-center text-center gap-6 sm:gap-8">
                                                         <div className="space-y-3">
                                                             <h4 className="text-2xl md:text-3xl font-serif font-bold text-[#101848]">Secure Your Spot</h4>
                                                             <p className="text-black/40 text-sm font-medium">Almost there! Select your payment preference to complete registration.</p>
@@ -479,13 +485,13 @@ export default function ProgramsPage() {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setFormData(prev => ({ ...prev, pay_full: true }))}
-                                                                className={`p-8 rounded-[32px] border transition-all flex flex-col items-center gap-2 ${formData.pay_full
+                                                                className={`p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border transition-all flex flex-col items-center gap-2 ${formData.pay_full
                                                                         ? "bg-white border-[#101848] shadow-2xl scale-105"
                                                                         : "bg-transparent border-black/5 hover:border-black/20"
                                                                     }`}
                                                             >
                                                                 <span className="text-[11px] font-black uppercase tracking-[0.2em] text-black/30">Full Payment</span>
-                                                                <span className="text-3xl font-bold text-[#101848]">RM {selectedProgram.price}</span>
+                                                                <span className="text-2xl sm:text-3xl font-bold text-[#101848]">RM {selectedProgram.price}</span>
                                                                 <div className="mt-2 w-2 h-2 rounded-full bg-[#101848] opacity-0 transition-opacity" style={{ opacity: formData.pay_full ? 1 : 0 }} />
                                                             </button>
 
@@ -493,13 +499,13 @@ export default function ProgramsPage() {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => setFormData(prev => ({ ...prev, pay_full: false }))}
-                                                                    className={`p-8 rounded-[32px] border transition-all flex flex-col items-center gap-2 ${!formData.pay_full
+                                                                    className={`p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border transition-all flex flex-col items-center gap-2 ${!formData.pay_full
                                                                             ? "bg-white border-[#101848] shadow-2xl scale-105"
                                                                             : "bg-transparent border-black/5 hover:border-black/20"
                                                                         }`}
                                                                 >
                                                                     <span className="text-[11px] font-black uppercase tracking-[0.2em] text-black/30">Minimum Deposit</span>
-                                                                    <span className="text-3xl font-bold text-[#101848]">RM {selectedProgram.minimum_deposit}</span>
+                                                                    <span className="text-2xl sm:text-3xl font-bold text-[#101848]">RM {selectedProgram.minimum_deposit}</span>
                                                                     <div className="mt-2 w-2 h-2 rounded-full bg-[#101848] opacity-0 transition-opacity" style={{ opacity: !formData.pay_full ? 1 : 0 }} />
                                                                 </button>
                                                             )}
@@ -542,6 +548,7 @@ export default function ProgramsPage() {
                                 )}
                             </div>
                         </motion.div>
+                        </div>
                     </div>
                 )}
             </AnimatePresence>

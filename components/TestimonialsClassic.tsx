@@ -19,7 +19,7 @@ export default function TestimonialsClassic({ content }: Props) {
     };
 
     return (
-        <section className="relative py-12 px-6 overflow-hidden min-h-[500px] flex items-center bg-white" id="testimonials">
+        <section className="relative py-12 md:py-16 px-5 sm:px-6 md:px-8 overflow-hidden min-h-[500px] flex items-center bg-white" id="testimonials">
             {/* Background Image Layer with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <Image
@@ -46,13 +46,15 @@ export default function TestimonialsClassic({ content }: Props) {
                     <span className="text-[#101848]/60 font-sans font-semibold tracking-[0.2em] uppercase text-xs mb-3 block">
                         {displayData.subtitle}
                     </span>
-                    <h2 className="text-[30px] md:text-[42px] font-serif text-[#101848] leading-[1.1] mb-4">
+                    <h2 className="text-[26px] sm:text-[32px] md:text-[42px] font-serif text-[#101848] leading-[1.15] mb-4">
                         {displayData.title}
                     </h2>
                     <div className="w-16 h-[1px] bg-[#101848]/20 mx-auto"></div>
                 </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+                {/* 3-up only from `lg`. At the old `md` breakpoint three quote cards
+                    were ~200px wide each and the copy became unreadable. */}
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     {displayData.testimonials.map((testimonial, index) => (
                         <motion.div
                             key={index}
@@ -65,9 +67,9 @@ export default function TestimonialsClassic({ content }: Props) {
                             {/* Card with subtle texture/background */}
                             <div className="relative bg-white/40 backdrop-blur-md border border-white/50 p-6 md:p-8 rounded-2xl shadow-[0_10px_30px_rgba(16,24,72,0.05)] hover:shadow-[0_20px_50px_rgba(16,24,72,0.1)] transition-all duration-500 h-full flex flex-col justify-between">
                                 {/* Decorative Quote Mark */}
-                                <span className="absolute -top-3 -left-3 text-[70px] text-[#101848]/5 font-serif leading-none select-none">"</span>
-                                
-                                <p className="text-[#233252]/85 text-[16px] md:text-[18px] leading-relaxed font-sans italic relative z-10 mb-6 flex-grow">
+                                <span className="absolute top-0 left-2 text-[70px] text-[#101848]/5 font-serif leading-none select-none pointer-events-none">"</span>
+
+                                <p className="text-[15px] md:text-[17px] text-[#233252]/85 leading-relaxed font-sans italic relative z-10 mb-6 flex-grow">
                                     {testimonial.quote}
                                 </p>
 
@@ -77,9 +79,9 @@ export default function TestimonialsClassic({ content }: Props) {
                                                 {getInitials(testimonial.author_name)}
                                             </span>
                                         </div>
-                                        <div>
-                                            <h4 className="font-serif text-[17px] text-[#101848] leading-tight font-bold">{testimonial.author_name}</h4>
-                                            <p className="text-[#101848]/50 text-[12px] font-sans font-medium tracking-wide uppercase mt-0.5">{testimonial.author_role}</p>
+                                        <div className="min-w-0">
+                                            <h4 className="font-serif text-[16px] sm:text-[17px] text-[#101848] leading-tight font-bold truncate">{testimonial.author_name}</h4>
+                                            <p className="text-[#101848]/50 text-[11px] sm:text-[12px] font-sans font-medium tracking-wide uppercase mt-0.5 truncate">{testimonial.author_role}</p>
                                         </div>
                                     </div>
                             </div>

@@ -86,7 +86,7 @@ export default function TestimonialsAdminPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-20 text-[#101848] font-serif">Loading Testimonials...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20 text-[#101848] font-serif">Loading Testimonials...</div>;
 
     return (
         <div className="space-y-8">

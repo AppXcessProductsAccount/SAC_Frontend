@@ -48,7 +48,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                 <span className="text-[#101848]/60 font-sans font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                     {subtitle}
                 </span>
-                <h2 className="text-[36px] md:text-[52px] font-serif text-[#101848] mb-6">{title}</h2>
+                <h2 className="text-[24px] sm:text-[36px] md:text-[52px] font-serif text-[#101848] mb-6">{title}</h2>
                 <div className="flex items-center gap-3 mb-6">
                     <span className="material-icons text-[#101848]/40">verified</span>
                     <span className="text-sm font-sans text-[#233252]/60 uppercase tracking-widest">Registered: {registrationDate}</span>
@@ -95,7 +95,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                 <span className="text-[#101848]/60 font-sans font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                     {subtitle}
                 </span>
-                <h2 className="text-[36px] md:text-[52px] font-serif text-[#101848] mb-6">{title}</h2>
+                <h2 className="text-[24px] sm:text-[36px] md:text-[52px] font-serif text-[#101848] mb-6">{title}</h2>
                 <div className="grid lg:grid-cols-2 gap-12">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
@@ -122,7 +122,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
     );
 
     return (
-        <section className="relative py-20 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-12 md:py-20 bg-[#eeebf0] overflow-hidden">
             <div className="absolute inset-0 z-0">
                 <img
                     src={content?.image_url || "/upcoming_event.png"}

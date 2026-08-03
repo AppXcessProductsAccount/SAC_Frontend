@@ -65,7 +65,7 @@ export default function EnlightenmentAdminPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-20 text-[#101848] font-serif">Loading Enlightenment Settings...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20 text-[#101848] font-serif">Loading Enlightenment Settings...</div>;
 
     const getFullUrl = (url: string) => {
         if (!url) return "";
@@ -179,7 +179,7 @@ export default function EnlightenmentAdminPage() {
                                 </div>
 
                                 <div className="relative pt-1">
-                                    <span className="absolute -left-2 -top-2 text-[40px] text-[#101848]/5 font-serif leading-none select-none">"</span>
+                                    <span className="absolute -left-2 -top-2 text-[26px] md:text-[40px] text-[#101848]/5 font-serif leading-none select-none">"</span>
                                     <p className="text-[#233252]/80 text-[10px] leading-relaxed font-sans italic relative z-10">
                                         {data.content || "Experience profound transformation..."}
                                     </p>

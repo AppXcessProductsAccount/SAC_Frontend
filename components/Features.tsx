@@ -63,7 +63,7 @@ export default function Features() {
     };
 
     return (
-        <section className="py-24 px-6 relative overflow-hidden bg-white" id="about">
+        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-white" id="about">
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

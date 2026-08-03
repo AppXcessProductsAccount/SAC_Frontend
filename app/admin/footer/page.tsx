@@ -68,7 +68,7 @@ export default function FooterAdminPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-20 text-[#101848] font-serif">Loading Footer Settings...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20 text-[#101848] font-serif">Loading Footer Settings...</div>;
 
     const getFullUrl = (url: string) => {
         if (!url) return "";

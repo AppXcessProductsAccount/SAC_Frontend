@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope, Lora } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -22,14 +22,25 @@ export const metadata: Metadata = {
   description: "Experience serenity through guided meditation, sleep stories, and mindful breathing. A journey to clarity starts with a single breath.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#eeebf0",
+};
+
+// Runs before first paint so the saved theme is known to CSS/JS immediately.
+const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('app-theme');document.documentElement.dataset.theme=(t==='modern'||t==='classic')?t:'classic';}catch(e){document.documentElement.dataset.theme='classic';}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-theme="classic" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet"
@@ -46,7 +57,7 @@ export default function RootLayout({
         <script src="https://js.hit-pay.com/sdk.js" defer />
       </head>
       <body
-        className={`${manrope.variable} ${lora.variable} font-display bg-background-dark text-slate-200 antialiased`}
+        className={`${manrope.variable} ${lora.variable} font-display bg-background-light text-[#1b1b2b] antialiased`}
       >
           <AuthProvider>
             <ThemeProvider>
@@ -57,4 +68,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { UpcomingProgramsContent } from "./UpcomingPrograms";
@@ -10,8 +10,9 @@ interface Props {
 }
 
 export default function UpcomingProgramsClassic({ content }: Props) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const [canScrollPrev, setCanScrollPrev] = useState(false);
+    const [canScrollNext, setCanScrollNext] = useState(false);
 
     // Fallback data
     const displayData = {
@@ -59,20 +60,44 @@ export default function UpcomingProgramsClassic({ content }: Props) {
         ...displayData.programs
     ];
 
-    const nextSlide = () => {
-        if (currentIndex < events.length - 1) {
-            setCurrentIndex(prev => prev + 1);
-        }
-    };
+    /* The rail is a native horizontally-scrolling, scroll-snapped list.
+       The previous implementation translated the track by a hard-coded
+       `index * 374px` while cards were a hard-coded 350px wide, so on any
+       viewport under ~430px the cards overflowed and were clipped by the
+       section's `overflow-hidden`, and the "next" button disabled itself
+       three cards early regardless of how many were actually visible.
+       Measuring real geometry fixes both, and gives touch swipe for free. */
+    const syncArrows = useCallback(() => {
+        const el = trackRef.current;
+        if (!el) return;
+        setCanScrollPrev(el.scrollLeft > 8);
+        setCanScrollNext(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+    }, []);
 
-    const prevSlide = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex(prev => prev - 1);
-        }
+    useEffect(() => {
+        const el = trackRef.current;
+        if (!el) return;
+        syncArrows();
+        el.addEventListener("scroll", syncArrows, { passive: true });
+        const ro = new ResizeObserver(syncArrows);
+        ro.observe(el);
+        return () => {
+            el.removeEventListener("scroll", syncArrows);
+            ro.disconnect();
+        };
+    }, [syncArrows, events.length]);
+
+    const scrollByCard = (direction: 1 | -1) => {
+        const el = trackRef.current;
+        if (!el) return;
+        const card = el.querySelector<HTMLElement>("[data-card]");
+        const gap = 24;
+        const step = card ? card.offsetWidth + gap : el.clientWidth * 0.85;
+        el.scrollBy({ left: direction * step, behavior: "smooth" });
     };
 
     return (
-        <section className="relative w-full overflow-hidden bg-white pt-24 pb-32" id="events">
+        <section className="relative w-full overflow-hidden bg-white pt-16 pb-20 md:pt-24 md:pb-32" id="events">
             {/* Background Texture */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -86,14 +111,14 @@ export default function UpcomingProgramsClassic({ content }: Props) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 {/* Section Header */}
-                <div className="flex flex-col mb-12">
+                <div className="flex flex-col mb-8 md:mb-12">
                     <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="text-[42px] md:text-[54px] font-bold text-[#101848] mb-4 leading-tight"
+                        className="text-[30px] sm:text-[42px] md:text-[54px] font-bold text-[#101848] mb-3 md:mb-4 leading-tight"
                     >
                         {displayData.title}
                     </motion.h2>
@@ -102,35 +127,35 @@ export default function UpcomingProgramsClassic({ content }: Props) {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-[18px] text-[#233252]/60 font-sans max-w-xl"
+                        className="text-[15px] md:text-[18px] text-[#233252]/60 font-sans max-w-xl"
                     >
                         {displayData.subtitle}
                     </motion.p>
                 </div>
 
                 {/* Slider Container */}
-                <div className="relative mt-8">
-                    <motion.div
-                        ref={scrollContainerRef}
-                        className="flex gap-6 overflow-x-visible cursor-grab active:cursor-grabbing"
-                        animate={{ x: `-${currentIndex * (350 + 24)}px` }} // card width (350) + gap (24)
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                <div className="relative mt-6 md:mt-8">
+                    <div
+                        ref={trackRef}
+                        className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 -mx-5 px-5 sm:mx-0 sm:px-0"
                     >
-                        {events.map((event, index) => (
-                            <motion.div
+                        {events.map((event) => (
+                            <div
                                 key={event.id}
-                                className="relative flex-shrink-0 w-[350px] aspect-[3/4] rounded-[32px] overflow-hidden shadow-2xl group border border-white/20"
+                                data-card
+                                className="relative snap-start flex-shrink-0 w-[78vw] max-w-[350px] sm:w-[300px] md:w-[350px] aspect-[3/4] rounded-[32px] overflow-hidden shadow-2xl group border border-white/20"
                             >
                                 <Image
                                     src={event.image_url}
                                     alt={event.title}
                                     fill
+                                    sizes="(max-width: 640px) 78vw, 350px"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
 
                                 {/* Overlay Top: Tags */}
-                                <div className="absolute top-6 left-6 flex gap-2 z-20">
-                                    {event.tags.map((tag: string, i: number) => (
+                                <div className="absolute top-5 left-5 md:top-6 md:left-6 flex flex-wrap gap-2 z-20 pr-5">
+                                    {(event.tags || []).map((tag: string, i: number) => (
                                         <span key={i} className="bg-black/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-[12px] font-sans font-medium uppercase tracking-wider border border-white/10">
                                             {tag}
                                         </span>
@@ -139,15 +164,15 @@ export default function UpcomingProgramsClassic({ content }: Props) {
 
                                 {/* Bottom Info Overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-                                <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
-                                    <h3 className="text-2xl font-bold text-white mb-2 leading-tight">
+                                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-20">
+                                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight pr-16">
                                         {event.title}
                                     </h3>
-                                    <div className="flex flex-col gap-1">
-                                        <p className="text-white/70 font-sans text-sm uppercase tracking-widest font-semibold italic">
+                                    <div className="flex flex-col gap-1 pr-16">
+                                        <p className="text-white/70 font-sans text-[13px] md:text-sm uppercase tracking-widest font-semibold italic">
                                             {event.date_text}
                                         </p>
-                                        <div className="flex items-center gap-1 text-white/50 text-[12px] font-sans uppercase tracking-[0.1em]">
+                                        <div className="flex items-center gap-1 text-white/50 text-[11px] md:text-[12px] font-sans uppercase tracking-[0.1em]">
                                             <span className="material-symbols-outlined text-[14px]">location_on</span>
                                             {event.location || "Upcoming Centres"}
                                         </div>
@@ -156,40 +181,44 @@ export default function UpcomingProgramsClassic({ content }: Props) {
                                     {/* Action Button */}
                                     <Link
                                         href={event.isPreview ? "/programs#preview" : "/programs"}
-                                        className="absolute bottom-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[#101848] transition-all group/btn shadow-lg"
+                                        aria-label={`View ${event.title}`}
+                                        className="absolute bottom-6 right-6 md:bottom-8 md:right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[#101848] transition-all group/btn shadow-lg"
                                     >
                                         <Plus size={24} className="transition-transform group-hover/btn:rotate-90" />
                                     </Link>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* Bottom Controls */}
-                <div className="mt-16 flex items-center justify-between">
+                <div className="mt-10 md:mt-16 flex items-center justify-between gap-4">
                     <Link
                         href="/programs"
-                        className="flex items-center gap-2 group text-[#101848] font-bold text-[16px] font-sans uppercase tracking-widest"
+                        className="flex items-center gap-2 group text-[#101848] font-bold text-[13px] md:text-[16px] font-sans uppercase tracking-widest"
                     >
                         View All Programs
                         <ChevronRight className="transition-transform group-hover:translate-x-1" size={20} />
                     </Link>
 
-                    <div className="flex gap-4">
+                    {/* Hidden on phones — the rail is swipeable there */}
+                    <div className="hidden sm:flex gap-3 md:gap-4 shrink-0">
                         <button
-                            onClick={prevSlide}
-                            disabled={currentIndex === 0}
-                            className={`p-4 rounded-full border transition-all ${currentIndex === 0 ? "border-[#101848]/10 text-[#101848]/20" : "border-[#101848]/20 text-[#101848] hover:bg-[#101848] hover:text-white shadow-md active:scale-95"}`}
+                            onClick={() => scrollByCard(-1)}
+                            disabled={!canScrollPrev}
+                            aria-label="Previous programs"
+                            className={`p-3 md:p-4 rounded-full border transition-all ${!canScrollPrev ? "border-[#101848]/10 text-[#101848]/20 cursor-not-allowed" : "border-[#101848]/20 text-[#101848] hover:bg-[#101848] hover:text-white shadow-md active:scale-95"}`}
                         >
-                            <ChevronLeft size={24} />
+                            <ChevronLeft size={22} />
                         </button>
                         <button
-                            onClick={nextSlide}
-                            disabled={currentIndex >= events.length - 3} // roughly showing 3 cards
-                            className={`p-4 rounded-full border transition-all ${currentIndex >= events.length - 3 ? "border-[#101848]/10 text-[#101848]/20" : "border-[#101848]/20 text-[#101848] hover:bg-[#101848] hover:text-white shadow-md active:scale-95"}`}
+                            onClick={() => scrollByCard(1)}
+                            disabled={!canScrollNext}
+                            aria-label="Next programs"
+                            className={`p-3 md:p-4 rounded-full border transition-all ${!canScrollNext ? "border-[#101848]/10 text-[#101848]/20 cursor-not-allowed" : "border-[#101848]/20 text-[#101848] hover:bg-[#101848] hover:text-white shadow-md active:scale-95"}`}
                         >
-                            <ChevronRight size={24} />
+                            <ChevronRight size={22} />
                         </button>
                     </div>
                 </div>

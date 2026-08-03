@@ -11,7 +11,7 @@ export default function ParanjothiHero({ content }: { content?: any }) {
     const description = content?.description || "Gnanaguru Paranjothi Subramaniam is the Spiritual Master, Co-Founder & Program Director of Self Awareness Centre (SAC)...";
 
     return (
-        <section className="relative py-24 md:py-32 overflow-hidden">
+        <section className="relative py-14 md:py-24 md:py-32 overflow-hidden">
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/header_bg.png"
@@ -52,7 +52,7 @@ export default function ParanjothiHero({ content }: { content?: any }) {
                         <span className="text-[#101848]/60 font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                             {subtitle}
                         </span>
-                        <h1 className="text-[48px] md:text-[64px] font-serif text-[#101848] leading-[1.1] mb-8">
+                        <h1 className="text-[28px] sm:text-[48px] md:text-[64px] font-serif text-[#101848] leading-[1.1] mb-8">
                             {title}
                         </h1>
                         <p className="text-lg text-[#233252]/90 leading-relaxed font-medium">

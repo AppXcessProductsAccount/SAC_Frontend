@@ -22,7 +22,7 @@ export default function FounderProfile({ content }: { content?: any }) {
     const subtitle = content?.subtitle || "The Hearts Behind SAC";
 
     return (
-        <section className="relative py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -50,7 +50,7 @@ export default function FounderProfile({ content }: { content?: any }) {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1]"
+                        className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1]"
                     >
                         {title}
                     </motion.h2>

@@ -33,7 +33,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
     };
 
     return (
-        <section className="relative py-32 px-6 overflow-hidden min-h-[500px] flex items-center bg-white" id="contact">
+        <section className="relative py-16 md:py-24 lg:py-32 px-6 overflow-hidden min-h-[500px] flex items-center bg-white" id="contact">
             {/* Background Image Layer with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <Image
@@ -60,7 +60,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                             <span className="text-[#101848]/60 font-sans font-semibold tracking-[0.2em] uppercase text-xs mb-3 block">
                                 Connect With Us
                             </span>
-                            <h2 className="text-[36px] md:text-[52px] font-serif text-[#101848] leading-[1.1] mb-6 whitespace-pre-line">
+                            <h2 className="text-[24px] sm:text-[36px] md:text-[52px] font-serif text-[#101848] leading-[1.1] mb-6 whitespace-pre-line">
                                 {data.title}
                             </h2>
                             <p className="text-[#233252]/80 text-[18px] md:text-[20px] leading-relaxed font-sans max-w-lg">
@@ -114,7 +114,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                 {status === "success" ? (
                                     <div className="text-center py-12 space-y-6">
                                         <div className="w-20 h-20 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                                            <span className="material-icons text-4xl">done_all</span>
+                                            <span className="material-icons text-2xl md:text-4xl">done_all</span>
                                         </div>
                                         <h3 className="text-[28px] font-serif text-[#101848]">Message Received</h3>
                                         <p className="text-[#101848]/60 font-sans">We'll get back to you with peace and clarity shortly.</p>

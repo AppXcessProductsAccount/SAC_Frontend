@@ -22,7 +22,7 @@ interface Props {
 export default function ProgramsListClassic({ programs, loading, error, onRegister }: Props) {
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 space-y-4">
+            <div className="flex flex-col items-center justify-center py-12 md:py-20 space-y-4">
                 <Loader2 className="w-10 h-10 animate-spin text-[#101848]" />
                 <p className="text-gray-500 font-medium font-serif italic">Curating sessions for you...</p>
             </div>
@@ -31,7 +31,7 @@ export default function ProgramsListClassic({ programs, loading, error, onRegist
 
     if (error) {
         return (
-            <div className="text-center py-20 bg-white rounded-[32px] border border-gray-100 shadow-sm">
+            <div className="text-center py-12 md:py-20 bg-white rounded-[32px] border border-gray-100 shadow-sm">
                 <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                 <h3 className="text-xl font-serif font-bold text-[#101848]">Something went wrong</h3>
                 <p className="text-gray-500 mt-2">{error}</p>

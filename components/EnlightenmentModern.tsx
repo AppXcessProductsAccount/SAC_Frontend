@@ -26,7 +26,7 @@ export default function EnlightenmentModern({ data }: { data: any }) {
                         </span>
                         
                         <div className="relative inline-block mb-8">
-                            <h2 className="text-[36px] md:text-[48px] lg:text-[56px] font-sans text-[#1b1b2b] leading-[1.1] tracking-tight relative z-10 whitespace-pre-line">
+                            <h2 className="text-[24px] sm:text-[36px] md:text-[48px] lg:text-[56px] font-sans text-[#1b1b2b] leading-[1.1] tracking-tight relative z-10 whitespace-pre-line">
                                 {data.title}
                             </h2>
                             {/* Decorative Curve */}

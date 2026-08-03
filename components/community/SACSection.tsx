@@ -30,7 +30,7 @@ export default function SACSection({ content }: { content?: any }) {
     const philosophy = content?.philosophy || "SAC is a non-religious, non-communal and non-political organisation. We conduct Transformational, Motivational and Spiritual related programs designed to uplift the individual.";
 
     return (
-        <section className="relative py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -55,7 +55,7 @@ export default function SACSection({ content }: { content?: any }) {
                         <span className="text-[#101848]/60 font-sans font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                             {subtitle}
                         </span>
-                        <h2 className="text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1] mb-8">
+                        <h2 className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1] mb-8">
                             {title}
                         </h2>
                         <div className="space-y-6 text-[18px] text-[#233252]/80 font-sans leading-relaxed">

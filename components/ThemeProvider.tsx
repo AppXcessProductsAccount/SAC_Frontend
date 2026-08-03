@@ -1,38 +1,51 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useState } from "react";
+import ThemeToggle from "./ThemeToggle";
 
 type Theme = "classic" | "modern";
 
 interface ThemeContextType {
     theme: Theme;
     toggleTheme: () => void;
+    setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>("classic");
+// useLayoutEffect warns during SSR; fall back to useEffect on the server.
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-    // Load theme from localStorage
-    useEffect(() => {
-        const savedTheme = localStorage.getItem("app-theme") as Theme;
-        if (savedTheme) {
-            setTheme(savedTheme);
+export default function ThemeProvider({ children }: { children: React.ReactNode }) {
+    const [theme, setThemeState] = useState<Theme>("classic");
+
+    // Read the theme the inline <head> script already resolved. Running this in a
+    // layout effect means the swap is committed BEFORE the browser paints, so a
+    // returning "modern" visitor never sees the classic layout flash first.
+    useIsomorphicLayoutEffect(() => {
+        const fromDom = document.documentElement.dataset.theme as Theme | undefined;
+        const saved = fromDom || (localStorage.getItem("app-theme") as Theme | null);
+        if (saved === "modern" || saved === "classic") {
+            setThemeState(saved);
         }
     }, []);
 
-    const toggleTheme = () => {
-        const newTheme = theme === "classic" ? "modern" : "classic";
-        setTheme(newTheme);
-        localStorage.setItem("app-theme", newTheme);
+    const setTheme = (next: Theme) => {
+        setThemeState(next);
+        document.documentElement.dataset.theme = next;
+        try {
+            localStorage.setItem("app-theme", next);
+        } catch {
+            /* private mode / storage disabled — theme just won't persist */
+        }
     };
 
+    const toggleTheme = () => setTheme(theme === "classic" ? "modern" : "classic");
+
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            <div className={`theme-${theme}`}>
-                {children}
-            </div>
+        <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
+            {children}
+            <ThemeToggle />
         </ThemeContext.Provider>
     );
 }

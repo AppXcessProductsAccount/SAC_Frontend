@@ -23,7 +23,7 @@ interface Props {
 export default function ProgramsListModern({ programs, loading, error, onRegister }: Props) {
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-6">
+            <div className="flex flex-col items-center justify-center py-16 md:py-24 lg:py-32 space-y-6">
                 <div className="relative">
                     <Loader2 className="w-12 h-12 animate-spin text-[#1b1b2b]" />
                     <Sparkles className="absolute -top-2 -right-2 w-5 h-5 text-blue-400 animate-pulse" />
@@ -35,7 +35,7 @@ export default function ProgramsListModern({ programs, loading, error, onRegiste
 
     if (error) {
         return (
-            <div className="text-center py-24 bg-[#f5f6f6] rounded-[48px] border border-gray-100 shadow-sm px-6">
+            <div className="text-center py-14 md:py-24 bg-[#f5f6f6] rounded-[48px] border border-gray-100 shadow-sm px-6">
                 <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-red-100">
                     <AlertCircle className="w-10 h-10 text-red-500" />
                 </div>

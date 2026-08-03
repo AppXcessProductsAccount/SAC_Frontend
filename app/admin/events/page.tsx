@@ -83,7 +83,7 @@ export default function EventsAdminPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-20 text-[#101848] font-serif">Loading Events...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20 text-[#101848] font-serif">Loading Events...</div>;
 
     const getFullUrl = (url: string) => {
         if (!url) return "";

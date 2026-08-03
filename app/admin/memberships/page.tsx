@@ -98,7 +98,7 @@ export default function AdminMembershipsPage() {
         });
     };
 
-    if (loading) return <div className="text-center py-20 font-serif">Loading...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20 font-serif">Loading...</div>;
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 min-h-[600px]">

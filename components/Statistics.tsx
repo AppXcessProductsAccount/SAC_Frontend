@@ -68,7 +68,7 @@ export default function Statistics() {
     };
 
     return (
-        <section className="py-24 px-6 relative overflow-hidden bg-white">
+        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-white">
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
                     variants={containerVariants}
@@ -88,7 +88,7 @@ export default function Statistics() {
                                     {stat.icon}
                                 </span>
                             )}
-                            <h3 className="text-5xl md:text-6xl font-bold text-[var(--site-primary)] mb-4">
+                            <h3 className="text-3xl sm:text-5xl md:text-6xl font-bold text-[var(--site-primary)] mb-4">
                                 {stat.number}
                             </h3>
                             <p className="text-xl font-bold text-secondary mb-2">{stat.label}</p>

@@ -8,7 +8,7 @@ export default function CommunityHero({ content }: { content?: any }) {
     const description = content?.description || "\"SAS Malaysia and Singapore are collaborative partners dedicated to opening the path for the further spiritual enhancement of our members.\"";
 
     return (
-        <section className="relative py-24 md:py-32 bg-[#eeebf0] overflow-hidden text-center">
+        <section className="relative py-14 md:py-24 md:py-32 bg-[#eeebf0] overflow-hidden text-center">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -35,7 +35,7 @@ export default function CommunityHero({ content }: { content?: any }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-[42px] md:text-[68px] font-serif text-[#101848] leading-[1.1] mb-8 whitespace-pre-line"
+                    className="text-[28px] sm:text-[42px] md:text-[68px] font-serif text-[#101848] leading-[1.1] mb-8 whitespace-pre-line"
                 >
                     {title}
                 </motion.h1>

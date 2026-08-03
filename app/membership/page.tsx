@@ -110,14 +110,14 @@ export default function MembershipPage() {
         return (
             <main className="bg-[#eeebf0] min-h-screen">
                 <Navbar />
-                <div className="max-w-2xl mx-auto py-20 px-4 text-center">
+                <div className="max-w-2xl mx-auto py-12 md:py-20 px-4 text-center">
                     <div className="bg-green-50 rounded-3xl p-12 border border-green-100">
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-green-200">
                             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h1 className="text-4xl font-serif font-bold text-[#101848] mb-4">Application Submitted!</h1>
+                        <h1 className="text-2xl md:text-4xl font-serif font-bold text-[#101848] mb-4">Application Submitted!</h1>
                         <p className="text-gray-600 text-lg mb-8">Thank you for your interest in joining {selectedMembership?.name}. Our team will review your application and get back to you shortly.</p>
                         <button 
                             onClick={() => router.push('/profile')}
@@ -310,9 +310,9 @@ export default function MembershipPage() {
     return (
         <main className="bg-[#eeebf0] min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
             <Navbar />
-            <div className="max-w-7xl mx-auto py-20 px-4">
+            <div className="max-w-7xl mx-auto py-12 md:py-20 px-4">
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-serif font-bold text-[#101848] mb-6">Become a Member</h1>
+                    <h1 className="text-3xl md:text-5xl font-serif font-bold text-[#101848] mb-6">Become a Member</h1>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">Join our community and embark on a transformative journey towards self-awareness and inner peace.</p>
                 </div>
 

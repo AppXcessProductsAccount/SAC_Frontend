@@ -11,7 +11,7 @@ export default function ParanjothiVideos({ content }: { content?: any }) {
     const videos = Array.isArray(rawVideos) ? rawVideos : [rawVideos];
 
     return (
-        <section className="relative py-24 bg-[#eeebf0]">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0]">
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/upcoming_event.png"
@@ -23,7 +23,7 @@ export default function ParanjothiVideos({ content }: { content?: any }) {
 
             <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
                 <div className="text-center mb-16">
-                    <h2 className="text-[42px] md:text-[56px] font-serif text-[#101848] mb-4">{title}</h2>
+                    <h2 className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] mb-4">{title}</h2>
                     {subtitle && <p className="text-gray-600 max-w-2xl mx-auto font-sans">{subtitle}</p>}
                 </div>
 

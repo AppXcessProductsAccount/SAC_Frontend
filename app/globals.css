@@ -8,6 +8,16 @@
   --accent-brown: #866050;
   --accent-muted: #8d93a4;
   --font-serif: 'Lora', serif;
+
+  /* Real rendered height of the sticky navbar. Used for hero offsets and
+     scroll-padding so anchors never land underneath the header. */
+  --nav-h: 76px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 92px;
+  }
 }
 
 @theme {
@@ -26,15 +36,53 @@
 }
 
 @layer base {
+
+  /* scroll-behavior only takes effect on the scrolling element (html), not body. */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 12px);
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     font-family: var(--font-display);
-    scroll-behavior: smooth;
     background-color: var(--site-bg-light);
     color: var(--site-primary);
+    /* Full-bleed decorations (parallax layers, blob tails, clouds) must never
+       create a horizontal scrollbar on small screens. */
+    overflow-x: hidden;
+  }
+
+  /* Replaced media never overflows its column on narrow viewports. */
+  img,
+  video,
+  iframe,
+  svg {
+    max-width: 100%;
+  }
+
+  /* Give tap targets a sane minimum on touch devices. */
+  @media (pointer: coarse) {
+
+    button,
+    a[role="button"] {
+      touch-action: manipulation;
+    }
   }
 }
 
 @layer utilities {
+
+  /* Horizontal card rails: native scroll + snap, chrome hidden. */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
@@ -323,5 +371,21 @@
 
   .animate-shooting-star-slow {
     animation: shooting-star-slow var(--ss-duration, 30s) linear infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -119,7 +119,7 @@ export default function ContactPage() {
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative py-24 bg-white overflow-hidden">
+            <section className="relative py-14 md:py-24 bg-white overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image 
                         src={hero.background_image_url || "/testimonial.png"} 
@@ -143,7 +143,7 @@ export default function ContactPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-[42px] md:text-[64px] font-serif text-[#101848] leading-tight mb-6"
+                        className="text-[28px] sm:text-[42px] md:text-[64px] font-serif text-[#101848] leading-tight mb-6"
                     >
                         {hero.title}
                     </motion.h1>
@@ -159,7 +159,7 @@ export default function ContactPage() {
             </section>
 
             {/* Content Section */}
-            <section className="py-24 px-6 relative overflow-hidden">
+            <section className="py-14 md:py-24 px-6 relative overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image 
                         src={content.background_image_url || "/upcoming_event.png"} 
@@ -289,7 +289,7 @@ export default function ContactPage() {
                                     {status === "success" ? (
                                         <div className="text-center py-12 space-y-6">
                                             <div className="w-20 h-20 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                                                <span className="material-icons text-4xl">done_all</span>
+                                                <span className="material-icons text-2xl md:text-4xl">done_all</span>
                                             </div>
                                             <h3 className="text-[28px] font-serif text-[#101848]">{form.success_message || "Message Received"}</h3>
                                             <p className="text-[#101848]/60 font-sans">{form.success_subtitle || "We'll get back to you with peace and clarity shortly."}</p>

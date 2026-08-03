@@ -85,7 +85,7 @@ export default function AdminNavbarPage() {
         setLinks(newLinks);
     };
 
-    if (loading) return <div className="text-center py-20">Loading...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20">Loading...</div>;
 
     const fullLogoUrl = logoUrl.startsWith("/uploads/")
         ? `${process.env.NEXT_PUBLIC_API_URL}${logoUrl}`

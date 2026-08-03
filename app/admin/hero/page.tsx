@@ -68,7 +68,7 @@ export default function AdminHeroPage() {
         }
     };
 
-    if (loading) return <div className="text-center py-20">Loading...</div>;
+    if (loading) return <div className="text-center py-12 md:py-20">Loading...</div>;
 
     const fullBgUrl = bgImageUrl.startsWith("/uploads/")
         ? `${process.env.NEXT_PUBLIC_API_URL}${bgImageUrl}`

@@ -33,29 +33,31 @@ export default function Footer() {
     };
 
     const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-        e.preventDefault();
         const element = document.getElementById(id);
-        if (element) {
-            const offset = 80;
-            const bodyRect = document.body.getBoundingClientRect().top;
-            const elementRect = element.getBoundingClientRect().top;
-            const elementPosition = elementRect - bodyRect;
-            const offsetPosition = elementPosition - offset;
+        // No such section on this page — let the browser follow the href instead of
+        // swallowing the click (the old version always preventDefault'd, so
+        // "Programs" and "Contact" were dead links everywhere).
+        if (!element) return;
+        e.preventDefault();
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
-            });
-        }
+        const navHeight = parseInt(
+            getComputedStyle(document.documentElement).getPropertyValue("--nav-h"),
+            10
+        ) || 80;
+
+        window.scrollTo({
+            top: element.getBoundingClientRect().top + window.scrollY - navHeight - 12,
+            behavior: "smooth"
+        });
     };
 
     const quickLinks = [
-        { label: "Home", id: "home" },
-        { label: "Programs", id: "programs" },
-        { label: "Events", id: "events" },
-        { label: "Enlightenment", id: "enlightenment" },
-        { label: "Testimonials", id: "testimonials" },
-        { label: "Contact", id: "contact" },
+        { label: "Home", id: "home", href: "/" },
+        { label: "Programs", id: "programs", href: "/programs" },
+        { label: "Events", id: "events", href: "/#events" },
+        { label: "Enlightenment", id: "enlightenment", href: "/#enlightenment" },
+        { label: "Testimonials", id: "testimonials", href: "/#testimonials" },
+        { label: "Contact", id: "contact", href: "/contact" },
     ];
 
     if (loading) return null;
@@ -78,7 +80,9 @@ export default function Footer() {
             <div className="absolute inset-0 z-0">
                 <img
                     src={getFullUrl(displayData.background_image_url)}
-                    alt="Footer Background"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                 />
                 {/* Dark Overlay for Readability */}
@@ -90,23 +94,25 @@ export default function Footer() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                className="relative z-10 w-full max-w-[1400px] mx-auto px-8 md:px-12"
+                className="relative z-10 w-full max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12"
             >
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-0 items-stretch">
-                    
+                {/* 4-up only from `lg` — four columns at the 768px `md` breakpoint left
+                    each one ~150px wide, wrapping every address onto five lines. */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-0 items-stretch">
+
                     {/* Column 1: SAS & SASM Info */}
-                    <div className="flex flex-col md:pr-12 md:pb-8 md:border-r md:border-white/10 h-full">
+                    <div className="flex flex-col lg:pr-12 lg:pb-8 lg:border-r lg:border-white/10 h-full">
                         <div className="space-y-8 flex-grow">
                             <div>
                                 <h3 className="text-[16px] font-serif text-white mb-3 uppercase tracking-[0.1em]">
                                     Self Awareness Society (SAS)
                                 </h3>
                                 <div className="text-white/60 text-[12px] font-sans space-y-2 leading-relaxed">
-                                    <p className="flex justify-between border-b border-white/5 pb-1">
+                                    <p className="flex flex-wrap justify-between gap-x-3 border-b border-white/5 pb-1">
                                         <span className="text-white/40 text-[10px] uppercase">Founding Patron</span>
                                         <span>Paranjothi Subramaniam</span>
                                     </p>
-                                    <p className="flex justify-between border-b border-white/5 pb-1">
+                                    <p className="flex flex-wrap justify-between gap-x-3 border-b border-white/5 pb-1">
                                         <span className="text-white/40 text-[10px] uppercase">Patron</span>
                                         <span>Sakuntala S. Suppiah</span>
                                     </p>
@@ -139,7 +145,7 @@ export default function Footer() {
                     </div>
 
                     {/* Column 2: Logo */}
-                    <div className="flex flex-col items-center justify-center md:pb-6 md:border-r md:border-white/10 h-full">
+                    <div className="flex flex-col items-center justify-center lg:pb-6 lg:border-r lg:border-white/10 h-full">
                         <div className="relative w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-2xl overflow-hidden border-4 md:border-6 border-[#101848]/20">
                             <Image
                                 src={getFullUrl(displayData.logo_url)}
@@ -152,15 +158,15 @@ export default function Footer() {
                     </div>
 
                     {/* Column 3: Quick Links */}
-                    <div className="flex flex-col md:pl-12 md:pr-12 md:pb-8 md:border-r md:border-white/10 h-full">
-                        <h3 className="text-[20px] font-serif text-white mb-6 border-b border-white/10 pb-2">
+                    <div className="flex flex-col lg:pl-12 lg:pr-12 lg:pb-8 lg:border-r lg:border-white/10 h-full">
+                        <h3 className="text-[18px] md:text-[20px] font-serif text-white mb-5 md:mb-6 border-b border-white/10 pb-2">
                             Quick Links
                         </h3>
                         <div className="flex flex-col gap-y-3">
                             {quickLinks.map((link) => (
                                 <a
                                     key={link.id}
-                                    href={`#${link.id}`}
+                                    href={link.href}
                                     onClick={(e) => scrollToSection(e, link.id)}
                                     className="text-white/60 hover:text-white transition-colors font-sans text-xs tracking-wide w-fit"
                                 >
@@ -171,8 +177,8 @@ export default function Footer() {
                     </div>
 
                     {/* Column 4: Contact Info / Branches */}
-                    <div className="flex flex-col md:pl-12 md:pb-8 h-full">
-                        <h3 className="text-[20px] font-serif text-white mb-6 border-b border-white/10 pb-2">
+                    <div className="flex flex-col lg:pl-12 lg:pb-8 h-full">
+                        <h3 className="text-[18px] md:text-[20px] font-serif text-white mb-5 md:mb-6 border-b border-white/10 pb-2">
                             Our Centers
                         </h3>
                         <div className="space-y-6">
@@ -203,7 +209,7 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Footer */}
-                <div className="mt-12 md:mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-white/30 text-[10px] font-sans tracking-widest uppercase">
+                <div className="mt-10 md:mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-white/30 text-[10px] font-sans tracking-widest uppercase text-center md:text-left">
                     <p>{displayData.copyright_text}</p>
                     <div className="flex gap-6">
                         <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>

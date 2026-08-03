@@ -132,7 +132,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 className="space-y-8"
                             >
                                 <div className="text-center space-y-3">
-                                    <h2 className="text-4xl font-serif font-bold text-[#101848]">Welcome Back</h2>
+                                    <h2 className="text-2xl md:text-4xl font-serif font-bold text-[#101848]">Welcome Back</h2>
                                     <p className="text-black/40 text-sm font-medium">Continue your mindfulness journey</p>
                                 </div>
 
@@ -188,7 +188,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                 className="space-y-8"
                             >
                                 <div className="text-center space-y-3">
-                                    <h2 className="text-4xl font-serif font-bold text-[#101848]">Verify Email</h2>
+                                    <h2 className="text-2xl md:text-4xl font-serif font-bold text-[#101848]">Verify Email</h2>
                                     <p className="text-black/40 text-sm font-medium">
                                         Enter the 6-digit code sent to <br/>
                                         <span className="text-[#101848] font-bold">{email}</span>

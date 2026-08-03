@@ -36,7 +36,7 @@ export default function AboutUs() {
     if (!about) return null;
 
     return (
-        <section className="py-24 px-6 relative overflow-hidden bg-white" id="about-us">
+        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-white" id="about-us">
             <AmbientBackground starCount={25} opacity={0.3} />
 
             <div className="max-w-7xl mx-auto relative z-10">
@@ -83,7 +83,7 @@ export default function AboutUs() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.5, duration: 0.8 }}
-                                className="text-4xl md:text-5xl font-bold text-[var(--site-secondary)] leading-tight"
+                                className="text-2xl sm:text-4xl md:text-5xl font-bold text-[var(--site-secondary)] leading-tight"
                             >
                                 {about.title}
                             </motion.h2>

@@ -15,7 +15,7 @@ export default function UpcomingEvents({ content }: { content?: any }) {
     const intro = content?.intro || "Join us every Thursday to recharge yourself through meditation and learn new insights with our fellow members. It's a time for community, growth, and inner peace.";
 
     return (
-        <section className="relative py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -41,7 +41,7 @@ export default function UpcomingEvents({ content }: { content?: any }) {
                         <span className="text-[#101848]/60 font-sans font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                             {subtitle}
                         </span>
-                        <h2 className="text-[42px] md:text-[52px] font-serif text-[#101848] leading-[1.1] mb-8 whitespace-pre-line">
+                        <h2 className="text-[28px] sm:text-[42px] md:text-[52px] font-serif text-[#101848] leading-[1.1] mb-8 whitespace-pre-line">
                             {title}
                         </h2>
                         <div className="space-y-6">

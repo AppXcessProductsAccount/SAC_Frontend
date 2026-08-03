@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function CTA() {
     return (
-        <section className="py-24 px-6 relative overflow-hidden bg-[var(--site-bg-dark)]">
+        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-[var(--site-bg-dark)]">
             {/* Background Layer */}
             <AmbientBackground starCount={40} showShootingStar={true} opacity={0.5} />
 
@@ -23,7 +23,7 @@ export default function CTA() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.3, duration: 0.8 }}
-                            className="text-4xl md:text-6xl font-bold text-secondary mb-8 leading-tight"
+                            className="text-2xl sm:text-4xl md:text-6xl font-bold text-secondary mb-8 leading-tight"
                         >
                             Ready to Begin Your Journey to <span className="text-[var(--site-primary)]">Clarity?</span>
                         </motion.h2>

@@ -26,14 +26,14 @@ export default function FAQClassic({ data }: { data: FAQContent | null }) {
                 />
             </div>
             
-            <div className="relative z-10 max-w-3xl mx-auto px-6">
+            <div className="relative z-10 max-w-3xl mx-auto px-5 sm:px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-center mb-16"
+                    className="text-center mb-10 md:mb-16"
                 >
-                    <h2 className="text-[36px] md:text-[42px] font-serif text-[#101848] mb-4">
+                    <h2 className="text-[26px] sm:text-[32px] md:text-[42px] font-serif text-[#101848] mb-4 text-balance">
                         {displayData.title}
                     </h2>
                     <div className="w-16 h-[1px] bg-[#101848]/20 mx-auto"></div>
@@ -44,17 +44,18 @@ export default function FAQClassic({ data }: { data: FAQContent | null }) {
                         <div key={index} className="border-b border-[#101848]/10 pb-4">
                             <button
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                                className="w-full flex justify-between items-center py-4 text-left group"
+                                aria-expanded={openIndex === index}
+                                className="w-full flex justify-between items-center gap-4 py-4 text-left group"
                             >
-                                <span className="text-[18px] md:text-[20px] font-serif text-[#101848] group-hover:text-[#233252] transition-colors">
+                                <span className="text-[16px] sm:text-[18px] md:text-[20px] font-serif text-[#101848] group-hover:text-[#233252] transition-colors">
                                     {item.question}
                                 </span>
                                 <motion.div
                                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                                     transition={{ duration: 0.3 }}
-                                    className="text-[#101848]/40"
+                                    className="text-[#101848]/40 shrink-0"
                                 >
-                                    <ChevronDown size={24} />
+                                    <ChevronDown size={22} />
                                 </motion.div>
                             </button>
                             <AnimatePresence>
@@ -66,7 +67,7 @@ export default function FAQClassic({ data }: { data: FAQContent | null }) {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <p className="text-[#233252]/70 font-sans leading-relaxed pb-4 pr-12">
+                                        <p className="text-[14px] md:text-[15px] text-[#233252]/70 font-sans leading-relaxed pb-4 pr-0 md:pr-12">
                                             {item.answer}
                                         </p>
                                     </motion.div>

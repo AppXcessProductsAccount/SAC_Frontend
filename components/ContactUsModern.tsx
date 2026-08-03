@@ -31,7 +31,7 @@ export default function ContactUsModern({ data }: { data: any }) {
                         </span>
                         
                         <div className="relative inline-block mb-8">
-                            <h2 className="text-[42px] md:text-[54px] lg:text-[60px] font-sans text-[#1b1b2b] leading-[1.05] tracking-tight whitespace-pre-line relative z-10">
+                            <h2 className="text-[28px] sm:text-[42px] md:text-[54px] lg:text-[60px] font-sans text-[#1b1b2b] leading-[1.05] tracking-tight whitespace-pre-line relative z-10">
                                 {data.title}
                             </h2>
                             {/* Decorative Curve */}
@@ -76,7 +76,7 @@ export default function ContactUsModern({ data }: { data: any }) {
                         {status === "success" ? (
                             <div className="text-center py-12 md:py-20 flex flex-col items-center">
                                 <div className="w-24 h-24 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mb-8 border border-green-500/20">
-                                    <span className="material-icons text-5xl">done_all</span>
+                                    <span className="material-icons text-3xl md:text-5xl">done_all</span>
                                 </div>
                                 <h3 className="text-[32px] font-sans font-bold text-[#1b1b2b] tracking-tight mb-4">Message Received</h3>
                                 <p className="text-[#1b1b2b]/60 font-sans font-medium text-[16px] mb-8">We'll get back to you with peace and clarity shortly.</p>

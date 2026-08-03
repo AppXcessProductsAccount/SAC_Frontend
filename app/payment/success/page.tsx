@@ -35,7 +35,7 @@ function SuccessContent() {
     }, []);
 
     return (
-        <div className="max-w-2xl mx-auto px-6 py-20 text-center">
+        <div className="max-w-2xl mx-auto px-6 py-12 md:py-20 text-center">
             <motion.div
                 initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -86,7 +86,7 @@ function SuccessContent() {
                     Payment Confirmed
                 </div>
                 
-                <h1 className="text-4xl md:text-6xl font-serif font-bold text-[#101848] tracking-tight">
+                <h1 className="text-2xl sm:text-4xl md:text-6xl font-serif font-bold text-[#101848] tracking-tight">
                     Thank You!
                 </h1>
                 
@@ -138,7 +138,7 @@ export default function PaymentSuccessPage() {
     return (
         <main className="bg-white min-h-screen">
             <Navbar />
-            <section className="pt-32 pb-20 overflow-hidden">
+            <section className="pt-20 md:pt-32 pb-20 overflow-hidden">
                 <Suspense fallback={
                     <div className="flex items-center justify-center min-h-[400px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#101848]"></div>

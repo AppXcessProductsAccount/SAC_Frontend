@@ -29,13 +29,16 @@ const Cloud = ({ delay, duration, top, scale, opacity, yOffset }: CloudProps) =>
         className="absolute pointer-events-none filter blur-[2px]"
         style={{ top, scale, zIndex: 5 }}
     >
-        <div className="relative w-[600px] h-[400px]">
+        {/* Scaled down on phones — a 600px cloud on a 360px viewport covered the
+            whole hero and blew out the headline contrast. */}
+        <div className="relative w-[260px] h-[175px] sm:w-[400px] sm:h-[265px] md:w-[600px] md:h-[400px]">
             <Image
                 src="/11506828.png"
-                alt="Cloud"
+                alt=""
+                aria-hidden="true"
                 fill
+                sizes="(max-width: 640px) 260px, (max-width: 768px) 400px, 600px"
                 className="object-contain opacity-70"
-                priority
             />
         </div>
     </motion.div>

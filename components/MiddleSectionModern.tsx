@@ -32,7 +32,7 @@ export default function MiddleSectionModern({ content }: Props) {
     const firstPart = titleParts.join(' ');
 
     return (
-        <section className="relative z-10 w-full bg-white py-12 md:py-24 px-4 md:px-8 font-sans shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
+        <section className="relative z-10 w-full bg-white py-12 md:py-24 px-5 md:px-8 font-sans shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
             <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4 md:gap-6">
                 
                 {/* LEFT CELL - Content & Buttons */}
@@ -41,15 +41,17 @@ export default function MiddleSectionModern({ content }: Props) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
-                    className="relative w-full h-[500px] lg:h-[700px] rounded-[32px] md:rounded-[48px] overflow-hidden bg-[#f5f6f6] shadow-sm p-8 md:p-14 flex flex-col justify-between"
+                    /* min-h, not a fixed h: a longer CMS title at 48px+ used to overflow
+                       the 500px box and get clipped by `overflow-hidden`. */
+                    className="relative w-full min-h-[460px] lg:h-[700px] rounded-[32px] md:rounded-[48px] overflow-hidden bg-[#f5f6f6] shadow-sm p-6 sm:p-8 md:p-14 flex flex-col justify-between gap-10"
                 >
                     {/* The Text Block */}
                     <div>
-                        <h2 className="text-[48px] md:text-[64px] lg:text-[75px] font-sans text-[#1b1b2b] leading-[0.95] tracking-tight mb-2">
+                        <h2 className="text-[34px] sm:text-[48px] md:text-[64px] lg:text-[75px] font-sans text-[#1b1b2b] leading-[0.95] tracking-tight mb-2">
                             {firstPart}
                         </h2>
                         <div className="relative inline-block mt-2">
-                            <h2 className="text-[48px] md:text-[64px] lg:text-[75px] font-sans text-[#1b1b2b] leading-[0.95] tracking-tight relative z-10">
+                            <h2 className="text-[34px] sm:text-[48px] md:text-[64px] lg:text-[75px] font-sans text-[#1b1b2b] leading-[0.95] tracking-tight relative z-10">
                                 {lastWord}
                             </h2>
                             {/* Decorative Wave Scribble */}
@@ -59,8 +61,8 @@ export default function MiddleSectionModern({ content }: Props) {
                             </svg>
                         </div>
 
-                        <div className="mt-12 md:mt-20">
-                            <p className="text-[#1b1b2b]/70 text-[13px] md:text-[15px] max-w-md font-medium leading-relaxed">
+                        <div className="mt-10 md:mt-16 lg:mt-20">
+                            <p className="text-[#1b1b2b]/70 text-[14px] md:text-[15px] max-w-md font-medium leading-relaxed">
                                 {displayData.text}
                             </p>
                         </div>
@@ -111,8 +113,9 @@ export default function MiddleSectionModern({ content }: Props) {
                         )}
                     </motion.div>
 
-                    {/* BOTTOM RIGHT ROW */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 h-auto md:h-[220px]">
+                    {/* BOTTOM RIGHT ROW — min-h so long CMS copy grows the cards
+                        instead of spilling out of a fixed 220px row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 md:min-h-[220px]">
                         
                         {/* Yellow Card - Group Meditation */}
                         <motion.div 
@@ -120,14 +123,14 @@ export default function MiddleSectionModern({ content }: Props) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.4 }}
-                            className="bg-[#f8eac9] rounded-[32px] p-8 md:p-10 relative overflow-hidden shadow-sm flex flex-col justify-center"
+                            className="bg-[#f8eac9] rounded-[32px] p-6 sm:p-8 md:p-10 relative overflow-hidden shadow-sm flex flex-col justify-center"
                         >
                             <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-bl-full translate-x-4 -translate-y-4" />
                             <div className="absolute top-0 right-16 w-16 h-16 bg-[#b2c8f8] rounded-bl-full translate-x-2 -translate-y-2 opacity-80" />
 
-                            <h3 className="text-[22px] md:text-[26px] font-bold text-[#1b1b2b] mb-4 relative z-10 leading-tight">
+                            <h3 className="text-[20px] md:text-[26px] font-bold text-[#1b1b2b] mb-3 md:mb-4 relative z-10 leading-tight pr-16">
                                 {displayData.group_meditation.title.split(' ').map((word, i) => (
-                                    <span key={i}>{word} <br /></span>
+                                    <span key={i} className="block">{word}</span>
                                 ))}
                             </h3>
                             <p className="text-[#1b1b2b]/60 text-[12px] md:text-[13px] font-medium leading-relaxed relative z-10">
@@ -141,17 +144,17 @@ export default function MiddleSectionModern({ content }: Props) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: 0.6 }}
-                            className="bg-[#d0dfcd] rounded-[32px] p-8 md:p-10 relative overflow-hidden shadow-sm flex flex-col justify-end"
+                            className="bg-[#d0dfcd] rounded-[32px] p-6 sm:p-8 md:p-10 relative overflow-hidden shadow-sm flex flex-col justify-end"
                         >
-                            <span className="absolute -top-4 right-6 text-[120px] text-white/40 font-serif leading-none italic pointer-events-none">"</span>
-                            
-                            <p className="text-[#1b1b2b]/80 text-[12px] md:text-[13px] font-medium leading-relaxed mb-4 z-10">
+                            <span className="absolute -top-4 right-6 text-[120px] text-white/40 font-serif leading-none italic pointer-events-none select-none">"</span>
+
+                            <p className="text-[#1b1b2b]/80 text-[12px] md:text-[13px] font-medium leading-relaxed mb-4 relative z-10">
                                 "{displayData.testimonial.text}"
                             </p>
-                            
-                            <div className="z-10 mt-auto">
+
+                            <div className="relative z-10 mt-auto">
                                 <p className="text-[#1b1b2b]/50 text-[11px] uppercase tracking-widest font-bold mb-1">{displayData.testimonial.role}</p>
-                                <h4 className="text-[24px] md:text-[32px] font-bold text-[#1b1b2b] tracking-tight">{displayData.testimonial.author}</h4>
+                                <h4 className="text-[22px] md:text-[32px] font-bold text-[#1b1b2b] tracking-tight break-words">{displayData.testimonial.author}</h4>
                             </div>
                         </motion.div>
 

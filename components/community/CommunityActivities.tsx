@@ -35,7 +35,7 @@ export default function CommunityActivities({ content }: { content?: any }) {
     const description = content?.description || "Witness the diverse ways we help people through workshops, retreats, and community service across our regional branches.";
 
     return (
-        <section className="relative py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
             <div className="absolute inset-0 z-0">
                 <img
                     src={content?.image_url || "/sectionbackground.png"}
@@ -58,7 +58,7 @@ export default function CommunityActivities({ content }: { content?: any }) {
                     >
                         {subtitle}
                     </motion.span>
-                    <h2 className="text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1] mb-6">
+                    <h2 className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1] mb-6">
                         {title}
                     </h2>
                     <p className="text-[18px] text-[#233252]/80 font-sans max-w-2xl leading-relaxed">

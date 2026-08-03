@@ -133,18 +133,18 @@ export default function MyRegistrationsPage() {
 
             <section className="py-4 max-w-7xl mx-auto px-6">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                    <div className="flex flex-col items-center justify-center py-12 md:py-20 space-y-4">
                         <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
                         <p className="text-gray-500 font-medium">Loading your journey...</p>
                     </div>
                 ) : error ? (
-                    <div className="text-center py-20 bg-white rounded-[32px] border border-gray-100 shadow-sm">
+                    <div className="text-center py-12 md:py-20 bg-white rounded-[32px] border border-gray-100 shadow-sm">
                         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                         <h3 className="text-xl font-bold text-gray-800">Error Loading Data</h3>
                         <p className="text-gray-500 mt-2">{error}</p>
                     </div>
                 ) : registrations.length === 0 ? (
-                    <div className="text-center py-32 bg-white rounded-[40px] border border-dashed border-gray-200">
+                    <div className="text-center py-16 md:py-24 lg:py-32 bg-white rounded-[40px] border border-dashed border-gray-200">
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                             <History className="test-black w-10 h-10" />
                         </div>

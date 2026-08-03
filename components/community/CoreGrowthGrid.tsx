@@ -58,7 +58,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
     };
 
     return (
-        <section className="relative py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -85,7 +85,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1]"
+                        className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] leading-[1.1]"
                     >
                         {title}
                     </motion.h2>
@@ -99,11 +99,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                                 key={idx}
                                 layout
                                 onClick={() => handleInteraction(idx)}
-                                className={`
-                                    relative cursor-pointer overflow-hidden rounded-[40px] transition-all duration-500 ease-out
-                                    ${isExpanded ? 'lg:col-span-2 ring-2 ring-[#101848]' : 'bg-[#eeebf0] group'}
-                                    min-h-[300px] flex flex-col p-8
-                                `}
+                                className={`relative cursor-pointer overflow-hidden rounded-[40px] transition-all duration-500 ease-out ${isExpanded ? 'lg:col-span-2 ring-2 ring-[#101848]' : 'bg-[#eeebf0] group'} min-h-[300px] flex flex-col p-8`}
                             >
                                 {/* Background Image with Overlay */}
                                 <div className="absolute inset-0 z-0">
@@ -114,9 +110,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />
                                     )}
-                                    <div className={`
-                                        absolute inset-0 transition-colors duration-500
-                                        ${isExpanded ? 'bg-black/60 backdrop-blur-[2px]' : 'bg-black/20 group-hover:bg-black/40'}
+                                    <div className={`absolute inset-0 transition-colors duration-500 ${isExpanded ? 'bg-black/60 backdrop-blur-[2px]' : 'bg-black/20 group-hover:bg-black/40'}
                                     `} />
                                 </div>
 
@@ -127,9 +121,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                                         </span>
                                         <motion.div
                                             animate={{ rotate: isExpanded ? 45 : 0 }}
-                                            className={`
-                                                w-10 h-10 rounded-full flex items-center justify-center transition-colors
-                                                ${isExpanded ? 'bg-white text-[#101848]' : 'bg-white/20 text-white group-hover:bg-white group-hover:text-[#101848]'}
+                                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isExpanded ? 'bg-white text-[#101848]' : 'bg-white/20 text-white group-hover:bg-white group-hover:text-[#101848]'}
                                             `}
                                         >
                                             <span className="material-icons text-xl">{isExpanded ? 'close' : 'add'}</span>

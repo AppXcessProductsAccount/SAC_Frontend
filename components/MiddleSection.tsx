@@ -50,7 +50,7 @@ export default function MiddleSection({ content, template: propTemplate }: { con
     }, [content]);
 
     if (loading && !content) return (
-        <div className="py-32 flex justify-center items-center bg-white">
+        <div className="py-16 md:py-24 lg:py-32 flex justify-center items-center bg-white">
             <div className="w-8 h-8 border-4 border-[#101848]/20 border-t-[#101848] rounded-full animate-spin"></div>
         </div>
     );

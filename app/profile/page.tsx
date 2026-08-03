@@ -131,7 +131,7 @@ export default function ProfilePage() {
                                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                                 Back
                             </button>
-                            <h1 className="text-4xl font-serif font-bold text-[#101848]">Profile Settings</h1>
+                            <h1 className="text-2xl md:text-4xl font-serif font-bold text-[#101848]">Profile Settings</h1>
                             <p className="text-[#101848]/60 italic font-serif">"The journey inward begins with self-awareness."</p>
                         </div>
                         
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                                 {avatarPreview ? (
                                     <img src={avatarPreview} alt={user.full_name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <span className="text-4xl md:text-5xl font-serif font-bold text-[#101848]">
+                                    <span className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-[#101848]">
                                         {user.full_name?.charAt(0).toUpperCase()}
                                     </span>
                                 )}

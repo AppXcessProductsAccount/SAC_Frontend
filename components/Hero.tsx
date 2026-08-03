@@ -8,13 +8,9 @@ export default function Hero({ content, template: propTemplate }: { content?: an
     const { theme } = useTheme();
     const activeTemplate = propTemplate === "default" || !propTemplate ? theme : propTemplate;
 
-    return (
-        <main>
-            {activeTemplate === "classic" ? (
-                <HeroClassic content={content} />
-            ) : (
-                <HeroModern content={content} />
-            )}
-        </main>
-    );
+    // Deliberately a fragment, not <main>: the page already renders a <main>
+    // landmark, and nesting a second one is invalid HTML.
+    return activeTemplate === "classic"
+        ? <HeroClassic content={content} />
+        : <HeroModern content={content} />;
 }
