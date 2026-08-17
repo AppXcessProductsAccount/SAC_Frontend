@@ -43,7 +43,7 @@ export default function SACSection({ content }: { content?: any }) {
                     }}
                 />
             </div>
-            <div className="max-w-[1400px] mx-auto px-8 md:px-12 relative z-10">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     {/* Left Column: History & Founders */}
                     <motion.div
@@ -88,7 +88,7 @@ export default function SACSection({ content }: { content?: any }) {
                         transition={{ duration: 0.8 }}
                         className="space-y-10"
                     >
-                        <div className="bg-[#101848] text-white p-12 rounded-[60px] shadow-2xl relative overflow-hidden">
+                        <div className="bg-[#101848] text-white p-6 sm:p-12 rounded-[32px] sm:rounded-[60px] shadow-2xl relative overflow-hidden">
                             <div className="relative z-10">
                                 <h3 className="text-2xl font-serif mb-6">Our Core Philosophy</h3>
                                 <p className="text-white/80 font-sans leading-relaxed mb-6">
@@ -127,7 +127,7 @@ export default function SACSection({ content }: { content?: any }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="mt-20 bg-[#eeebf0] p-10 md:p-16 rounded-[60px] border border-white shadow-sm flex flex-col md:flex-row items-center gap-12"
+                    className="mt-20 bg-[#eeebf0] p-6 sm:p-10 md:p-16 rounded-[32px] sm:rounded-[60px] border border-white shadow-sm flex flex-col md:flex-row items-center gap-12"
                 >
                     <div className="md:w-1/3">
                         <div className="w-16 h-16 rounded-2xl bg-[#101848] flex items-center justify-center mb-6 shadow-lg shadow-[#101848]/20">

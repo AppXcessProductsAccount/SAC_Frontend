@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AboutHero from "@/components/about/AboutHero";
@@ -23,8 +24,8 @@ export default function AboutPage() {
                 // 1. Discovery: List all available pages
                 const pages = await cmsApi.getPages();
                 
-                // 2. Find the About page
-                const aboutPage = pages.find((p: any) => p.name === "about" || p.id === 2);
+                // 2. Find the About page (survives an admin rename)
+                const aboutPage = resolveCmsPage(pages, "about");
 
                 if (aboutPage) {
                     // 3. Navigation: List sections (structure only)

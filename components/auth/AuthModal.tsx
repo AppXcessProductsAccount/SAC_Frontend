@@ -97,31 +97,33 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1000] overflow-y-auto overscroll-contain">
             {/* Backdrop */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={onClose}
-                className="absolute inset-0 bg-[#101848]/20 backdrop-blur-md"
+                className="fixed inset-0 bg-[#101848]/20 backdrop-blur-md"
             />
 
-            {/* Modal */}
+            {/* Modal — wrapper scrolls so the OTP/step content can never be
+                clipped out of reach on short or landscape phones. */}
+            <div className="relative min-h-full flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-md overflow-hidden rounded-[40px] bg-white border border-black/5 shadow-2xl shadow-blue-900/10"
+                className="relative w-full max-w-md overflow-hidden rounded-[28px] sm:rounded-[40px] bg-white border border-black/5 shadow-2xl shadow-blue-900/10"
             >
                 <button
                     onClick={onClose}
-                    className="absolute right-6 top-6 p-2 text-black/20 hover:text-black/80 transition-colors rounded-full hover:bg-black/5"
+                    className="absolute right-3 top-3 sm:right-6 sm:top-6 p-2 text-black/30 hover:text-black/80 transition-colors rounded-full hover:bg-black/5 z-20"
                 >
                     <X size={20} />
                 </button>
 
-                <div className="px-10 py-12 relative z-10">
+                <div className="px-6 sm:px-10 py-10 sm:py-12 relative z-10">
                     <AnimatePresence mode="wait">
                         {step === "email" && (
                             <motion.div
@@ -273,6 +275,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </AnimatePresence>
                 </div>
             </motion.div>
+            </div>
         </div>
     );
 }

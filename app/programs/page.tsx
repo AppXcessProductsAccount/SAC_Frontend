@@ -421,7 +421,7 @@ export default function ProgramsPage() {
                                                             </div>
 
                                                             {formData.discovery_source === "Introducer" && (
-                                                                <div className="grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
+                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
                                                                     <div className="space-y-1.5">
                                                                         <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
                                                                             <User size={12} className="text-[#101848]/40" />

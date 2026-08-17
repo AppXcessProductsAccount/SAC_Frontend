@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import CloudAnimation from "./CloudAnimation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 const HERO_SLIDES = [
     {
@@ -42,6 +43,7 @@ const HERO_SLIDES = [
 ];
 
 export default function HeroClassic({ content }: { content?: any }) {
+    const { theme } = useTheme();
     const slides = content?.slides?.length ? content.slides : HERO_SLIDES;
     const [currentSlide, setCurrentSlide] = useState(0);
     const touchStartX = useRef<number | null>(null);
@@ -77,6 +79,13 @@ export default function HeroClassic({ content }: { content?: any }) {
             id="home"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
+            /* The modern navbar is a floating pill with nothing behind it, so the slide
+               has to run underneath it or the page opens with a band of empty grey above
+               the image. The classic navbar paints its own textured header instead, and
+               tucking under that would just hide the top of the slide — hence the theme
+               check rather than an unconditional pull-up. --nav-h is measured from the
+               real navbar, so this lands flush on every breakpoint. */
+            style={theme === "modern" ? { marginTop: "calc(var(--nav-h) * -1)" } : undefined}
             /* svh (not vh) so mobile browser chrome collapsing doesn't resize the hero
                mid-scroll. min/max keep it sane on short landscape phones and 4K. */
             className="relative w-full h-[88svh] min-h-[520px] max-h-[780px] md:h-[80svh] md:min-h-[600px] md:max-h-[820px] overflow-hidden bg-[#eeebf0]"

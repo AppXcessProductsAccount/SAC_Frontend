@@ -36,14 +36,14 @@ export default function MissionIntentSection({ content }: { content?: any }) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 {/* Mission Wrapper */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 1 }}
-                    className="relative bg-[#101848] rounded-[60px] p-12 md:p-20 text-center text-white mb-24 overflow-hidden"
+                    className="relative bg-[#101848] rounded-[32px] sm:rounded-[60px] p-6 sm:p-12 md:p-20 text-center text-white mb-24 overflow-hidden"
                 >
                     <div className="absolute inset-0 opacity-10">
                         <img src="/upcoming_event.png" alt="texture" className="w-full h-full object-cover invert" />
@@ -59,7 +59,7 @@ export default function MissionIntentSection({ content }: { content?: any }) {
                 </motion.div>
 
                 {/* Journey's Intention Wrapper */}
-                <div className="text-center mb-16">
+                <div className="text-center mb-10 md:mb-16">
                     <h2 className="text-[32px] md:text-[42px] font-serif text-[#101848] mb-4">
                         {intentHeader.title}
                     </h2>

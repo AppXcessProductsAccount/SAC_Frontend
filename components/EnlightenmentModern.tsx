@@ -3,9 +3,13 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
+import { toYouTubeEmbedUrl, withEmbedParams } from "@/lib/youtube";
 
 export default function EnlightenmentModern({ data }: { data: any }) {
     const [isVideoActive, setIsVideoActive] = useState(false);
+
+    // Editors paste watch/share links; YouTube refuses to frame those.
+    const embedUrl = toYouTubeEmbedUrl(data.video_url);
 
     return (
         <section className="relative w-full bg-white py-12 md:py-20 px-4 md:px-8 font-sans" id="enlightenment">
@@ -62,16 +66,22 @@ export default function EnlightenmentModern({ data }: { data: any }) {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="relative w-full aspect-video bg-black rounded-[24px] md:rounded-[32px] overflow-hidden shadow-lg border border-gray-100 group"
                 >
-                    <iframe
-                        src={`${data.video_url}${isVideoActive ? "?autoplay=1" : ""}`}
-                        title={data.title}
-                        className={`w-full h-full absolute inset-0 transition-opacity duration-700 ${isVideoActive ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-80'}`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
+                    {embedUrl ? (
+                        <iframe
+                            src={isVideoActive ? withEmbedParams(embedUrl, { autoplay: 1 }) : embedUrl}
+                            title={data.title}
+                            className={`w-full h-full absolute inset-0 transition-opacity duration-700 ${isVideoActive ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-80'}`}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        ></iframe>
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-white/40 text-sm">
+                            Video unavailable
+                        </div>
+                    )}
 
                     {/* Interactive Play Overlay to prevent iframe wheel capture glitches */}
-                    {!isVideoActive && (
+                    {embedUrl && !isVideoActive && (
                         <div 
                             className="absolute inset-0 z-10 cursor-pointer flex items-center justify-center group/play transition-colors hover:bg-black/20"
                             onClick={() => setIsVideoActive(true)}

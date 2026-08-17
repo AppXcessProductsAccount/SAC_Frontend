@@ -8,7 +8,7 @@ export default function AboutHero({ content }: { content?: any }) {
     const description = content?.description || "\"We believe that the things we surround ourselves with should tell a story. Not just of where they came from, but where they are going.\"";
 
     return (
-        <section className="relative py-14 md:py-24 md:py-32 bg-[#eeebf0] overflow-hidden text-center">
+        <section className="relative py-14 md:py-20 lg:py-32 bg-[#eeebf0] overflow-hidden text-center">
             {/* Background Texture - Cleaned up to be conditional or neutral */}
             <div className="absolute inset-0 z-0 bg-white/10 opacity-30">
                 <div className="w-full h-full bg-gradient-to-b from-transparent via-[#101848]/5 to-transparent" />

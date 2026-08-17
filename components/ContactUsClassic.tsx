@@ -46,7 +46,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
             </div>
 
             <div className="relative z-10 max-w-[1400px] mx-auto w-full">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
                     
                     {/* Left Side: Content */}
                     <motion.div
@@ -69,20 +69,20 @@ export default function ContactUsClassic({ data }: { data: any }) {
                         </div>
 
                         <div className="space-y-6 pt-4">
-                            <div className="flex items-center gap-6 group w-full max-w-[450px] bg-white/40 backdrop-blur-md border border-white/60 px-7 py-5 rounded-2xl shadow-sm hover:bg-white/60 transition-all duration-300">
+                            <div className="flex items-center gap-4 sm:gap-6 group w-full max-w-[450px] bg-white/40 backdrop-blur-md border border-white/60 px-5 sm:px-7 py-4 sm:py-5 rounded-2xl shadow-sm hover:bg-white/60 transition-all duration-300">
                                 <div className="w-14 h-14 rounded-full border border-[#101848]/20 bg-white/80 flex items-center justify-center text-[#101848] group-hover:bg-[#101848] group-hover:text-white transition-all duration-300 shadow-sm flex-shrink-0">
                                     <span className="material-icons text-2xl">alternate_email</span>
                                 </div>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col min-w-0">
                                     <span className="text-[#101848]/50 text-[11px] font-bold uppercase tracking-widest mb-0.5">Email us</span>
-                                    <span className="font-sans font-bold text-[#101848] text-[18px] md:text-[20px] tracking-tight">{data.email}</span>
+                                    <span className="font-sans font-bold text-[#101848] text-[15px] sm:text-[18px] md:text-[20px] tracking-tight break-all">{data.email}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-6 group w-full max-w-[450px] bg-white/40 backdrop-blur-md border border-white/60 px-7 py-5 rounded-2xl shadow-sm hover:bg-white/60 transition-all duration-300">
+                            <div className="flex items-center gap-4 sm:gap-6 group w-full max-w-[450px] bg-white/40 backdrop-blur-md border border-white/60 px-5 sm:px-7 py-4 sm:py-5 rounded-2xl shadow-sm hover:bg-white/60 transition-all duration-300">
                                 <div className="w-14 h-14 rounded-full border border-[#101848]/20 bg-white/80 flex items-center justify-center text-[#101848] group-hover:bg-[#101848] group-hover:text-white transition-all duration-300 shadow-sm flex-shrink-0">
                                     <span className="material-icons text-2xl">self_improvement</span>
                                 </div>
-                                <div className="flex flex-col">
+                                <div className="flex flex-col min-w-0">
                                     <span className="text-[#101848]/50 text-[11px] font-bold uppercase tracking-widest mb-0.5">Support</span>
                                     <span className="font-sans font-bold text-[#101848] text-[18px] md:text-[20px] tracking-tight">{data.support_text}</span>
                                 </div>
@@ -110,7 +110,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                 <div className="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
                             </div>
 
-                            <div className="relative z-10 p-8 md:p-12">
+                            <div className="relative z-10 p-5 sm:p-8 md:p-12">
                                 {status === "success" ? (
                                     <div className="text-center py-12 space-y-6">
                                         <div className="w-20 h-20 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto">
@@ -152,7 +152,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                     name="Name_First"
                                                     type="text" 
                                                     maxLength={255}
-                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
                                                     placeholder="First name"
                                                 />
                                             </div>
@@ -163,7 +163,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                     name="Name_Last"
                                                     type="text" 
                                                     maxLength={255}
-                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
                                                     placeholder="Last name"
                                                 />
                                             </div>
@@ -177,7 +177,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                     name="Email"
                                                     type="email" 
                                                     maxLength={255}
-                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
                                                     placeholder="Enter email"
                                                 />
                                             </div>
@@ -197,7 +197,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                         name="PhoneNumber_countrycode"
                                                         type="text" 
                                                         maxLength={20}
-                                                        className="flex-1 bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                        className="flex-1 bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
                                                         placeholder="Number"
                                                     />
                                                 </div>
@@ -211,7 +211,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                 name="SingleLine"
                                                 type="text" 
                                                 maxLength={255}
-                                                className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
                                                 placeholder="What is this regarding?"
                                             />
                                         </div>
@@ -222,7 +222,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                 name="MultiLine"
                                                 rows={3} 
                                                 maxLength={65535}
-                                                className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans resize-none" 
+                                                className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans resize-none" 
                                                 placeholder="Tell us what's on your mind..."
                                             />
                                         </div>

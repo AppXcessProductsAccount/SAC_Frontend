@@ -3,12 +3,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { toYouTubeEmbedUrl } from "@/lib/youtube";
 
 export default function ParanjothiVideos({ content }: { content?: any }) {
     const title = content?.title || "Transformational Insights";
     const subtitle = content?.subtitle || "";
     const rawVideos = content?.videos || [];
-    const videos = Array.isArray(rawVideos) ? rawVideos : [rawVideos];
+    // Editors paste watch/share links; YouTube refuses to frame those, so normalise
+    // each entry and drop anything that isn't an embeddable video.
+    const videos = (Array.isArray(rawVideos) ? rawVideos : [rawVideos])
+        .map((src: string) => toYouTubeEmbedUrl(src))
+        .filter(Boolean);
 
     return (
         <section className="relative py-14 md:py-24 bg-[#eeebf0]">
@@ -21,8 +26,8 @@ export default function ParanjothiVideos({ content }: { content?: any }) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
-                <div className="text-center mb-16">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
+                <div className="text-center mb-10 md:mb-16">
                     <h2 className="text-[28px] sm:text-[42px] md:text-[56px] font-serif text-[#101848] mb-4">{title}</h2>
                     {subtitle && <p className="text-gray-600 max-w-2xl mx-auto font-sans">{subtitle}</p>}
                 </div>

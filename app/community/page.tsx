@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CommunityHero from "@/components/community/CommunityHero";
@@ -21,10 +22,8 @@ export default function CommunityPage() {
                 // 1. Discovery: List all available pages
                 const pages = await cmsApi.getPages();
                 
-                // 2. Find the Community page
-                const communityPage = pages.find((p: any) => 
-                    p.name === "community_events" || p.name === "community"
-                );
+                // 2. Find the Community page (survives an admin rename)
+                const communityPage = resolveCmsPage(pages, "community");
 
                 if (communityPage) {
                     // 3. Navigation: List sections (structure only)

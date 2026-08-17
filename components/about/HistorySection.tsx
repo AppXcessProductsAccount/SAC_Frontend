@@ -35,7 +35,7 @@ export default function HistorySection({ content }: { content?: any }) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}

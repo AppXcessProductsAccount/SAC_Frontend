@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { MiddleSectionContent } from "./MiddleSection";
+import { toYouTubeEmbedUrl } from "@/lib/youtube";
 
 interface Props {
     content: MiddleSectionContent | null;
@@ -11,7 +12,8 @@ export default function MiddleSectionClassic({ content }: Props) {
     const displayData = {
         title: content?.title || "7 Day Transformational Journey",
         text: content?.text || "A life-changing program designed to help you discover your inner peace and spiritual potential. Watch our promo video to learn more about the journey that awaits you.",
-        youtube_url: content?.youtube_url || "https://www.youtube.com/embed/sGtx4XfL76I",
+        // Normalised: editors paste watch/share links, which YouTube refuses to frame.
+        youtube_url: toYouTubeEmbedUrl(content?.youtube_url) || toYouTubeEmbedUrl("sGtx4XfL76I"),
         testimonial: {
             text: content?.testimonial?.text || "This journey has completely redefined my perspective on life. The peace I found here is something I carry with me every single day. Truly transformational!",
             author: content?.testimonial?.author || "Sarah Ahmed",

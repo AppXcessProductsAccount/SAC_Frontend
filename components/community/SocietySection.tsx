@@ -43,7 +43,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8 }}
-                className="text-left mb-16"
+                className="text-left mb-10 md:mb-16"
             >
                 <span className="text-[#101848]/60 font-sans font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
                     {subtitle}
@@ -107,7 +107,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                             {description}
                         </p>
                     </div>
-                    <div className="bg-[#101848] text-white p-10 rounded-[40px] shadow-xl relative overflow-hidden">
+                    <div className="bg-[#101848] text-white p-6 sm:p-10 rounded-[40px] shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-10">
                             <span className="material-icons text-[80px]">groups</span>
                         </div>
@@ -135,7 +135,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 {(!type || type === 'SASM') && renderSASM()}
                 {(!type || type === 'SASS') && renderSASS()}
             </div>

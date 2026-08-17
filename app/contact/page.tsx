@@ -6,6 +6,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveCmsPage } from "@/lib/cms-pages";
 
 export default function ContactPage() {
     const [sections, setSections] = useState<any[]>([]);
@@ -17,9 +18,7 @@ export default function ContactPage() {
             try {
                 // 1. Discovery: Find the Contact page (ID 6)
                 const pages = await cmsApi.getPages();
-                const contactPage = pages.find((p: any) => 
-                    p.id === 6 || p.name.toLowerCase() === "contact"
-                );
+                const contactPage = resolveCmsPage(pages, "contact");
 
                 if (contactPage) {
                     // 2. Navigation: List sections
@@ -170,14 +169,14 @@ export default function ContactPage() {
                     <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#eeebf0] to-transparent z-10"></div>
                 </div>
                 <div className="relative z-10 max-w-[1400px] mx-auto">
-                    <div className="grid lg:grid-cols-[1.2fr_1fr] gap-16">
+                    <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16">
                         
                         {/* Locations List */}
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="space-y-12"
+                            className="space-y-8 md:space-y-12"
                         >
                             <div className="border-b border-[#101848]/10 pb-4">
                                 <h2 className="text-[28px] md:text-[36px] font-serif text-[#101848]">{content.locations_header}</h2>
@@ -186,7 +185,7 @@ export default function ContactPage() {
 
                             {/* Singapore */}
                             {content.singapore && (
-                                <div className="bg-white/60 backdrop-blur-md p-8 rounded-[32px] border border-white/80 shadow-sm">
+                                <div className="bg-white/60 backdrop-blur-md p-5 sm:p-8 rounded-[24px] sm:rounded-[32px] border border-white/80 shadow-sm">
                                     <h3 className="text-xl font-serif text-[#101848] mb-4">{content.singapore.name}</h3>
                                     <div className="space-y-4 text-sm md:text-base text-[#233252]/80 font-sans leading-relaxed">
                                         <p className="flex gap-3">
@@ -209,7 +208,7 @@ export default function ContactPage() {
                                         </div>
                                         <p className="flex items-center gap-3">
                                             <span className="material-icons text-[#101848]/40 text-lg">email</span>
-                                            <span className="font-bold text-[#101848]">{content.singapore.email}</span>
+                                            <span className="font-bold text-[#101848] break-all">{content.singapore.email}</span>
                                         </p>
                                         {content.singapore.google_map_url && (
                                             <div className="pt-4">
@@ -243,7 +242,7 @@ export default function ContactPage() {
                                                 {loc.fax && <p>Fax: {loc.fax}</p>}
                                                 {loc.hp && <p>Hp: {loc.hp}</p>}
                                             </div>
-                                            <p className="text-[#101848] font-bold">{loc.email}</p>
+                                            <p className="text-[#101848] font-bold break-all">{loc.email}</p>
                                             <div className="pt-2 space-y-2">
                                                 {loc.contacts?.map((c: any, i: number) => (
                                                     <p key={i} className="flex flex-col border-l-2 border-[#101848]/10 pl-3">
@@ -279,7 +278,7 @@ export default function ContactPage() {
                             viewport={{ once: true }}
                             className="relative"
                         >
-                            <div className="sticky top-32 bg-white rounded-[40px] shadow-[0_20px_50px_rgba(16,24,72,0.1)] p-8 md:p-12 overflow-hidden border border-white">
+                            <div className="lg:sticky lg:top-28 bg-white rounded-[24px] sm:rounded-[40px] shadow-[0_20px_50px_rgba(16,24,72,0.1)] p-5 sm:p-8 md:p-12 overflow-hidden border border-white">
                                 <div className="absolute inset-0 z-0 opacity-5">
                                     <Image src={form.background_image_url || "/card_bg.png"} alt="bg" fill className="object-cover" />
                                 </div>
@@ -304,33 +303,33 @@ export default function ContactPage() {
                                         <form onSubmit={handleSubmit} className="space-y-5">
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Full Name</label>
-                                                <input required name="full_name" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Your name" />
+                                                <input required name="full_name" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Your name" />
                                             </div>
                                             
                                             <div className="grid md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Phone</label>
-                                                    <input required name="phone" type="tel" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Number" />
+                                                    <input required name="phone" type="tel" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Number" />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Email</label>
-                                                    <input required name="email" type="email" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Email address" />
+                                                    <input required name="email" type="email" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Email address" />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Address</label>
-                                                <input required name="address" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Your current address" />
+                                                <input required name="address" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Your current address" />
                                             </div>
 
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Subject</label>
-                                                <input required name="subject" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="What is this regarding?" />
+                                                <input required name="subject" type="text" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="What is this regarding?" />
                                             </div>
 
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Message</label>
-                                                <textarea required name="message" rows={3} className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-5 py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans resize-none" placeholder="Tell us what's on your mind..." />
+                                                <textarea required name="message" rows={3} className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans resize-none" placeholder="Tell us what's on your mind..." />
                                             </div>
 
                                             <button 

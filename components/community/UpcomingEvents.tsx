@@ -28,7 +28,7 @@ export default function UpcomingEvents({ content }: { content?: any }) {
                     }}
                 />
             </div>
-            <div className="max-w-[1400px] mx-auto px-8 md:px-12 relative z-10">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-12 gap-16 items-start">
                     {/* Left Column - Intro */}
                     <motion.div
@@ -58,9 +58,9 @@ export default function UpcomingEvents({ content }: { content?: any }) {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="lg:col-span-7 bg-[#101848] rounded-[60px] p-10 md:p-16 shadow-2xl relative overflow-hidden text-white"
+                        className="lg:col-span-7 bg-[#101848] rounded-[32px] sm:rounded-[60px] p-6 sm:p-10 md:p-16 shadow-2xl relative overflow-hidden text-white"
                     >
-                        <div className="absolute top-0 right-0 p-12 opacity-10">
+                        <div className="absolute top-0 right-0 p-6 sm:p-12 opacity-10">
                             <span className="material-icons text-[120px]">schedule</span>
                         </div>
                         

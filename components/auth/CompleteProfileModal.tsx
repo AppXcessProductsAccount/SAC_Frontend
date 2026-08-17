@@ -78,20 +78,24 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1100] overflow-y-auto overscroll-contain">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
             />
 
+            {/* Wrapper scrolls: this form is ~8 fields tall and was previously
+                centred in a non-scrolling fixed layer, so the lower half of the
+                form and the save button were unreachable on a phone. */}
+            <div className="relative min-h-full flex items-center justify-center p-3 sm:p-4">
             <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="relative w-full max-w-md bg-white border border-black/5 shadow-2xl overflow-hidden rounded-[32px]"
+                className="relative w-full max-w-md bg-white border border-black/5 shadow-2xl overflow-hidden rounded-[24px] sm:rounded-[32px]"
             >
-                <div className="p-6">
+                <div className="p-5 sm:p-6">
                     <div className="flex justify-between items-start mb-6">
                         <div className="space-y-1">
                             <h2 className="text-xl font-bold tracking-tight text-black">Complete Profile</h2>
@@ -134,7 +138,7 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-bold text-black/70 uppercase">Nickname</label>
                                             <input
@@ -161,7 +165,7 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-bold text-black/70 uppercase">Date of Birth</label>
                                             <input
@@ -224,6 +228,7 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
                     </AnimatePresence>
                 </div>
             </motion.div>
+            </div>
         </div>
     );
 }

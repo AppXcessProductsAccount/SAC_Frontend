@@ -53,6 +53,25 @@
     overflow-x: hidden;
   }
 
+  /* CMS copy is authored in admin textareas, so the line breaks an editor types
+     have to survive into the page — HTML collapses them by default, which is why
+     a new line in a description rendered as a plain space.
+     `pre-line` keeps newlines and still collapses incidental whitespace, and JSX
+     never emits literal newlines into text nodes (the compiler trims and joins
+     them), so hand-written markup renders exactly as before. Tailwind's
+     whitespace-* / truncate utilities still win where a component opts out. */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  blockquote,
+  li {
+    white-space: pre-line;
+  }
+
   /* Replaced media never overflows its column on narrow viewports. */
   img,
   video,

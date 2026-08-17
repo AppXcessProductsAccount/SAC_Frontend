@@ -71,8 +71,8 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                     }}
                 />
             </div>
-            <div className="max-w-[1400px] mx-auto px-8 md:px-12 relative z-10">
-                <div className="text-center mb-16">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
+                <div className="text-center mb-10 md:mb-16">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}

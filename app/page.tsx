@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -21,8 +22,8 @@ export default function Home() {
                 // 1. Discovery: List all available pages
                 const pages = await cmsApi.getPages();
                 
-                // 2. Find the Home page
-                const homePage = pages.find((p: any) => p.name === "home" || p.id === 1);
+                // 2. Find the Home page (survives an admin rename)
+                const homePage = resolveCmsPage(pages, "home");
 
                 if (homePage) {
                     // 3. Navigation: List sections (structure only)

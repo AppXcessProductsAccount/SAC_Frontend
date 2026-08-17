@@ -47,8 +47,8 @@ export default function OrganizationSection({ content }: { content?: any }) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
-                <div className="text-center mb-16">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
+                <div className="text-center mb-10 md:mb-16">
                     <h2 className="text-[32px] md:text-[42px] font-serif text-[#101848] mb-4">
                         {header.title}
                     </h2>
@@ -69,7 +69,7 @@ export default function OrganizationSection({ content }: { content?: any }) {
                                 org.theme === "dark" 
                                 ? "bg-[#101848] text-white shadow-xl" 
                                 : "bg-white/60 text-[#233252] border border-white/40 shadow-sm"
-                            } p-10 rounded-[40px]`}
+                            } p-6 sm:p-10 rounded-[40px]`}
                         >
                             <h3 className={`text-2xl font-serif mb-6 ${org.theme === "dark" ? "text-white" : "text-[#101848]"}`}>
                                 {org.name}

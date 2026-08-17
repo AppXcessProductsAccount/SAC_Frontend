@@ -23,9 +23,24 @@ export interface UpcomingProgramsContent {
     programs: Program[];
 }
 
+/**
+ * Some sections are stored with an extra `{ template_id, content: { … } }` wrapper
+ * around the real payload. The fetch path already unwrapped it; the props path (how
+ * the home page supplies this section) did not, so every CMS value — title, subtitle
+ * and the programme pictures — silently read as undefined.
+ */
+function unwrapContent(raw: unknown): UpcomingProgramsContent | null {
+    if (!raw || typeof raw !== "object") return null;
+
+    const inner = (raw as { content?: unknown }).content;
+    if (inner && typeof inner === "object") return inner as UpcomingProgramsContent;
+
+    return raw as UpcomingProgramsContent;
+}
+
 export default function UpcomingEvents({ content, template: propTemplate }: { content?: UpcomingProgramsContent, template?: string }) {
     const { theme } = useTheme();
-    const [data, setData] = useState<UpcomingProgramsContent | null>(content || null);
+    const [data, setData] = useState<UpcomingProgramsContent | null>(unwrapContent(content));
     const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
     const [realPrograms, setRealPrograms] = useState<Program[]>([]);
@@ -36,12 +51,11 @@ export default function UpcomingEvents({ content, template: propTemplate }: { co
                 if (!content) {
                     // Fetch static content from CMS
                     const response = await cmsApi.getSectionContent("upcoming-programs");
-                    const contentData = (response.content?.content && typeof response.content.content === 'object') 
-                        ? response.content.content 
-                        : response.content;
-                    
-                    setData(contentData);
-                    setTemplate(response.template_id || "default");
+                    // Null-safe: this endpoint answers 404 for a missing section, and
+                    // reaching into `response.content` then threw before the programme
+                    // list below could load at all.
+                    setData(unwrapContent(response?.content ?? response));
+                    setTemplate(response?.template_id || "default");
                 }
 
                 // Fetch dynamic program data from API always to keep it fresh
@@ -68,11 +82,18 @@ export default function UpcomingEvents({ content, template: propTemplate }: { co
     if (loading && !content) return null;
 
     const activeTemplate = template === "default" ? theme : template;
-    const displayData = data || content;
+    const displayData = data || unwrapContent(content);
+
+    /* This section is authored content, not a view of the Programs module: its cards
+       carry their own title, date_text, tags, location and picture, all editable under
+       Website -> upcoming-programs. The live programme list used to replace it whenever
+       a single programme existed, which is why the authored dates and pictures never
+       showed. The live list is now only a fallback for an empty section. */
+    const cmsPrograms = displayData?.programs || [];
 
     const mergedData = displayData ? {
         ...displayData,
-        programs: realPrograms.length > 0 ? realPrograms : (displayData.programs || [])
+        programs: cmsPrograms.length > 0 ? cmsPrograms : realPrograms
     } : null;
 
     return (

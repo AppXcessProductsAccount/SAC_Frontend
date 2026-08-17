@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ParanjothiHero from "@/components/paranjothi/ParanjothiHero";
@@ -18,8 +19,8 @@ export default function ParanjothiPage() {
                 // 1. Discovery: List all available pages
                 const pages = await cmsApi.getPages();
                 
-                // 2. Find the Paranjothi page
-                const pPage = pages.find((p: any) => p.name === "paranjothi" || p.slug === "/paranjothi" || p.id === 3);
+                // 2. Find the Paranjothi page (survives an admin rename)
+                const pPage = resolveCmsPage(pages, "paranjothi");
 
                 if (pPage) {
                     // 3. Navigation: List sections (structure only)

@@ -10,7 +10,7 @@ export default function ParanjothiBio({ content }: { content?: any }) {
 
     return (
         <section className="relative py-14 md:py-24 bg-white/40 backdrop-blur-md border-y border-white/60">
-            <div className="max-w-[1400px] mx-auto px-8 md:px-12">
+            <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     {/* Split paragraphs into two columns if possible */}
                     <div className="space-y-6 text-[#233252]/80 leading-relaxed text-lg">

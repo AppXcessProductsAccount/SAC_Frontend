@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { toYouTubeEmbedUrl } from "@/lib/youtube";
 
 export default function EnlightenmentAdminPage() {
     const [loading, setLoading] = useState(true);
@@ -55,7 +56,9 @@ export default function EnlightenmentAdminPage() {
         setSaving(true);
         setMessage("");
         try {
-            await cmsApi.updateEnlightenment(data);
+            // Store the embeddable form so the public site never frames a watch/share
+            // link (YouTube blocks those with X-Frame-Options).
+            await cmsApi.updateEnlightenment({ ...data, video_url: toYouTubeEmbedUrl(data.video_url) || data.video_url });
             setMessage("Enlightenment section updated successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
@@ -103,19 +106,28 @@ export default function EnlightenmentAdminPage() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Video Embed URL</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">YouTube Video URL</label>
                             <input
                                 type="text"
                                 value={data.video_url}
                                 onChange={(e) => setData({ ...data, video_url: e.target.value })}
                                 className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-black transition-all"
-                                placeholder="https://www.youtube.com/embed/..."
+                                placeholder="https://www.youtube.com/watch?v=..."
                             />
+                            {data.video_url && !toYouTubeEmbedUrl(data.video_url) ? (
+                                <p className="text-xs text-red-600 mt-2">
+                                    This doesn't look like a YouTube link — the video won't display on the site.
+                                </p>
+                            ) : (
+                                <p className="text-xs text-gray-500 mt-2">
+                                    Paste any YouTube link (watch, youtu.be or embed) — it is converted to an embeddable URL on save.
+                                </p>
+                            )}
                         </div>
                     </div>
 
                     <div className="space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Founder Name</label>
                                 <input
@@ -166,7 +178,7 @@ export default function EnlightenmentAdminPage() {
                             <div className="absolute inset-0 bg-[#eeebf0]/20" />
                         </div>
 
-                        <div className="relative z-10 w-full grid grid-cols-2 gap-8 items-center">
+                        <div className="relative z-10 w-full grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
                             {/* Content Side */}
                             <div className="space-y-4">
                                 <div>
@@ -204,9 +216,9 @@ export default function EnlightenmentAdminPage() {
                                 <div className="absolute -inset-1 border border-[#101848]/5 rounded-xl rotate-2"></div>
 
                                 <div className="relative aspect-video rounded-xl overflow-hidden shadow-xl bg-black border-2 border-white/50">
-                                    {data.video_url ? (
+                                    {toYouTubeEmbedUrl(data.video_url) ? (
                                         <iframe
-                                            src={data.video_url}
+                                            src={toYouTubeEmbedUrl(data.video_url)}
                                             className="w-full h-full pointer-events-none opacity-90"
                                             title="Preview"
                                         />

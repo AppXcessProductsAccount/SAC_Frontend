@@ -36,8 +36,8 @@ export default function FounderProfile({ content }: { content?: any }) {
                 />
             </div>
 
-            <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12">
-                <div className="text-center mb-16">
+            <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
+                <div className="text-center mb-10 md:mb-16">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export default function FounderProfile({ content }: { content?: any }) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, delay: idx * 0.2 }}
-                            className="bg-white/40 backdrop-blur-md p-10 rounded-[48px] border border-white/60 shadow-xl flex flex-col items-center text-center group hover:bg-white/60 transition-all duration-500"
+                            className="bg-white/40 backdrop-blur-md p-6 sm:p-10 rounded-[48px] border border-white/60 shadow-xl flex flex-col items-center text-center group hover:bg-white/60 transition-all duration-500"
                         >
                             <div className="w-48 h-48 rounded-full overflow-hidden mb-8 ring-4 ring-white/80 shadow-lg group-hover:scale-105 transition-transform duration-500">
                                 <img

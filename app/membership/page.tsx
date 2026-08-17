@@ -148,7 +148,7 @@ export default function MembershipPage() {
                             <p className="text-white/70">Please fill out the details below to complete your application.</p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 space-y-10">
+                        <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-10">
                             {/* Section 1: Membership Type */}
                             <section className="space-y-6">
                                 <h3 className="text-xl font-bold text-[#101848] border-b border-gray-100 pb-2">Membership Type</h3>
@@ -178,9 +178,9 @@ export default function MembershipPage() {
                                 
                                 {/* Monthly Contribution if allow_donation */}
                                 {selectedMembership.membership_types.find(t => t.name === formData.membership_type)?.allow_donation && (
-                                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                                    <div className="bg-blue-50 p-5 sm:p-6 rounded-2xl border border-blue-100">
                                         <label className="block text-sm font-medium text-blue-800 mb-2">Monthly Contribution</label>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                                             <div className="relative flex-1">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-800 font-bold">$</span>
                                                 <input 
@@ -258,9 +258,9 @@ export default function MembershipPage() {
                             )}
 
                             {/* Section 5: Terms & Conditions */}
-                            <section className="space-y-6 bg-gray-50 p-8 rounded-3xl border border-gray-100">
+                            <section className="space-y-6 bg-gray-50 p-5 sm:p-8 rounded-3xl border border-gray-100">
                                 <h3 className="text-xl font-bold text-[#101848]">Terms and Conditions For Members</h3>
-                                <div className="bg-white p-6 rounded-2xl border border-gray-200 max-h-60 overflow-y-auto text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-6">
+                                <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 max-h-60 overflow-y-auto text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-6">
                                     {selectedMembership.terms_and_conditions}
                                 </div>
                                 <div className="flex items-center gap-6">

@@ -2,8 +2,12 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { toYouTubeEmbedUrl } from "@/lib/youtube";
 
 export default function EnlightenmentClassic({ data }: { data: any }) {
+    // Editors paste watch/share links; YouTube refuses to frame those.
+    const embedUrl = toYouTubeEmbedUrl(data.video_url);
+
     return (
         <section className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-6 md:px-8 overflow-hidden min-h-[500px] flex items-center bg-white" id="enlightenment">
             {/* Background Image Layer with Seamless Mask Effect */}
@@ -78,13 +82,19 @@ export default function EnlightenmentClassic({ data }: { data: any }) {
                         <div className="absolute -inset-2 md:-inset-4 border border-[#101848]/5 rounded-3xl rotate-2"></div>
                         
                         <div className="relative aspect-video rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-black border-4 border-white/50">
-                            <iframe
-                                src={data.video_url}
-                                title={data.title}
-                                className="w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                            {embedUrl ? (
+                                <iframe
+                                    src={embedUrl}
+                                    title={data.title}
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-white/40 text-sm font-sans">
+                                    Video unavailable
+                                </div>
+                            )}
                         </div>
                     </motion.div>
 

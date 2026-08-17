@@ -133,7 +133,7 @@ export default function FooterAdminPage() {
                     {/* Right Column: Social Links & Background */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-serif font-bold text-[#101848] border-b pb-2">Social Media & Visuals</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Facebook URL</label>
                                 <input
@@ -153,7 +153,7 @@ export default function FooterAdminPage() {
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Twitter URL</label>
                                 <input
@@ -205,7 +205,7 @@ export default function FooterAdminPage() {
                             <div className="absolute inset-0 bg-[#101848]/40 backdrop-blur-[1px]" />
                         </div>
 
-                        <div className="relative z-10 w-full grid grid-cols-4 gap-4 items-start text-white">
+                        <div className="relative z-10 w-full grid grid-cols-2 lg:grid-cols-4 gap-4 items-start text-white">
                             {/* Newsletter */}
                             <div className="space-y-2 col-span-1">
                                 <h3 className="text-[12px] font-serif font-bold">{data.newsletter_title || "Newsletter"}</h3>

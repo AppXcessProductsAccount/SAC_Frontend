@@ -122,7 +122,7 @@ export default function ContactAdminPage() {
                     {/* Right Column: Contact Details & Images */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-serif font-bold text-[#101848] border-b pb-2">Contact Details</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                                 <input
@@ -142,7 +142,7 @@ export default function ContactAdminPage() {
                                 />
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Support Text</label>
                                 <input
@@ -209,7 +209,7 @@ export default function ContactAdminPage() {
                             <div className="absolute inset-0 bg-[#eeebf0]/25" />
                         </div>
 
-                        <div className="relative z-10 w-full grid grid-cols-2 gap-12 items-start">
+                        <div className="relative z-10 w-full grid grid-cols-1 sm:grid-cols-2 gap-12 items-start">
                             {/* Content Side */}
                             <div className="space-y-4">
                                 <div>

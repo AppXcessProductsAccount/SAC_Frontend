@@ -150,7 +150,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                                         <CreditCard size={14} /> Payment Summary
                                     </h4>
                                     <div className="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
-                                        <div className="grid grid-cols-2 divide-x divide-gray-50 border-b border-gray-50">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 divide-x divide-gray-50 border-b border-gray-50">
                                             <div className="p-6">
                                                 <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Amount Paid</span>
                                                 <span className="text-lg font-bold text-green-600">MYR {registration.amount_paid.toFixed(2)}</span>
@@ -160,7 +160,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                                                 <span className="text-lg font-bold text-red-500">MYR {registration.balance_amount.toFixed(2)}</span>
                                             </div>
                                         </div>
-                                        <div className="grid grid-cols-2 divide-x divide-gray-50">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 divide-x divide-gray-50">
                                             <div className="p-6">
                                                 <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Payment Status</span>
                                                 <div className="flex items-center gap-2">

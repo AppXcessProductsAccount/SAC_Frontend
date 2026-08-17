@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { cmsApi } from "@/lib/cms-api";
+import { applyCmsPageBindings } from "@/lib/cms-pages";
 import { AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { Sparkles, Layout, User, LogOut, FileText, Menu, X, ChevronDown } from "lucide-react";
@@ -51,19 +52,68 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
 
+    const navRef = useRef<HTMLElement>(null);
     const [navItems, setNavItems] = useState<NavigationItem[]>(DEFAULT_NAV);
     const [logoUrl, setLogoUrl] = useState("/logo.png");
     const [brandName, setBrandName] = useState("SELF AWARENESS CENTRE");
 
+    /* The wordmark beside the logo. It was two hard-coded words — "SELF AWARENESS" —
+       so the centre's name was cut short, and `brandName` (already fetched from the
+       CMS, already defaulting to the full name) only ever reached the logo's alt text.
+       The first word keeps the serif weight and the rest stays in the light spaced
+       sans, so the look is unchanged apart from the word that was missing. */
+    const renderBrand = (restSizeClass: string) => {
+        const [firstWord, ...rest] = brandName.trim().split(/\s+/);
+        return (
+            <>
+                {firstWord}
+                {rest.length > 0 && (
+                    <span className={`font-light opacity-80 font-sans tracking-widest ml-1 ${restSizeClass}`}>
+                        {rest.join(" ")}
+                    </span>
+                )}
+            </>
+        );
+    };
+
     useEffect(() => {
         const fetchNavData = async () => {
+            let links: NavigationItem[] = DEFAULT_NAV;
+
             try {
                 const data = await cmsApi.getNavigation();
                 // Merge CMS links if they exist, otherwise use default structure
                 if (data) {
                     if (data.links) {
+                        /* Every lookup below keys on the destination URL, never on the
+                           label. The label is what an editor renames in the CMS ("Paranjothi"
+                           -> "Our Spiritual Master"); matching on it meant a rename read as
+                           "this link is missing" and the menu grew a duplicate entry back to
+                           the same page. The URL is what actually identifies the link. */
+                        const sameUrl = (a: unknown, b: unknown) => {
+                            const clean = (url: unknown) => {
+                                const value = typeof url === "string" ? url.trim().toLowerCase() : "";
+                                return value.length > 1 ? value.replace(/\/+$/, "") : value;
+                            };
+                            return clean(a) === clean(b);
+                        };
+                        const findByUrl = (url: string) => data.links.find((l: NavigationItem) => sameUrl(l.url, url));
+                        const indexByUrl = (url: string) => data.links.findIndex((l: NavigationItem) => sameUrl(l.url, url));
+
+                        /* Insert a link the CMS doesn't carry, next to an anchor link —
+                           keeping whatever label the editor gave the anchor. */
+                        const ensureLink = (item: NavigationItem, anchorUrl: string, offset: number) => {
+                            if (findByUrl(item.url)) return;
+                            const anchorIndex = indexByUrl(anchorUrl);
+                            if (anchorIndex !== -1) {
+                                data.links.splice(anchorIndex + offset, 0, item);
+                            } else {
+                                data.links.push(item);
+                            }
+                        };
+
                         // Logic to maintain the dropdown if CMS data doesn't have it
-                        const homeItem = data.links.find((l: any) => l.label === "Home");
+                        const homeItem = findByUrl("/");
                         if (homeItem) {
                             homeItem.children = [
                                 { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
@@ -71,44 +121,21 @@ export default function Navbar() {
                         }
 
                         // Ensure Programs is present at top level if not in CMS
-                        if (!data.links.find((l: any) => l.label === "Programs")) {
-                            const aboutIndex = data.links.findIndex((l: any) => l.label === "About");
-                            const newItem = { label: "Programs", url: "/programs", id: "programs" };
-                            if (aboutIndex !== -1) {
-                                data.links.splice(aboutIndex + 1, 0, newItem);
-                            } else {
-                                data.links.push(newItem);
-                            }
-                        }
+                        ensureLink({ label: "Programs", url: "/programs", id: "programs" }, "/about", 1);
 
                         // Logic for About (no children now)
-                        const aboutItem = data.links.find((l: any) => l.label === "About");
+                        const aboutItem = findByUrl("/about");
                         if (aboutItem) {
                             aboutItem.children = [];
                         }
 
                         // Ensure Paranjothi is present at top level if not in CMS
-                        if (!data.links.find((l: any) => l.label === "Paranjothi")) {
-                            const aboutIndex = data.links.findIndex((l: any) => l.label === "About");
-                            const newItem = { label: "Paranjothi", url: "/paranjothi", id: "paranjothi" };
-                            if (aboutIndex !== -1) {
-                                data.links.splice(aboutIndex + 1, 0, newItem);
-                            } else {
-                                data.links.push(newItem);
-                            }
-                        }
+                        ensureLink({ label: "Paranjothi", url: "/paranjothi", id: "paranjothi" }, "/about", 1);
 
                         // Ensure Membership is present if not in CMS
-                        if (!data.links.find((l: any) => l.label === "Membership")) {
-                            const contactIndex = data.links.findIndex((l: any) => l.label === "Contact");
-                            const newItem = { label: "Membership", url: "/membership", id: "membership" };
-                            if (contactIndex !== -1) {
-                                data.links.splice(contactIndex, 0, newItem);
-                            } else {
-                                data.links.push(newItem);
-                            }
-                        }
-                        setNavItems(data.links);
+                        ensureLink({ label: "Membership", url: "/membership", id: "membership" }, "/contact", 0);
+
+                        links = data.links;
                     }
                     if (data.logo_url) setLogoUrl(data.logo_url);
                     if (data.brand_name) setBrandName(data.brand_name);
@@ -116,9 +143,58 @@ export default function Navbar() {
             } catch (error) {
                 console.error("Failed to fetch navigation data:", error);
             }
+
+            /* Menu labels and hrefs follow the CMS page names, so renaming a page in the
+               admin shows up here and points at its new URL. Kept separate from the block
+               above because the menu falls back to DEFAULT_NAV whenever there is no
+               navigation section to merge — a rename has to reach the menu in that case
+               too. */
+            try {
+                const pages = await cmsApi.getPages();
+                links = applyCmsPageBindings(links, pages);
+            } catch (error) {
+                console.warn("Could not apply CMS page names to the menu:", error);
+            }
+
+            setNavItems(links);
         };
         fetchNavData();
     }, []);
+
+    /* Publish the navbar's real height into --nav-h.
+       The variable was a hard-coded guess (76px / 92px) but the bar is not one fixed
+       height: the modern theme wraps its contents in a floating pill with its own
+       padding, and the desktop link row is taller than the logo. The guess fell short
+       of the modern bar, so the hero — which pulls itself up by --nav-h to sit under a
+       transparent navbar — stopped a few pixels below the top of the page and left a
+       strip of background above the slider. Measuring covers every breakpoint, both
+       themes, and a theme switch at runtime. */
+    useEffect(() => {
+        const nav = navRef.current;
+        if (!nav) return;
+
+        const publishHeight = () => {
+            const height = nav.getBoundingClientRect().height;
+            // A 0 during layout would pull the hero flush and then jump it back.
+            if (height > 0) {
+                document.documentElement.style.setProperty("--nav-h", `${Math.round(height)}px`);
+            }
+        };
+
+        publishHeight();
+
+        const observer =
+            typeof ResizeObserver !== "undefined" ? new ResizeObserver(publishHeight) : null;
+        observer?.observe(nav);
+        window.addEventListener("resize", publishHeight);
+        window.addEventListener("orientationchange", publishHeight);
+
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener("resize", publishHeight);
+            window.removeEventListener("orientationchange", publishHeight);
+        };
+    }, [theme]);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -230,7 +306,7 @@ export default function Navbar() {
 
     return (
         <>
-        <nav className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 ${scrolled && theme === 'classic' ? "backdrop-blur-md bg-white/40 shadow-lg" : ""}`}>
+        <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 ${scrolled && theme === 'classic' ? "backdrop-blur-md bg-white/40 shadow-lg" : ""}`}>
             {/* Background Image Layer for Classic Theme */}
             {theme === 'classic' && (
                 <div className="absolute inset-0 z-0">
@@ -256,12 +332,14 @@ export default function Navbar() {
                         <Image src={getFullUrl(logoUrl)} alt={`${brandName} Logo`} fill className="object-cover" />
                     </div>
                     <span className={`font-serif text-[13px] sm:text-[15px] md:text-[16px] tracking-wide font-medium whitespace-nowrap ${theme === 'modern' ? 'text-[#1b1b2b]' : 'text-[#101848]'}`}>
-                        SELF <span className="font-light opacity-80 font-sans tracking-widest text-[10px] sm:text-[11px] md:text-[12px] ml-1">AWARENESS</span>
+                        {renderBrand("text-[10px] sm:text-[11px] md:text-[12px]")}
                     </span>
                 </Link>
 
                 {/* Navigation Links - Centered (desktop only) */}
-                <div className="hidden lg:flex items-center justify-center gap-6 xl:gap-8 flex-1">
+                {/* Tighter gap at lg: labels come from CMS page names now, so a renamed
+                    page ("Our Spiritual Master") needs the room the gap was using. */}
+                <div className="hidden lg:flex items-center justify-center gap-4 xl:gap-8 flex-1">
                     {navItems.map((item, index) => {
                         const isHashLink = item.url.startsWith("/#");
                         const isActive = (pathname === item.url) || (item.id === activeSection && !isStandalonePage);
@@ -285,7 +363,11 @@ export default function Navbar() {
                                         isActive ? "text-[#101848]" : "text-[#1b1b2b]/70 hover:text-[#101848]"
                                     } ${theme === 'modern' ? 'font-sans text-[11px] xl:text-[12px] font-bold uppercase tracking-[0.1em]' : ''}`}
                                 >
-                                    {item.label}
+                                    {/* `whitespace-pre`, not the default: a menu label is one line.
+                                        As a flex child it could shrink below its own width and break
+                                        at every space ("Our / Spiritual / Master"). This breaks only
+                                        where an editor actually typed a newline. */}
+                                    <span className="whitespace-pre">{item.label}</span>
                                     {hasChildren && (
                                         <ChevronDown
                                             size={14}
@@ -323,7 +405,7 @@ export default function Navbar() {
                                                                 setHoveredItem(null);
                                                             }
                                                         }}
-                                                        className="px-5 py-2 text-[13px] text-[#1b1b2b]/70 hover:text-[#101848] hover:bg-[#101848]/5 transition-all text-left font-medium"
+                                                        className="px-5 py-2 text-[13px] text-[#1b1b2b]/70 hover:text-[#101848] hover:bg-[#101848]/5 transition-all text-left font-medium whitespace-pre"
                                                     >
                                                         {child.label}
                                                     </Link>
@@ -458,7 +540,7 @@ export default function Navbar() {
                         >
                             <div className="flex items-center justify-between px-5 py-4 border-b border-black/5 shrink-0">
                                 <span className="font-serif text-[15px] tracking-wide font-medium text-[#101848]">
-                                    SELF <span className="font-light opacity-80 font-sans tracking-widest text-[11px] ml-1">AWARENESS</span>
+                                    {renderBrand("text-[11px]")}
                                 </span>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
@@ -486,7 +568,7 @@ export default function Navbar() {
                                                         }
                                                         setIsMobileMenuOpen(false);
                                                     }}
-                                                    className={`flex-1 px-4 py-3.5 text-[15px] font-medium transition-colors ${
+                                                    className={`flex-1 px-4 py-3.5 text-[15px] font-medium transition-colors whitespace-pre ${
                                                         isActive ? "text-[#101848] font-bold" : "text-[#1b1b2b]/80"
                                                     }`}
                                                 >
@@ -527,7 +609,7 @@ export default function Navbar() {
                                                                         }
                                                                         setIsMobileMenuOpen(false);
                                                                     }}
-                                                                    className="block px-4 py-2.5 text-[14px] text-[#1b1b2b]/60 hover:text-[#101848] transition-colors"
+                                                                    className="block px-4 py-2.5 text-[14px] text-[#1b1b2b]/60 hover:text-[#101848] transition-colors whitespace-pre"
                                                                 >
                                                                     {child.label}
                                                                 </Link>
