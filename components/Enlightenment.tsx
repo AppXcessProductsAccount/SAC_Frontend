@@ -5,6 +5,7 @@ import { cmsApi } from "@/lib/cms-api";
 import { useTheme } from "./ThemeProvider";
 import EnlightenmentClassic from "./EnlightenmentClassic";
 import EnlightenmentModern from "./EnlightenmentModern";
+import { getFullUrl } from "@/lib/api/config";
 
 export interface EnlightenmentContent {
     title: string;
@@ -34,7 +35,7 @@ export default function Enlightenment({ content, template: propTemplate }: { con
 
         const fetchContent = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cms/website/enlightenment/content`, { cache: 'no-store' });
+                const res = await fetch(getFullUrl("/api/cms/website/enlightenment/content"), { cache: 'no-store' });
                 if (!res.ok) throw new Error("Failed to fetch");
                 const sectionData = await res.json();
                 

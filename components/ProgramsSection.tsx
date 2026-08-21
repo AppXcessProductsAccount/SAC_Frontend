@@ -2,6 +2,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 export default function ProgramsSection() {
     const [data, setData] = useState<any>(null);
@@ -32,14 +33,6 @@ export default function ProgramsSection() {
         card1_image_url: "/herobelow_1.png",
         card2_title: "Advanced\nMindfulness",
         card2_image_url: "/herobelow_2.png"
-    };
-
-    const getFullUrl = (url: string) => {
-        if (!url) return "";
-        if (url.startsWith("/uploads/")) {
-            return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-        }
-        return url;
     };
 
     return (

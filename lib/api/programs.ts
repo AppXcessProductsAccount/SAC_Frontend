@@ -65,7 +65,7 @@ export interface RegistrationResponse {
 
 export const programsApi = {
     listPrograms: async (): Promise<Program[]> => {
-        const res = await fetch(`${getApiBaseUrl()}/api/programs`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/programs/`, { cache: 'no-store' });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || "Failed to fetch programs");
         // Sort by order_id

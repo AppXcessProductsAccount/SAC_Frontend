@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveMediaUrl } from "@/lib/api/config";
 
 export default function AdminHeroPage() {
     const [title, setTitle] = useState("");
@@ -70,9 +71,7 @@ export default function AdminHeroPage() {
 
     if (loading) return <div className="text-center py-12 md:py-20">Loading...</div>;
 
-    const fullBgUrl = bgImageUrl.startsWith("/uploads/")
-        ? `${process.env.NEXT_PUBLIC_API_URL}${bgImageUrl}`
-        : bgImageUrl;
+    const fullBgUrl = resolveMediaUrl(bgImageUrl);
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">

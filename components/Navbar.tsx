@@ -13,6 +13,7 @@ import { Sparkles, Layout, User, LogOut, FileText, Menu, X, ChevronDown } from "
 import { useAuth } from "@/hooks/useAuth";
 import AuthModal from "./auth/AuthModal";
 import CompleteProfileModal from "./auth/CompleteProfileModal";
+import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 interface NavigationItem {
     label: string;
@@ -292,14 +293,6 @@ export default function Navbar() {
         const offsetPosition = element.getBoundingClientRect().top + window.scrollY - navHeight - 12;
 
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-    };
-
-    const getFullUrl = (url: string) => {
-        if (!url) return "";
-        if (url.startsWith("/uploads/")) {
-            return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-        }
-        return url;
     };
 
     const isStandalonePage = pathname !== "/";

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveMediaUrl } from "@/lib/api/config";
 
 interface NavigationLink {
     label: string;
@@ -87,9 +88,7 @@ export default function AdminNavbarPage() {
 
     if (loading) return <div className="text-center py-12 md:py-20">Loading...</div>;
 
-    const fullLogoUrl = logoUrl.startsWith("/uploads/")
-        ? `${process.env.NEXT_PUBLIC_API_URL}${logoUrl}`
-        : logoUrl;
+    const fullLogoUrl = resolveMediaUrl(logoUrl);
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">

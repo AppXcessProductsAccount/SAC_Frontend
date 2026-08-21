@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 export default function ContactAdminPage() {
     const [loading, setLoading] = useState(true);
@@ -69,14 +70,6 @@ export default function ContactAdminPage() {
     };
 
     if (loading) return <div className="text-center py-12 md:py-20 text-[#101848] font-serif">Loading Contact Settings...</div>;
-
-    const getFullUrl = (url: string) => {
-        if (!url) return "";
-        if (url.startsWith("/uploads/")) {
-            return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-        }
-        return url;
-    };
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">

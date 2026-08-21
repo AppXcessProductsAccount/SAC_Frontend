@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cmsApi } from "@/lib/cms-api";
+import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 export default function Footer() {
     const [data, setData] = useState<any>(null);
@@ -23,14 +24,6 @@ export default function Footer() {
         };
         fetchData();
     }, []);
-
-    const getFullUrl = (url: string) => {
-        if (!url) return "";
-        if (url.startsWith("/uploads/")) {
-            return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-        }
-        return url;
-    };
 
     const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
         const element = document.getElementById(id);

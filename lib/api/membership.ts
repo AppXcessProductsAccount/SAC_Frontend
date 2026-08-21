@@ -54,7 +54,7 @@ export interface MembershipRegistration {
 export const membershipApi = {
     // Public
     listActive: async (): Promise<Membership[]> => {
-        const res = await fetch(`${getApiBaseUrl()}/api/memberships`, { cache: 'no-store' });
+        const res = await fetch(`${getApiBaseUrl()}/api/memberships/`, { cache: 'no-store' });
         if (!res.ok) throw new Error("Failed to fetch memberships");
         return res.json();
     },
@@ -89,7 +89,7 @@ export const membershipApi = {
 
     // Admin
     adminListAll: async (token: string): Promise<Membership[]> => {
-        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships/`, {
             headers: { "Authorization": `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch memberships (admin)");
@@ -97,7 +97,7 @@ export const membershipApi = {
     },
 
     adminCreate: async (token: string, data: Partial<Membership>): Promise<Membership> => {
-        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships`, {
+        const res = await fetch(`${getApiBaseUrl()}/api/admin/memberships/`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,

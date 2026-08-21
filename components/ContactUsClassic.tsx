@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 export default function ContactUsClassic({ data }: { data: any }) {
     const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
@@ -23,14 +24,6 @@ export default function ContactUsClassic({ data }: { data: any }) {
             setRedirectUrl(url.toString());
         }
     }, []);
-
-    const getFullUrl = (url: string) => {
-        if (!url) return "";
-        if (url.startsWith("/uploads/")) {
-            return `${process.env.NEXT_PUBLIC_API_URL}${url}`;
-        }
-        return url;
-    };
 
     return (
         <section className="relative py-16 md:py-24 lg:py-32 px-6 overflow-hidden min-h-[500px] flex items-center bg-white" id="contact">
