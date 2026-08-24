@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { UpcomingProgramsContent } from "./UpcomingPrograms";
+import { resolveMediaUrl } from "@/lib/api/config";
 
 interface Props {
     content: UpcomingProgramsContent | null;
@@ -97,20 +98,7 @@ export default function UpcomingProgramsClassic({ content }: Props) {
     };
 
     return (
-        <section className="relative w-full overflow-hidden bg-white pt-16 pb-20 md:pt-24 md:pb-32" id="events">
-            {/* Background Texture */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/upcoming_event.png"
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                    }}
-                />
-            </div>
-
+        <section className="relative w-full overflow-hidden pt-10 pb-12 md:pt-14 md:pb-16" id="events">
             <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 {/* Section Header */}
                 <div className="flex flex-col mb-8 md:mb-12">
@@ -146,7 +134,7 @@ export default function UpcomingProgramsClassic({ content }: Props) {
                                 className="relative snap-start flex-shrink-0 w-[78vw] max-w-[350px] sm:w-[300px] md:w-[350px] aspect-[3/4] rounded-[32px] overflow-hidden shadow-2xl group border border-white/20"
                             >
                                 <Image
-                                    src={event.image_url}
+                                    src={resolveMediaUrl(event.image_url) || "/event_workshop.png"}
                                     alt={event.title}
                                     fill
                                     sizes="(max-width: 640px) 78vw, 350px"
@@ -165,16 +153,19 @@ export default function UpcomingProgramsClassic({ content }: Props) {
                                 {/* Bottom Info Overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
                                 <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 z-20">
-                                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight pr-16">
+                                    {/* Clamped: the card is a fixed 3:4 box and the title is
+                                        CMS copy, so a long name pushed the date and location
+                                        down past the bottom edge and out of the card. */}
+                                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 leading-tight pr-16 line-clamp-2">
                                         {event.title}
                                     </h3>
                                     <div className="flex flex-col gap-1 pr-16">
                                         <p className="text-white/70 font-sans text-[13px] md:text-sm uppercase tracking-widest font-semibold italic">
                                             {event.date_text}
                                         </p>
-                                        <div className="flex items-center gap-1 text-white/50 text-[11px] md:text-[12px] font-sans uppercase tracking-[0.1em]">
-                                            <span className="material-symbols-outlined text-[14px]">location_on</span>
-                                            {event.location || "Upcoming Centres"}
+                                        <div className="flex items-center gap-1 text-white/50 text-[11px] md:text-[12px] font-sans uppercase tracking-[0.1em] min-w-0">
+                                            <span className="material-symbols-outlined text-[14px] shrink-0">location_on</span>
+                                            <span className="truncate">{event.location || "Upcoming Centres"}</span>
                                         </div>
                                     </div>
 

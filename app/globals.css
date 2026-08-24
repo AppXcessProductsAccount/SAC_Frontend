@@ -29,6 +29,13 @@
 
   --font-display: var(--font-serif);
 
+  /* Manrope is loaded by next/font in the root layout, but nothing was consuming
+     it: without this mapping Tailwind's `font-sans` resolved to the browser's own
+     sans stack (Arial / system-ui). That is why body copy drifted between two
+     unrelated faces — anything with `font-sans` got Arial, anything without a font
+     class inherited the serif from <body>. */
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
   --radius: 0.5rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;

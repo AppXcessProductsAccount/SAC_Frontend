@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useTheme } from "./ThemeProvider";
 import FAQClassic from "./FAQClassic";
-import FAQModern from "./FAQModern";
 import { cmsApi } from "@/lib/cms-api";
 
 export interface FAQItem {
@@ -12,15 +10,15 @@ export interface FAQItem {
 }
 
 export interface FAQContent {
+    /** Optional CMS override for the section backdrop; falls back to the marble plate. */
+    background_image_url?: string;
     title: string;
     subtitle: string;
     faqs: FAQItem[];
 }
 
-export default function FAQ({ content, template: propTemplate }: { content?: FAQContent, template?: string }) {
-    const { theme } = useTheme();
+export default function FAQ({ content }: { content?: FAQContent, template?: string }) {
     const [data, setData] = useState<FAQContent | null>(content || null);
-    const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
 
     const defaultData: FAQContent = {
@@ -61,7 +59,6 @@ export default function FAQ({ content, template: propTemplate }: { content?: FAQ
                     : response.content;
                 
                 setData(contentData);
-                setTemplate(response.template_id || "default");
             } catch (error) {
                 console.error("Failed to fetch FAQ content:", error);
                 setData(defaultData);
@@ -76,9 +73,6 @@ export default function FAQ({ content, template: propTemplate }: { content?: FAQ
     if (loading && !content) return null;
 
     const displayData = data || content || defaultData;
-    const activeTemplate = template === "default" ? theme : template;
 
-    return activeTemplate === 'classic' 
-        ? <FAQClassic data={displayData} />
-        : <FAQModern data={displayData} />;
+    return <FAQClassic data={displayData} />;
 }

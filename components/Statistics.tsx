@@ -68,14 +68,22 @@ export default function Statistics() {
     };
 
     return (
-        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-white">
+        <section className="py-10 md:py-14 px-6 relative overflow-hidden">
             <div className="max-w-7xl mx-auto relative z-10">
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-100px" }}
-                    className={`grid grid-cols-2 md:grid-cols-${Math.min(stats.length || 4, 4)} gap-12 text-center`}
+                    /* Literal class names, not `md:grid-cols-${n}`: Tailwind resolves
+                       classes by scanning the source text, so an interpolated name is
+                       never compiled and the md breakpoint silently did nothing — this
+                       stayed two columns at every width. */
+                    className={`grid grid-cols-2 ${
+                        { 1: "md:grid-cols-1", 2: "md:grid-cols-2", 3: "md:grid-cols-3" }[
+                            Math.min(stats.length || 4, 4)
+                        ] ?? "md:grid-cols-4"
+                    } gap-8 md:gap-12 text-center`}
                 >
                     {stats.map((stat, index) => (
                         <motion.div

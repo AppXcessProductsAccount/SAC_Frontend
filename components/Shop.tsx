@@ -68,7 +68,7 @@ export default function Shop() {
     };
 
     return (
-        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-secondary/80 backdrop-blur-3xl" id="shop">
+        <section className="py-10 md:py-14 px-6 relative overflow-hidden bg-secondary/80 backdrop-blur-3xl" id="shop">
             <AmbientBackground starCount={30} opacity={0.3} />
 
             <div className="max-w-7xl mx-auto relative z-10">

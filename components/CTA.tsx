@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function CTA() {
     return (
-        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-[var(--site-bg-dark)]">
+        <section className="py-10 md:py-14 px-6 relative overflow-hidden bg-[var(--site-bg-dark)]">
             {/* Background Layer */}
             <AmbientBackground starCount={40} showShootingStar={true} opacity={0.5} />
 

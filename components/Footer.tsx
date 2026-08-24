@@ -64,23 +64,15 @@ export default function Footer() {
         mail_url: "#",
         logo_url: "/logo.png",
         copyright_text: "© 2024 SelfAwareness Inc. All rights reserved.",
-        background_image_url: "/footer_bg.png"
+        background_image_url: "/testimonial.png"
     };
 
     return (
-        <footer className="relative w-full overflow-hidden min-h-[350px] flex items-center py-12 md:py-16 selection:bg-white/10">
-            {/* Background Texture Overlay */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src={getFullUrl(displayData.background_image_url)}
-                    alt=""
-                    aria-hidden="true"
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                />
-                {/* Dark Overlay for Readability */}
-                <div className="absolute inset-0 bg-[#101848]/40 backdrop-blur-[2px]"></div>
-            </div>
+        <footer className="relative w-full overflow-hidden min-h-[350px] flex items-center py-10 md:py-12 selection:bg-white/10">
+            {/* Every word in this footer is white, and marble is near-white, so the
+                plate has to sit under a heavy navy wash. At the old /40 the text
+                landed on a mid-grey at roughly 2:1 contrast — unreadable. */}
+            <div className="absolute inset-0 z-0 bg-[#101848]/[0.88] backdrop-blur-[2px]"></div>
 
             <motion.div 
                 initial={{ opacity: 0, y: 30 }}

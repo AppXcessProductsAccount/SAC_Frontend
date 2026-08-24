@@ -33,7 +33,7 @@ export default function OrganizationSection({ content }: { content?: any }) {
     ];
 
     return (
-        <section className="relative py-12 md:py-20 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-10 md:py-14 overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img

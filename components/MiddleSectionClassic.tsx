@@ -26,20 +26,7 @@ export default function MiddleSectionClassic({ content }: Props) {
     };
 
     return (
-        <section className="relative py-16 md:py-24 lg:py-32 bg-white overflow-hidden">
-            {/* Background Texture with Seamless Mask Effect */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/sectionbackground.png"
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, black 0%, black calc(100% - 26px), transparent 100%)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black calc(100% - 26px), transparent 100%)'
-                    }}
-                />
-            </div>
-            
+        <section className="relative py-10 md:py-14 lg:py-20 overflow-hidden">
             <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 <div className="grid lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16 items-center">
                     {/* Left: 7DTJ Promo Video */}
@@ -76,7 +63,7 @@ export default function MiddleSectionClassic({ content }: Props) {
                             transition={{ duration: 0.8, delay: 0.2 }}
                             className="bg-white p-6 sm:p-8 md:p-10 rounded-3xl shadow-sm border border-[#101848]/5 relative"
                         >
-                            <span className="absolute -top-6 left-8 text-[100px] text-[#101848]/5 font-serif leading-none pointer-events-none select-none">"</span>
+                            <span className="absolute -top-6 left-8 text-[56px] sm:text-[76px] md:text-[100px] text-[#101848]/5 font-serif leading-none pointer-events-none select-none">"</span>
                             <p className="text-[16px] sm:text-[18px] md:text-[20px] text-[#101848] font-serif italic mb-6 relative z-10">
                                 {displayData.testimonial.text}
                             </p>
@@ -99,7 +86,12 @@ export default function MiddleSectionClassic({ content }: Props) {
                             transition={{ duration: 0.8, delay: 0.4 }}
                             className="relative overflow-hidden group rounded-3xl"
                         >
-                            <div className="relative h-[220px] sm:h-[250px] w-full">
+                            {/* `min-h` + in-flow caption, not a fixed `h-[220px]` with the
+                                caption absolutely positioned inside it. The title and
+                                description are CMS copy of any length; pinned into a fixed
+                                220px box they ran past the top of the image and got clipped
+                                on narrow screens. The box now grows to fit the words. */}
+                            <div className="relative min-h-[220px] sm:min-h-[250px] w-full flex">
                                 <Image
                                     src="/event_meditation.png"
                                     alt={displayData.group_meditation.title}
@@ -107,9 +99,9 @@ export default function MiddleSectionClassic({ content }: Props) {
                                     sizes="(max-width: 1024px) 100vw, 700px"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#101848] via-[#101848]/40 to-transparent" />
-                                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-                                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-white mb-2">{displayData.group_meditation.title}</h3>
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#101848] via-[#101848]/50 to-transparent" />
+                                <div className="relative z-10 mt-auto w-full p-6 md:p-8">
+                                    <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-white mb-2 text-balance">{displayData.group_meditation.title}</h3>
                                     <p className="text-white/80 text-[13px] sm:text-sm md:text-base font-sans max-w-sm">
                                         {displayData.group_meditation.description}
                                     </p>

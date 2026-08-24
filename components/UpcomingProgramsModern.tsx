@@ -99,7 +99,7 @@ export default function UpcomingProgramsModern({ content }: Props) {
     const firstPart = titleParts.join(' ');
 
     return (
-        <section className="relative w-full overflow-hidden bg-white py-12 md:py-20 font-sans" id="events">
+        <section className="relative w-full overflow-hidden py-10 md:py-14 font-sans" id="events">
             <div className="max-w-[1500px] mx-auto px-5 md:px-8">
 
                 {/* Header Layout: Text on Left, Controls on Right */}

@@ -86,7 +86,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                     <div className="p-8 md:p-10 flex justify-between items-start border-b border-gray-50">
                         <div className="space-y-1">
                             <span className="text-[10px] font-black test-black uppercase tracking-[0.2em] block">Registration Profile</span>
-                            <h2 className="text-3xl font-serif font-bold text-[#101848]">Full Record Details</h2>
+                            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#101848]">Full Record Details</h2>
                         </div>
                         <button
                             onClick={onClose}

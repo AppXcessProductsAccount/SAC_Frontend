@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { toYouTubeEmbedUrl } from "@/lib/youtube";
 
@@ -9,22 +8,7 @@ export default function EnlightenmentClassic({ data }: { data: any }) {
     const embedUrl = toYouTubeEmbedUrl(data.video_url);
 
     return (
-        <section className="relative py-16 md:py-24 lg:py-32 px-5 sm:px-6 md:px-8 overflow-hidden min-h-[500px] flex items-center bg-white" id="enlightenment">
-            {/* Background Image Layer with Seamless Mask Effect */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src={data.image_url || "/sectionbackground.png"}
-                    alt="Enlightenment Background"
-                    fill
-                    className="object-cover opacity-80"
-                    priority
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 20px, black calc(100% - 20px), transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 22px, black calc(100% - 20px), transparent)'
-                    }}
-                />
-            </div>
-
+        <section className="relative py-10 md:py-14 lg:py-20 px-5 sm:px-6 md:px-8 overflow-hidden min-h-[420px] flex items-center" id="enlightenment">
             <div className="relative z-10 max-w-[1400px] mx-auto w-full">
                 <div className="grid lg:grid-cols-2 gap-10 md:gap-12 lg:gap-16 items-center">
 
@@ -48,7 +32,7 @@ export default function EnlightenmentClassic({ data }: { data: any }) {
                         <div className="relative pt-2">
                             {/* Decorative Quote Mark — kept inside the box so it can't clip
                                 against the section edge on narrow screens */}
-                            <span className="absolute left-0 -top-4 text-[90px] text-[#101848]/5 font-serif leading-none select-none pointer-events-none">"</span>
+                            <span className="absolute left-0 -top-4 text-[52px] sm:text-[70px] md:text-[90px] text-[#101848]/5 font-serif leading-none select-none pointer-events-none">"</span>
                             <p className="text-[15px] md:text-[18px] text-[#233252]/80 leading-relaxed font-sans italic relative z-10 max-w-lg">
                                 {data.content}
                             </p>

@@ -35,18 +35,7 @@ export default function CommunityActivities({ content }: { content?: any }) {
     const description = content?.description || "Witness the diverse ways we help people through workshops, retreats, and community service across our regional branches.";
 
     return (
-        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
-            <div className="absolute inset-0 z-0">
-                <img
-                    src={content?.image_url || "/sectionbackground.png"}
-                    alt="Activities Background"
-                    className="w-full h-full object-cover opacity-60"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                    }}
-                />
-            </div>
+        <section className="relative py-10 md:py-14 overflow-hidden">
 
             <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
                 <div className="mb-10 md:mb-16">
@@ -87,12 +76,12 @@ export default function CommunityActivities({ content }: { content?: any }) {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
 
                             {/* Card Content Overlay */}
-                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                                <div className="absolute top-6 right-6 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                                    <span className="text-[10px] font-bold text-white tracking-widest uppercase">{activity.location}</span>
+                            <div className="absolute inset-0 p-5 sm:p-8 flex flex-col justify-end">
+                                <div className="absolute top-5 right-5 sm:top-6 sm:right-6 max-w-[60%] bg-white/20 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20">
+                                    <span className="block truncate text-[10px] font-bold text-white tracking-widest uppercase">{activity.location}</span>
                                 </div>
                                 
-                                <h3 className="text-3xl font-serif text-white mb-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-white mb-3 text-balance translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                     {activity.title}
                                 </h3>
                                 

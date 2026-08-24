@@ -112,7 +112,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <main className="bg-[#eeebf0] min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
+        <main className="min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
             <Navbar />
             
             <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">

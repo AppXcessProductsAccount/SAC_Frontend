@@ -9,7 +9,7 @@ export default function ParanjothiBio({ content }: { content?: any }) {
     const quote = content?.quote || "";
 
     return (
-        <section className="relative py-14 md:py-24 bg-white/40 backdrop-blur-md border-y border-white/60">
+        <section className="relative py-10 md:py-14 bg-white/40 backdrop-blur-md border-y border-white/60">
             <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     {/* Split paragraphs into two columns if possible */}

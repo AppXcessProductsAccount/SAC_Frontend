@@ -16,7 +16,7 @@ export default function ParanjothiVideos({ content }: { content?: any }) {
         .filter(Boolean);
 
     return (
-        <section className="relative py-14 md:py-24 bg-[#eeebf0]">
+        <section className="relative py-10 md:py-14">
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/upcoming_event.png"

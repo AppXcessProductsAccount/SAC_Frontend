@@ -3,16 +3,8 @@ import { motion } from "framer-motion";
 
 export default function HeaderBelow() {
     return (
-        <section className="relative w-full h-auto overflow-hidden bg-[#eeebf0] py-16 md:py-24" id="programs">
-            {/* Background Texture Overlay */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/header_below.png"
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                />
-            </div>
-            
+        <section className="relative w-full h-auto overflow-hidden py-10 md:py-14" id="programs">
+
             <div className="relative z-10 max-w-[1400px] mx-auto px-8 md:px-12 flex flex-col lg:flex-row items-start gap-12 lg:gap-20 pt-12 md:pt-16">
                 {/* Left Content */}
                 <motion.div 

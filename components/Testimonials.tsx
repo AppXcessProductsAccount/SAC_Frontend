@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
-import { useTheme } from "./ThemeProvider";
 import TestimonialsClassic from "./TestimonialsClassic";
-import TestimonialsModern from "./TestimonialsModern";
 
 export interface Testimonial {
     author_name: string;
@@ -13,15 +11,15 @@ export interface Testimonial {
 }
 
 export interface TestimonialsContent {
+    /** Optional CMS override for the section backdrop; falls back to the marble plate. */
+    background_image_url?: string;
     title: string;
     subtitle: string;
     testimonials: Testimonial[];
 }
 
-export default function Testimonials({ content, template: propTemplate }: { content?: TestimonialsContent, template?: string }) {
-    const { theme } = useTheme();
+export default function Testimonials({ content }: { content?: TestimonialsContent, template?: string }) {
     const [data, setData] = useState<TestimonialsContent | null>(content || null);
-    const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
 
     const defaultData: TestimonialsContent = {
@@ -57,7 +55,6 @@ export default function Testimonials({ content, template: propTemplate }: { cont
                     : response.content;
                 
                 setData(contentData);
-                setTemplate(response.template_id || "default");
             } catch (error) {
                 console.error("Failed to fetch testimonials content:", error);
                 setData(defaultData);
@@ -72,9 +69,6 @@ export default function Testimonials({ content, template: propTemplate }: { cont
     if (loading && !content) return null;
 
     const displayData = data || content || defaultData;
-    const activeTemplate = template === "default" ? theme : template;
 
-    return activeTemplate === 'classic' 
-        ? <TestimonialsClassic content={displayData} />
-        : <TestimonialsModern content={displayData} />;
+    return <TestimonialsClassic content={displayData} />;
 }

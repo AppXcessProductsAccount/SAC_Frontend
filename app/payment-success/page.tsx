@@ -108,9 +108,9 @@ function SuccessContent() {
 
 export default function PaymentSuccessPage() {
     return (
-        <main className="bg-white min-h-screen">
+        <main className="min-h-screen">
             <Navbar />
-            <section className="pt-20 md:pt-32 pb-20">
+            <section className="pt-20 md:pt-32 pb-12">
                 <Suspense fallback={
                     <div className="flex items-center justify-center min-h-[400px]">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#101848]"></div>

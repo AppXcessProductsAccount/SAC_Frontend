@@ -267,7 +267,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                     <CheckCircle2 className="text-green-600 w-12 h-12" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h2 className="text-3xl font-serif font-bold text-[#101848]">Login Successful</h2>
+                                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#101848]">Login Successful</h2>
                                     <p className="text-black/40 font-medium">Welcome back to your practice.</p>
                                 </div>
                             </motion.div>

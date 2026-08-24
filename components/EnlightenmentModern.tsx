@@ -12,7 +12,7 @@ export default function EnlightenmentModern({ data }: { data: any }) {
     const embedUrl = toYouTubeEmbedUrl(data.video_url);
 
     return (
-        <section className="relative w-full bg-white py-12 md:py-20 px-4 md:px-8 font-sans" id="enlightenment">
+        <section className="relative w-full py-10 md:py-14 px-4 md:px-8 font-sans" id="enlightenment">
             <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-12 items-center">
                 
                 {/* LEFT CELL - Content Block */}

@@ -76,7 +76,7 @@ export default function ContactPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+            <div className="min-h-screen flex flex-col items-center justify-center">
                 <div className="w-16 h-16 border-4 border-[#101848]/10 border-t-[#101848] rounded-full animate-spin mb-4"></div>
                 <p className="text-[#101848]/60 font-serif italic text-lg animate-pulse">Loading Sacred Space...</p>
             </div>
@@ -114,22 +114,11 @@ export default function ContactPage() {
     const { hero, content, form } = data;
 
     return (
-        <main className="bg-[#eeebf0] min-h-screen selection:bg-[#101848]/10 font-sans">
+        <main className="min-h-screen selection:bg-[#101848]/10 font-sans">
             <Navbar />
 
             {/* Hero Section */}
-            <section className="relative py-14 md:py-24 bg-white overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image 
-                        src={hero.background_image_url || "/testimonial.png"} 
-                        alt="Hero Background" 
-                        fill 
-                        className="object-cover"
-                        priority 
-                    />
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-[1px]"></div>
-                    <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#eeebf0] to-transparent z-10"></div>
-                </div>
+            <section className="relative py-10 md:py-14 overflow-hidden">
                 <div className="relative z-20 max-w-4xl mx-auto px-6 text-center">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
@@ -158,7 +147,7 @@ export default function ContactPage() {
             </section>
 
             {/* Content Section */}
-            <section className="py-14 md:py-24 px-6 relative overflow-hidden">
+            <section className="py-10 md:py-14 px-6 relative overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <Image 
                         src={content.background_image_url || "/upcoming_event.png"} 

@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
-import { useTheme } from "./ThemeProvider";
 import ContactUsClassic from "./ContactUsClassic";
-import ContactUsModern from "./ContactUsModern";
 
 export default function ContactUs() {
-    const { theme } = useTheme();
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
@@ -41,8 +38,5 @@ export default function ContactUs() {
         singapore_info: "Self Awareness Society, Singapore Branches"
     };
 
-    return theme === 'classic' 
-        ? <ContactUsClassic data={displayData} />
-        : <ContactUsModern data={displayData} />;
+    return <ContactUsClassic data={displayData} />;
 }
-

@@ -8,7 +8,7 @@ export default function CommunityHero({ content }: { content?: any }) {
     const description = content?.description || "\"SAS Malaysia and Singapore are collaborative partners dedicated to opening the path for the further spiritual enhancement of our members.\"";
 
     return (
-        <section className="relative py-14 md:py-20 lg:py-32 bg-[#eeebf0] overflow-hidden text-center">
+        <section className="relative py-10 md:py-14 lg:py-20 overflow-hidden text-center">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img

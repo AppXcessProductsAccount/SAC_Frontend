@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Lora } from "next/font/google";
 import "./globals.css";
-import ThemeProvider from "@/components/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
+import PageBackground from "@/components/PageBackground";
 
 
 const manrope = Manrope({
@@ -29,8 +29,9 @@ export const viewport: Viewport = {
   themeColor: "#eeebf0",
 };
 
-// Runs before first paint so the saved theme is known to CSS/JS immediately.
-const THEME_INIT_SCRIPT = `try{var t=localStorage.getItem('app-theme');document.documentElement.dataset.theme=(t==='modern'||t==='classic')?t:'classic';}catch(e){document.documentElement.dataset.theme='classic';}`;
+// Classic is the only template. The stale `app-theme` key is cleared once so a
+// visitor who last saved "modern" is not left with a dead preference in storage.
+const THEME_INIT_SCRIPT = `try{localStorage.removeItem('app-theme');}catch(e){}`;
 
 export default function RootLayout({
   children,
@@ -59,10 +60,11 @@ export default function RootLayout({
       <body
         className={`${manrope.variable} ${lora.variable} font-display bg-background-light text-[#1b1b2b] antialiased`}
       >
+          {/* One continuous plate for the whole site. Pages opt in by leaving their
+              <main> and sections transparent; an opaque one simply covers it. */}
+          <PageBackground />
           <AuthProvider>
-            <ThemeProvider>
-              {children}
-            </ThemeProvider>
+            {children}
           </AuthProvider>
       </body>
     </html>

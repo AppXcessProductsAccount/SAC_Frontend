@@ -30,7 +30,7 @@ export default function SACSection({ content }: { content?: any }) {
     const philosophy = content?.philosophy || "SAC is a non-religious, non-communal and non-political organisation. We conduct Transformational, Motivational and Spiritual related programs designed to uplift the individual.";
 
     return (
-        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-10 md:py-14 overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img

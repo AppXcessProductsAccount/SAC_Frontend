@@ -98,9 +98,9 @@ export default function MembershipPage() {
     };
 
     if (loading) return (
-        <main className="bg-[#eeebf0] min-h-screen">
+        <main className="relative min-h-screen">
             <Navbar />
-            <div className="text-center py-40 font-serif text-[#101848]">Discovering Membership Options...</div>
+            <div className="relative z-10 text-center py-40 font-serif text-[#101848]">Discovering Membership Options...</div>
             <Footer />
             <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </main>
@@ -108,9 +108,9 @@ export default function MembershipPage() {
 
     if (step === 3) {
         return (
-            <main className="bg-[#eeebf0] min-h-screen">
+            <main className="relative min-h-screen">
                 <Navbar />
-                <div className="max-w-2xl mx-auto py-12 md:py-20 px-4 text-center">
+                <div className="relative z-10 max-w-2xl mx-auto py-12 md:py-20 px-4 text-center">
                     <div className="bg-green-50 rounded-3xl p-12 border border-green-100">
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg shadow-green-200">
                             <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,16 +135,16 @@ export default function MembershipPage() {
 
     if (step === 2 && selectedMembership) {
         return (
-            <main className="bg-[#eeebf0] min-h-screen">
+            <main className="relative min-h-screen">
                 <Navbar />
-                <div className="max-w-4xl mx-auto py-12 px-4">
+                <div className="relative z-10 max-w-4xl mx-auto py-12 px-4">
                     <button onClick={() => setStep(1)} className="text-[#101848] font-medium mb-8 hover:underline flex items-center gap-2">
                         &larr; Back to Memberships
                     </button>
 
                     <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
                         <div className="bg-[#101848] p-8 text-white">
-                            <h1 className="text-3xl font-serif font-bold mb-2">Apply for {selectedMembership.name}</h1>
+                            <h1 className="text-2xl sm:text-3xl font-serif font-bold mb-2 text-balance">Apply for {selectedMembership.name}</h1>
                             <p className="text-white/70">Please fill out the details below to complete your application.</p>
                         </div>
 
@@ -258,7 +258,7 @@ export default function MembershipPage() {
                             )}
 
                             {/* Section 5: Terms & Conditions */}
-                            <section className="space-y-6 bg-gray-50 p-5 sm:p-8 rounded-3xl border border-gray-100">
+                            <section className="space-y-6 p-5 sm:p-8 rounded-3xl border border-gray-100">
                                 <h3 className="text-xl font-bold text-[#101848]">Terms and Conditions For Members</h3>
                                 <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 max-h-60 overflow-y-auto text-sm text-gray-600 leading-relaxed whitespace-pre-wrap mb-6">
                                     {selectedMembership.terms_and_conditions}
@@ -308,9 +308,9 @@ export default function MembershipPage() {
     }
 
     return (
-        <main className="bg-[#eeebf0] min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
+        <main className="relative min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
             <Navbar />
-            <div className="max-w-7xl mx-auto py-12 md:py-20 px-4">
+            <div className="relative z-10 max-w-7xl mx-auto py-12 md:py-20 px-4">
                 <div className="text-center mb-16">
                     <h1 className="text-3xl md:text-5xl font-serif font-bold text-[#101848] mb-6">Become a Member</h1>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">Join our community and embark on a transformative journey towards self-awareness and inner peace.</p>

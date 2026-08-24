@@ -15,7 +15,7 @@ export default function ContactUsModern({ data }: { data: any }) {
     };
 
     return (
-        <section className="relative w-full bg-white py-12 md:py-20 px-4 md:px-8 font-sans" id="contact">
+        <section className="relative w-full py-10 md:py-14 px-4 md:px-8 font-sans" id="contact">
             <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4 md:gap-6">
                 
                 {/* LEFT CELL - Content */}

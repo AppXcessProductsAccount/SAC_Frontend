@@ -1,0 +1,185 @@
+{
+  "_readme": [
+    "Seed payload for the Home page, in the same shape as paranjothi_page_cms.json.",
+    "Every value here is currently a HARDCODED FALLBACK inside the frontend components.",
+    "Paste each section's `content` object into the admin Section Editor's 'JSON Code' tab",
+    "(CMS > Pages > Home > the section > JSON Code), save, then switch to the UI Editor.",
+    "Once the keys exist in stored content the admin's generic editor can drive them:",
+    "  - `slides` renders as a list with '+ Add Item' and a delete button per slide,",
+    "  - any *_image_url / *_image field renders an upload widget,",
+    "  - `background_image_url` is what the section's marble backdrop reads.",
+    "The editor can only edit keys that already exist, which is why an unseeded",
+    "section shows nothing to add and the page silently falls back to static defaults."
+  ],
+  "page": {
+    "name": "home",
+    "title": "SelfAwareness | Find Your Inner Calm",
+    "slug": "/"
+  },
+  "sections": [
+    {
+      "section_id": "hero",
+      "name": "Hero Slider",
+      "content": {
+        "slides": [
+          {
+            "id": 1,
+            "title": "7 Day Transformational\nJourney Program",
+            "subtitle": "A profound path to inner peace and self-realization.",
+            "image_url": "/section1_slide1.png",
+            "link": "/programs",
+            "button_text": "Join Program"
+          },
+          {
+            "id": 2,
+            "title": "Heart Centre Meditation\n+ Anahatha Chakra",
+            "subtitle": "Awaken your heart to unconditional love and compassion.",
+            "image_url": "/hero_slider_anahatha.png",
+            "link": "/programs",
+            "button_text": "Explore Meditation"
+          },
+          {
+            "id": 3,
+            "title": "Kundalini Yoga Meditation\n+ Ajna Chakra",
+            "subtitle": "Unlock the spiritual energy within and sharpen your intuition.",
+            "image_url": "/hero_slider_kundalini.png",
+            "link": "/programs",
+            "button_text": "Learn More"
+          },
+          {
+            "id": 4,
+            "title": "Free Online Preview",
+            "subtitle": "Experience the essence of our teachings from anywhere.",
+            "image_url": "/hero_slider_preview.png",
+            "link": "/programs#preview",
+            "button_text": "Watch Now"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "section2",
+      "name": "7 Day Transformational Journey",
+      "content": {
+        "background_image_url": "/testimonial.png",
+        "title": "7 Day Transformational Journey",
+        "text": "A life-changing program designed to help you discover your inner peace and spiritual potential. Watch our promo video to learn more about the journey that awaits you.",
+        "youtube_url": "https://www.youtube.com/embed/sGtx4XfL76I",
+        "testimonial": {
+          "text": "This journey has completely redefined my perspective on life. The peace I found here is something I carry with me every single day. Truly transformational!",
+          "author": "Sarah Ahmed",
+          "role": "7DTJ Graduate"
+        },
+        "group_meditation": {
+          "title": "Group Meditation",
+          "description": "Join our weekly sessions to experience the collective energy of collective consciousness and deep silence."
+        }
+      }
+    },
+    {
+      "section_id": "upcoming-programs",
+      "name": "Upcoming Programs",
+      "content": {
+        "background_image_url": "/testimonial.png",
+        "title": "Upcoming Programs",
+        "subtitle": "Join our transformative journeys and experience profound spiritual growth across various locations.",
+        "programs": [
+          {
+            "id": 1,
+            "title": "Self Awareness Workshop",
+            "date_text": "May 15–17, 2024",
+            "image_url": "/event_workshop.png",
+            "tags": ["Spirituality", "Self-Growth"],
+            "location": "Kuala Lumpur"
+          },
+          {
+            "id": 2,
+            "title": "Full Moon Meditation",
+            "date_text": "June 3, 2024",
+            "image_url": "/event_meditation.png",
+            "tags": ["Meditation", "Wellness"],
+            "location": "Singapore"
+          },
+          {
+            "id": 3,
+            "title": "Jungle Retreat",
+            "date_text": "June 20–23, 2024",
+            "image_url": "/event_retreat.png",
+            "tags": ["Nature", "Retreat"],
+            "location": "Penang"
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "enlightenment",
+      "name": "Enlightenment",
+      "content": {
+        "background_image_url": "/testimonial.png",
+        "label": "Wisdom & Knowledge",
+        "title": "Your Life's Destiny is\nin your Hands!",
+        "content": "Experience the profound wisdom of Guru Paranjothi Subramaniam as he reveals how you can shape your own destiny through the power of self-awareness and meditation. Enlightenment is the ultimate freedom from emotional attachments.",
+        "video_url": "https://www.youtube.com/embed/sGtx4XfL76I",
+        "founder_name": "Yogi Dr. Pradeep Ullal",
+        "founder_role": "Spiritual Scientist"
+      }
+    },
+    {
+      "section_id": "testimonials",
+      "name": "Voices of Serenity",
+      "content": {
+        "background_image_url": "/testimonial.png",
+        "title": "Voices of Serenity",
+        "subtitle": "Practitioner Stories",
+        "testimonials": [
+          {
+            "author_name": "John Doe",
+            "author_role": "London, UK",
+            "quote": "The 7 Day Transformational Journey completely shifted my perspective. I finally understood what it means to be truly at peace with myself."
+          },
+          {
+            "author_name": "Amara Singh",
+            "author_role": "Singapore",
+            "quote": "Heart Centre Meditation helped me release emotional burdens I had been carrying for years. The Anahatha Chakra activation was a profound experience."
+          },
+          {
+            "author_name": "Lee Wei",
+            "author_role": "Malaysia",
+            "quote": "Kundalini Yoga here is taught with such clarity and depth. My focus and mental clarity have improved tremendously since I started."
+          }
+        ]
+      }
+    },
+    {
+      "section_id": "faq",
+      "name": "Frequently Asked Questions",
+      "content": {
+        "background_image_url": "/testimonial.png",
+        "title": "Frequently Asked Questions",
+        "subtitle": "GET ANSWERS",
+        "faqs": [
+          {
+            "question": "What is the 7 Day Transformational Journey?",
+            "answer": "A comprehensive program designed to guide individuals through deep self-discovery and spiritual growth using meditation and wisdom teachings."
+          },
+          {
+            "question": "Can beginners join these programs?",
+            "answer": "Absolutely! Our programs are designed for all levels, from beginners looking to start their meditation journey to advanced practitioners seeking deeper insights."
+          },
+          {
+            "question": "Is there a free trial or preview available?",
+            "answer": "Yes, we offer a Free Online Preview session where you can experience our teachings and meditation techniques before committing to a full program."
+          },
+          {
+            "question": "Where are the centers located?",
+            "answer": "We have our HQ in Singapore and multiple branches across Malaysia. You can find detailed address information in our Contact section."
+          },
+          {
+            "question": "How do I start with Kundalini Yoga?",
+            "answer": "You can sign up for our introductory Kundalini Yoga workshop which focuses on the Ajna Chakra and awakening the vital energy within."
+          }
+        ]
+      }
+    }
+  ]
+}

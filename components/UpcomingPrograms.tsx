@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTheme } from "./ThemeProvider";
 import UpcomingProgramsClassic from "./UpcomingProgramsClassic";
-import UpcomingProgramsModern from "./UpcomingProgramsModern";
 import { cmsApi } from "@/lib/cms-api";
 import { programsApi, Program as RealProgram } from "@/lib/api/programs";
 
@@ -18,6 +16,8 @@ export interface Program {
 }
 
 export interface UpcomingProgramsContent {
+    /** Optional CMS override for the section backdrop; falls back to the marble plate. */
+    background_image_url?: string;
     title: string;
     subtitle: string;
     programs: Program[];
@@ -38,10 +38,8 @@ function unwrapContent(raw: unknown): UpcomingProgramsContent | null {
     return raw as UpcomingProgramsContent;
 }
 
-export default function UpcomingEvents({ content, template: propTemplate }: { content?: UpcomingProgramsContent, template?: string }) {
-    const { theme } = useTheme();
+export default function UpcomingEvents({ content }: { content?: UpcomingProgramsContent, template?: string }) {
     const [data, setData] = useState<UpcomingProgramsContent | null>(unwrapContent(content));
-    const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
     const [realPrograms, setRealPrograms] = useState<Program[]>([]);
 
@@ -55,7 +53,6 @@ export default function UpcomingEvents({ content, template: propTemplate }: { co
                     // reaching into `response.content` then threw before the programme
                     // list below could load at all.
                     setData(unwrapContent(response?.content ?? response));
-                    setTemplate(response?.template_id || "default");
                 }
 
                 // Fetch dynamic program data from API always to keep it fresh
@@ -81,7 +78,6 @@ export default function UpcomingEvents({ content, template: propTemplate }: { co
 
     if (loading && !content) return null;
 
-    const activeTemplate = template === "default" ? theme : template;
     const displayData = data || unwrapContent(content);
 
     /* This section is authored content, not a view of the Programs module: its cards
@@ -96,14 +92,6 @@ export default function UpcomingEvents({ content, template: propTemplate }: { co
         programs: cmsPrograms.length > 0 ? cmsPrograms : realPrograms
     } : null;
 
-    return (
-        <>
-            {activeTemplate === "classic" ? (
-                <UpcomingProgramsClassic content={mergedData} />
-            ) : (
-                <UpcomingProgramsModern content={mergedData} />
-            )}
-        </>
-    );
+    return <UpcomingProgramsClassic content={mergedData} />;
 }
 

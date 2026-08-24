@@ -109,7 +109,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
                     </div>
                     <div className="bg-[#101848] text-white p-6 sm:p-10 rounded-[40px] shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-8 opacity-10">
-                            <span className="material-icons text-[80px]">groups</span>
+                            <span className="material-icons text-[48px] sm:text-[64px] md:text-[80px]">groups</span>
                         </div>
                         <h4 className="text-xl font-serif mb-4 relative z-10">Our Objective</h4>
                         <p className="text-white/80 font-sans text-sm leading-relaxed relative z-10">
@@ -122,7 +122,7 @@ export default function SocietySection({ content, type }: { content?: any, type?
     );
 
     return (
-        <section className="relative py-12 md:py-20 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-10 md:py-14 overflow-hidden">
             <div className="absolute inset-0 z-0">
                 <img
                     src={content?.image_url || "/upcoming_event.png"}

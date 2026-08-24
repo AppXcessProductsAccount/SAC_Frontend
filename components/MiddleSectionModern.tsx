@@ -34,7 +34,7 @@ export default function MiddleSectionModern({ content }: Props) {
     const firstPart = titleParts.join(' ');
 
     return (
-        <section className="relative z-10 w-full bg-white py-12 md:py-24 px-5 md:px-8 font-sans shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
+        <section className="relative z-10 w-full py-10 md:py-14 px-5 md:px-8 font-sans shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
             <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-4 md:gap-6">
                 
                 {/* LEFT CELL - Content & Buttons */}

@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import CloudAnimation from "./CloudAnimation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useTheme } from "./ThemeProvider";
+import { resolveMediaUrl } from "@/lib/api/config";
 
 const HERO_SLIDES = [
     {
@@ -13,7 +14,7 @@ const HERO_SLIDES = [
         title: "7 Day Transformational\nJourney Program",
         subtitle: "A profound path to inner peace and self-realization.",
         image: "/section1_slide1.png",
-        link: "/programs/7dtj",
+        link: "/programs",
         button_text: "Join Program"
     },
     {
@@ -21,7 +22,7 @@ const HERO_SLIDES = [
         title: "Heart Centre Meditation\n+ Anahatha Chakra",
         subtitle: "Awaken your heart to unconditional love and compassion.",
         image: "/hero_slider_anahatha.png",
-        link: "/programs/heart-centre",
+        link: "/programs",
         button_text: "Explore Meditation"
     },
     {
@@ -29,7 +30,7 @@ const HERO_SLIDES = [
         title: "Kundalini Yoga Meditation\n+ Ajna Chakra",
         subtitle: "Unlock the spiritual energy within and sharpen your intuition.",
         image: "/hero_slider_kundalini.png",
-        link: "/programs/kundalini",
+        link: "/programs",
         button_text: "Learn More"
     },
     {
@@ -37,13 +38,23 @@ const HERO_SLIDES = [
         title: "Free Online Preview",
         subtitle: "Experience the essence of our teachings from anywhere.",
         image: "/hero_slider_preview.png",
-        link: "/programs/preview",
+        link: "/programs#preview",
         button_text: "Watch Now"
     }
 ];
 
+/**
+ * The app has no `/programs/[slug]` route — only `/programs` — so every deeper
+ * programme link 404s. The slide defaults used to carry four of them, and an editor
+ * can still save one in the CMS, so collapse any such link to the listing rather
+ * than letting a hero CTA dead-end. Drop this once a detail route exists.
+ */
+const programHref = (link?: string) => {
+    if (!link) return "/programs";
+    return /^\/programs\/[^#]/.test(link) ? "/programs" : link;
+};
+
 export default function HeroClassic({ content }: { content?: any }) {
-    const { theme } = useTheme();
     const slides = content?.slides?.length ? content.slides : HERO_SLIDES;
     const [currentSlide, setCurrentSlide] = useState(0);
     const touchStartX = useRef<number | null>(null);
@@ -79,13 +90,9 @@ export default function HeroClassic({ content }: { content?: any }) {
             id="home"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
-            /* The modern navbar is a floating pill with nothing behind it, so the slide
-               has to run underneath it or the page opens with a band of empty grey above
-               the image. The classic navbar paints its own textured header instead, and
-               tucking under that would just hide the top of the slide — hence the theme
-               check rather than an unconditional pull-up. --nav-h is measured from the
-               real navbar, so this lands flush on every breakpoint. */
-            style={theme === "modern" ? { marginTop: "calc(var(--nav-h) * -1)" } : undefined}
+            /* No negative pull-up here: the classic navbar paints its own textured
+               header above the slide, and tucking under it would hide the top of the
+               image. */
             /* svh (not vh) so mobile browser chrome collapsing doesn't resize the hero
                mid-scroll. min/max keep it sane on short landscape phones and 4K. */
             className="relative w-full h-[88svh] min-h-[520px] max-h-[780px] md:h-[80svh] md:min-h-[600px] md:max-h-[820px] overflow-hidden bg-[#eeebf0]"
@@ -100,7 +107,10 @@ export default function HeroClassic({ content }: { content?: any }) {
                     className="absolute inset-0"
                 >
                     <Image
-                        src={slide.image_url || slide.image}
+                        /* Resolved: a slide image added through the admin is stored as
+                           `/uploads/...`, which only exists on the API host — unresolved
+                           it 404s against the Next origin and the new slide renders blank. */
+                        src={resolveMediaUrl(slide.image_url || slide.image) || "/section1_slide1.png"}
                         alt=""
                         aria-hidden="true"
                         fill
@@ -139,12 +149,12 @@ export default function HeroClassic({ content }: { content?: any }) {
                             {slide.subtitle}
                         </p>
 
-                        <a
-                            href={slide.link}
+                        <Link
+                            href={programHref(slide.link)}
                             className="inline-block bg-[#101848] text-white px-7 sm:px-10 py-3.5 sm:py-4 rounded-[12px] font-sans font-medium text-[14px] sm:text-[16px] uppercase tracking-wider hover:bg-[#1b1b2b] transition-all shadow-xl hover:scale-105"
                         >
                             {slide.button_text}
-                        </a>
+                        </Link>
                     </motion.div>
                 </AnimatePresence>
             </div>

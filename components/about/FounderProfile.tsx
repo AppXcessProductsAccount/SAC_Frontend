@@ -22,7 +22,7 @@ export default function FounderProfile({ content }: { content?: any }) {
     const subtitle = content?.subtitle || "The Hearts Behind SAC";
 
     return (
-        <section className="relative py-14 md:py-24 bg-[#eeebf0] overflow-hidden">
+        <section className="relative py-10 md:py-14 overflow-hidden">
             {/* Background Texture with Seamless Mask Effect */}
             <div className="absolute inset-0 z-0">
                 <img
@@ -73,7 +73,7 @@ export default function FounderProfile({ content }: { content?: any }) {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <h3 className="text-3xl font-serif text-[#101848] mb-2">{founder.name}</h3>
+                            <h3 className="text-2xl sm:text-3xl font-serif text-[#101848] mb-2 text-balance">{founder.name}</h3>
                             <p className="text-[#101848]/60 font-sans font-bold tracking-widest uppercase text-xs mb-6">
                                 {founder.role}
                             </p>

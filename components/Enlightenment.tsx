@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
-import { useTheme } from "./ThemeProvider";
 import EnlightenmentClassic from "./EnlightenmentClassic";
-import EnlightenmentModern from "./EnlightenmentModern";
 import { getFullUrl } from "@/lib/api/config";
 
 export interface EnlightenmentContent {
@@ -16,10 +14,8 @@ export interface EnlightenmentContent {
     background_image_url?: string;
 }
 
-export default function Enlightenment({ content, template: propTemplate }: { content?: EnlightenmentContent, template?: string }) {
-    const { theme } = useTheme();
+export default function Enlightenment({ content }: { content?: EnlightenmentContent, template?: string }) {
     const [data, setData] = useState<EnlightenmentContent | null>(content || null);
-    const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
 
     const defaultData: EnlightenmentContent = {
@@ -40,7 +36,6 @@ export default function Enlightenment({ content, template: propTemplate }: { con
                 const sectionData = await res.json();
                 
                 setData(sectionData.content);
-                setTemplate(sectionData.template_id || "default");
             } catch (error) {
                 console.error("Failed to fetch enlightenment content:", error);
                 setData(defaultData);
@@ -55,9 +50,6 @@ export default function Enlightenment({ content, template: propTemplate }: { con
     if (loading && !content) return null;
 
     const displayData = data || content || defaultData;
-    const activeTemplate = template === "default" ? theme : template;
 
-    return activeTemplate === 'classic' 
-        ? <EnlightenmentClassic data={displayData} />
-        : <EnlightenmentModern data={displayData} />;
+    return <EnlightenmentClassic data={displayData} />;
 }

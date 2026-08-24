@@ -34,12 +34,33 @@ import { programsApi, Program, RegistrationPayload } from "@/lib/api/programs";
 import { useAuth } from "@/hooks/useAuth";
 import CompleteProfileModal from "@/components/auth/CompleteProfileModal";
 import AuthModal from "@/components/auth/AuthModal";
-import { useTheme } from "@/components/ThemeProvider";
 import ProgramsListClassic from "@/components/programs/ProgramsListClassic";
-import ProgramsListModern from "@/components/programs/ProgramsListModern";
+
+/**
+ * Phone check for the registration form.
+ *
+ * Deliberately permissive about separators — registrants type "+65 9123 4567",
+ * "016-234 5678" and "(65) 91234567" — but strict about the digit count, which is
+ * what actually makes a number reachable. E.164 caps a full international number
+ * at 15 digits; 7 is the shortest real subscriber number in the regions served
+ * (SG is 8, MY 9-10).
+ */
+const isValidPhone = (value: string) => {
+    const trimmed = value.trim();
+    if (!/^\+?[\d\s\-()]+$/.test(trimmed)) return false;
+    const digits = trimmed.replace(/\D/g, "");
+    return digits.length >= 7 && digits.length <= 15;
+};
+
+const FIELD_BASE = "w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]";
+
+const fieldClass = (hasError?: boolean, extra = "") =>
+    `${FIELD_BASE} ${hasError ? "border-red-400 bg-red-50/50" : "border-black/10"} ${extra}`.trim();
+
+const FieldError = ({ message }: { message?: string }) =>
+    message ? <p className="text-[10px] font-bold text-red-600 ml-1 mt-1">{message}</p> : null;
 
 export default function ProgramsPage() {
-    const { theme } = useTheme();
     const { user, tokens, isAuthenticated } = useAuth();
     const [programs, setPrograms] = useState<Program[]>([]);
     const [loading, setLoading] = useState(true);
@@ -53,6 +74,7 @@ export default function ProgramsPage() {
     const [regLoading, setRegLoading] = useState(false);
     const [regSuccess, setRegSuccess] = useState(false);
     const [regError, setRegError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
     const [regStep, setRegStep] = useState(1);
     const [formData, setFormData] = useState<RegistrationPayload>({
         nric_last_4: "",
@@ -90,6 +112,8 @@ export default function ProgramsPage() {
         }
         setSelectedProgram(program);
         setRegStep(1);
+        setFieldErrors({});
+        setRegError(null);
         setFormData(prev => ({
             ...prev,
             preferred_language: program.languages?.[0] || "English",
@@ -101,11 +125,68 @@ export default function ProgramsPage() {
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear this field's error as soon as it is edited, so the message goes away
+        // when it is addressed rather than lingering until the next Continue.
+        setFieldErrors(prev => {
+            if (!prev[name]) return prev;
+            const next = { ...prev };
+            delete next[name];
+            return next;
+        });
+    };
+
+    /**
+     * Step 1's Continue is a `type="button"`, which means the browser never runs its
+     * own `required` checks on that step — every field could be left blank and the
+     * form would still advance to payment. This gates it explicitly.
+     */
+    const validateStep1 = () => {
+        const errors: Record<string, string> = {};
+
+        if (!/^\d{4}$/.test(formData.nric_last_4.trim())) {
+            errors.nric_last_4 = "Enter the last 4 digits.";
+        }
+        if (!formData.emergency_contact_name.trim()) {
+            errors.emergency_contact_name = "Required.";
+        }
+        if (!formData.emergency_contact_relation) {
+            errors.emergency_contact_relation = "Required.";
+        }
+        if (!formData.emergency_contact_phone.trim()) {
+            errors.emergency_contact_phone = "Required.";
+        } else if (!isValidPhone(formData.emergency_contact_phone)) {
+            errors.emergency_contact_phone = "Enter a valid number, e.g. +65 9123 4567.";
+        }
+
+        if (formData.discovery_source === "Introducer") {
+            // Both introducer fields are optional in the payload type — they only exist
+            // when this source is picked — so default before checking.
+            const introducerName = formData.introducer_name ?? "";
+            const introducerPhone = formData.introducer_phone ?? "";
+
+            if (!introducerName.trim()) {
+                errors.introducer_name = "Required.";
+            }
+            if (!introducerPhone.trim()) {
+                errors.introducer_phone = "Required.";
+            } else if (!isValidPhone(introducerPhone)) {
+                errors.introducer_phone = "Enter a valid number.";
+            }
+        }
+
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmitRegistration = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedProgram || !tokens?.access_token) return;
+
+        // Re-check step 1 here too: the user can walk back from payment and edit it.
+        if (!validateStep1()) {
+            setRegStep(1);
+            return;
+        }
 
         setRegLoading(true);
         setRegError(null);
@@ -137,39 +218,10 @@ export default function ProgramsPage() {
     };
 
     return (
-        <main className={`${theme === 'modern' ? 'bg-white' : 'bg-[#f8f9fa]'} min-h-screen text-[#1b1b2b] font-sans`}>
+        <main className="min-h-screen text-[#1b1b2b] font-sans">
             <Navbar />
 
-            {/* Conditional Hero Section */}
-            {theme === 'modern' ? (
-                <section className="relative pt-28 md:pt-40 pb-20 overflow-hidden bg-white">
-                    <div className="max-w-7xl mx-auto px-6 relative z-10">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-6"
-                        >
-                            <span className="text-[10px] font-black text-[#1b1b2b]/30 uppercase tracking-[0.3em] block">Curated Experience</span>
-                            <h1 className="text-3xl sm:text-5xl md:text-8xl font-bold text-[#1b1b2b] tracking-tighter leading-[0.85]">
-                                Upcoming <br />
-                                <span className="text-blue-600 relative">
-                                    Programs
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: '100%' }}
-                                        transition={{ delay: 0.5, duration: 1 }}
-                                        className="absolute -bottom-2 left-0 h-2 bg-blue-50"
-                                    />
-                                </span>
-                            </h1>
-                            <p className="test-black max-w-lg text-sm font-medium leading-relaxed pt-4">
-                                Discover transformative spiritual journeys designed to elevate your consciousness and bring profound inner peace.
-                            </p>
-                        </motion.div>
-                    </div>
-                </section>
-            ) : (
-                <section className="relative pt-28 md:pt-40 pb-24 overflow-hidden bg-[#101848]">
+            <section className="relative pt-28 md:pt-40 pb-24 overflow-hidden bg-[#101848]">
                     <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#3b82f6,transparent_50%)]" />
                         <img src="/upcoming_event.png" className="w-full h-full object-cover mix-blend-overlay" alt="" />
@@ -192,26 +244,16 @@ export default function ProgramsPage() {
                             </p>
                         </motion.div>
                     </div>
-                </section>
-            )}
+            </section>
 
             {/* Programs List Section */}
-            <section className={`py-16 md:py-24 max-w-7xl mx-auto px-6 ${theme === 'modern' ? 'bg-white' : ''}`}>
-                {theme === 'modern' ? (
-                    <ProgramsListModern
-                        programs={programs}
-                        loading={loading}
-                        error={error}
-                        onRegister={handleRegisterClick}
-                    />
-                ) : (
-                    <ProgramsListClassic
-                        programs={programs}
-                        loading={loading}
-                        error={error}
-                        onRegister={handleRegisterClick}
-                    />
-                )}
+            <section className="py-10 md:py-14 max-w-7xl mx-auto px-6">
+                <ProgramsListClassic
+                    programs={programs}
+                    loading={loading}
+                    error={error}
+                    onRegister={handleRegisterClick}
+                />
             </section>
 
             {/* Registration Modal Overlay */}
@@ -246,14 +288,14 @@ export default function ProgramsPage() {
                                 <X size={22} />
                             </button>
 
-                            <div className="p-5 sm:p-10 md:p-14">
+                            <div className="p-5 sm:p-8 md:p-10">
                                 {/* Modal Header - Minimalist */}
-                                <div className="text-center space-y-3 mb-8 md:mb-10 px-8 sm:px-0">
+                                <div className="text-center space-y-2 mb-6 px-8 sm:px-0">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-black/5 text-black/40 text-[9px] font-black uppercase tracking-[0.2em]">
                                         <Sparkles size={10} />
                                         Program Registration
                                     </div>
-                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-[#101848] tracking-tight text-balance">
+                                    <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-[#101848] tracking-tight text-balance">
                                         Join {selectedProgram.program_name}
                                     </h2>
                                     <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[10px] font-black uppercase tracking-widest text-black/40">
@@ -282,25 +324,27 @@ export default function ProgramsPage() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleSubmitRegistration} className="space-y-10">
+                                    <form onSubmit={handleSubmitRegistration} className="space-y-6">
                                         {regStep === 1 ? (
-                                            <div className="space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
+                                            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                                                 {/* Step 1: Info Grid */}
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8">
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6">
                                                     {/* Column 1: Personal Preferences */}
-                                                    <div className="space-y-6">
-                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-4 border-b border-black/5 pb-2">Preferences</h4>
-                                                        <div className="space-y-4">
+                                                    <div className="space-y-4">
+                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Preferences</h4>
+                                                        <div className="space-y-3">
                                                             <div className="space-y-1.5">
                                                                 <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
                                                                     <ShieldCheck size={12} className="text-[#101848]/40" />
                                                                     NRIC (Last 4)
                                                                 </label>
                                                                 <input
-                                                                    type="text" name="nric_last_4" required maxLength={4} value={formData.nric_last_4} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
+                                                                    type="text" inputMode="numeric" name="nric_last_4" required maxLength={4} value={formData.nric_last_4} onChange={handleFormChange}
+                                                                    aria-invalid={!!fieldErrors.nric_last_4}
+                                                                    className={fieldClass(!!fieldErrors.nric_last_4)}
                                                                     placeholder="1234"
                                                                 />
+                                                                <FieldError message={fieldErrors.nric_last_4} />
                                                             </div>
                                                             <div className="space-y-1.5">
                                                                 <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
@@ -309,7 +353,7 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <select
                                                                     name="preferred_language" value={formData.preferred_language} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848] appearance-none"
+                                                                    className={fieldClass(false, "appearance-none")}
                                                                 >
                                                                     {selectedProgram.languages && selectedProgram.languages.length > 0 ? (
                                                                         selectedProgram.languages.map(lang => (
@@ -332,7 +376,7 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <select
                                                                     name="meal_preference" value={formData.meal_preference} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848] appearance-none"
+                                                                    className={fieldClass(false, "appearance-none")}
                                                                 >
                                                                     <option value="Vegetarian">Vegetarian</option>
                                                                     <option value="Non-Vegetarian">Non-Vegetarian</option>
@@ -343,9 +387,9 @@ export default function ProgramsPage() {
                                                     </div>
 
                                                     {/* Column 2: Emergency Contact */}
-                                                    <div className="space-y-6">
-                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-4 border-b border-black/5 pb-2">Emergency Contact</h4>
-                                                        <div className="space-y-4">
+                                                    <div className="space-y-4">
+                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Emergency Contact</h4>
+                                                        <div className="space-y-3">
                                                             <div className="space-y-1.5">
                                                                 <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
                                                                     <User size={12} className="text-[#101848]/40" />
@@ -353,7 +397,8 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <input
                                                                     type="text" name="emergency_contact_name" required value={formData.emergency_contact_name} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
+                                                                    aria-invalid={!!fieldErrors.emergency_contact_name}
+                                                                    className={fieldClass(!!fieldErrors.emergency_contact_name)}
                                                                     placeholder="Full Name"
                                                                 />
                                                             </div>
@@ -364,7 +409,8 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <select
                                                                     name="emergency_contact_relation" required value={formData.emergency_contact_relation} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848] appearance-none"
+                                                                    aria-invalid={!!fieldErrors.emergency_contact_relation}
+                                                                    className={fieldClass(!!fieldErrors.emergency_contact_relation, "appearance-none")}
                                                                 >
                                                                     <option value="">Select Relation</option>
                                                                     <option value="Spouse">Spouse</option>
@@ -374,6 +420,7 @@ export default function ProgramsPage() {
                                                                     <option value="Friend">Friend</option>
                                                                     <option value="Other">Other</option>
                                                                 </select>
+                                                                <FieldError message={fieldErrors.emergency_contact_relation} />
                                                             </div>
                                                             <div className="space-y-1.5">
                                                                 <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
@@ -381,18 +428,20 @@ export default function ProgramsPage() {
                                                                     Contact Phone
                                                                 </label>
                                                                 <input
-                                                                    type="tel" name="emergency_contact_phone" required value={formData.emergency_contact_phone} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
-                                                                    placeholder="+60..."
+                                                                    type="tel" inputMode="tel" name="emergency_contact_phone" required value={formData.emergency_contact_phone} onChange={handleFormChange}
+                                                                    aria-invalid={!!fieldErrors.emergency_contact_phone}
+                                                                    className={fieldClass(!!fieldErrors.emergency_contact_phone)}
+                                                                    placeholder="+65 9123 4567"
                                                                 />
+                                                                <FieldError message={fieldErrors.emergency_contact_phone} />
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     {/* Column 3: Misc & Health */}
-                                                    <div className="space-y-6">
-                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-4 border-b border-black/5 pb-2">Additional Info</h4>
-                                                        <div className="space-y-4">
+                                                    <div className="space-y-4">
+                                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Additional Info</h4>
+                                                        <div className="space-y-3">
                                                             <div className="space-y-1.5">
                                                                 <label className="text-[10px] font-black uppercase tracking-widest text-[#101848] ml-1 flex items-center gap-2">
                                                                     <Activity size={12} className="text-[#101848]/40" />
@@ -400,7 +449,7 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <input
                                                                     type="text" name="referred_by" value={formData.referred_by} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
+                                                                    className={fieldClass()}
                                                                     placeholder="Name"
                                                                 />
                                                             </div>
@@ -411,7 +460,7 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <select
                                                                     name="discovery_source" value={formData.discovery_source} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848] appearance-none"
+                                                                    className={fieldClass(false, "appearance-none")}
                                                                 >
                                                                     <option value="">Select Source</option>
                                                                     {selectedProgram.discovery_sources?.map(source => (
@@ -429,7 +478,8 @@ export default function ProgramsPage() {
                                                                         </label>
                                                                         <input
                                                                             type="text" name="introducer_name" required value={formData.introducer_name} onChange={handleFormChange}
-                                                                            className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
+                                                                            aria-invalid={!!fieldErrors.introducer_name}
+                                                                            className={fieldClass(!!fieldErrors.introducer_name)}
                                                                             placeholder="Name"
                                                                         />
                                                                     </div>
@@ -439,10 +489,12 @@ export default function ProgramsPage() {
                                                                             Phone
                                                                         </label>
                                                                         <input
-                                                                            type="tel" name="introducer_phone" required value={formData.introducer_phone} onChange={handleFormChange}
-                                                                            className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
-                                                                            placeholder="Phone"
+                                                                            type="tel" inputMode="tel" name="introducer_phone" required value={formData.introducer_phone} onChange={handleFormChange}
+                                                                            aria-invalid={!!fieldErrors.introducer_phone}
+                                                                            className={fieldClass(!!fieldErrors.introducer_phone)}
+                                                                            placeholder="+65 9123 4567"
                                                                         />
+                                                                        <FieldError message={fieldErrors.introducer_phone} />
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -453,7 +505,7 @@ export default function ProgramsPage() {
                                                                 </label>
                                                                 <input
                                                                     type="text" name="health_issues" value={formData.health_issues} onChange={handleFormChange}
-                                                                    className="w-full px-4 py-3 bg-gray-50 border border-black/10 rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]"
+                                                                    className={fieldClass()}
                                                                     placeholder="Optional"
                                                                 />
                                                             </div>
@@ -461,10 +513,10 @@ export default function ProgramsPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex justify-stretch sm:justify-end pt-4">
+                                                <div className="flex justify-stretch sm:justify-end pt-1">
                                                     <button
                                                         type="button"
-                                                        onClick={() => setRegStep(2)}
+                                                        onClick={() => { if (validateStep1()) setRegStep(2); }}
                                                         className="w-full sm:w-auto px-10 py-4 bg-[#101848] text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-xl hover:bg-black transition-all flex items-center justify-center gap-3"
                                                     >
                                                         Continue to Payment <ArrowRight size={16} />
@@ -485,7 +537,7 @@ export default function ProgramsPage() {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setFormData(prev => ({ ...prev, pay_full: true }))}
-                                                                className={`p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border transition-all flex flex-col items-center gap-2 ${formData.pay_full
+                                                                className={`p-5 sm:p-6 rounded-[20px] sm:rounded-[24px] border transition-all flex flex-col items-center gap-2 ${formData.pay_full
                                                                         ? "bg-white border-[#101848] shadow-2xl scale-105"
                                                                         : "bg-transparent border-black/5 hover:border-black/20"
                                                                     }`}
@@ -499,7 +551,7 @@ export default function ProgramsPage() {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => setFormData(prev => ({ ...prev, pay_full: false }))}
-                                                                    className={`p-6 sm:p-8 rounded-[24px] sm:rounded-[32px] border transition-all flex flex-col items-center gap-2 ${!formData.pay_full
+                                                                    className={`p-5 sm:p-6 rounded-[20px] sm:rounded-[24px] border transition-all flex flex-col items-center gap-2 ${!formData.pay_full
                                                                             ? "bg-white border-[#101848] shadow-2xl scale-105"
                                                                             : "bg-transparent border-black/5 hover:border-black/20"
                                                                         }`}

@@ -26,17 +26,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
     }, []);
 
     return (
-        <section className="relative py-16 md:py-24 lg:py-32 px-6 overflow-hidden min-h-[500px] flex items-center bg-white" id="contact">
-            {/* Background Image Layer with Seamless Mask Effect */}
-            <div className="absolute inset-0 z-0">
-                <Image
-                    src="/sectionbackground.png"
-                    alt="Contact Background"
-                    fill
-                    className="object-cover opacity-80"
-                    priority
-                />
-            </div>
+        <section className="relative py-10 md:py-14 lg:py-20 px-6 overflow-hidden min-h-[420px] flex items-center" id="contact">
 
             <div className="relative z-10 max-w-[1400px] mx-auto w-full">
                 <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">

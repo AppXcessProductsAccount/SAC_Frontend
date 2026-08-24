@@ -71,11 +71,11 @@ export default function ParanjothiPage() {
     };
 
     return (
-        <main className="bg-[#eeebf0] min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
+        <main className="min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans">
             <Navbar />
             
             {loading ? (
-                <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+                <div className="min-h-screen flex flex-col items-center justify-center">
                     <div className="w-16 h-16 border-4 border-[#101848]/10 border-t-[#101848] rounded-full animate-spin mb-4"></div>
                     <p className="text-[#101848]/60 font-serif italic text-lg animate-pulse">Loading Gnanaguru Paranjothi...</p>
                 </div>

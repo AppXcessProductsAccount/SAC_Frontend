@@ -36,7 +36,7 @@ export default function AboutUs() {
     if (!about) return null;
 
     return (
-        <section className="py-14 md:py-24 px-6 relative overflow-hidden bg-white" id="about-us">
+        <section className="py-10 md:py-14 px-6 relative overflow-hidden" id="about-us">
             <AmbientBackground starCount={25} opacity={0.3} />
 
             <div className="max-w-7xl mx-auto relative z-10">

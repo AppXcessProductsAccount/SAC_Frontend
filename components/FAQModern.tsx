@@ -13,7 +13,7 @@ export default function FAQModern({ data }: { data: FAQContent | null }) {
     };
 
     return (
-        <section className="relative w-full bg-white py-12 md:py-20 px-5 md:px-8 font-sans" id="faq">
+        <section className="relative w-full py-10 md:py-14 px-5 md:px-8 font-sans" id="faq">
             <div className="max-w-[1500px] mx-auto grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-4 md:gap-6">
 
                 {/* LEFT CELL - FAQ Accordion */}

@@ -93,10 +93,10 @@ export default function MyRegistrationsPage() {
     if (authLoading) return null;
 
     return (
-        <main className="bg-[#f8f9fa] min-h-screen text-[#1b1b2b] font-sans">
+        <main className="min-h-screen text-[#1b1b2b] font-sans">
             <Navbar />
 
-            <section className="relative pt-20 pb-2 overflow-hidden bg-white">
+            <section className="relative pt-20 pb-2 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -223,7 +223,9 @@ export default function MyRegistrationsPage() {
                                     </div>
 
                                     {/* Compact Payment Info Grid */}
-                                    <div className="grid grid-cols-3 gap-2">
+                                    {/* 3-up only from `sm`: at 360px each tile was ~100px
+                                        wide and the amounts wrapped out of their boxes. */}
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                         <div className="p-2 bg-gray-50 rounded-xl border border-black/5 flex flex-col items-center">
                                             <span className="text-[7px] font-black uppercase tracking-widest text-black/20">Paid</span>
                                             <span className="text-[11px] font-bold text-green-600">RM {reg.amount_paid.toFixed(0)}</span>

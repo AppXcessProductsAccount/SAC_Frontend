@@ -79,13 +79,13 @@ export default function Home() {
     };
 
     return (
-        <main className="bg-[#eeebf0] min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans overflow-x-clip">
+        <main className="min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans overflow-x-clip">
             <Navbar />
 
             {loading ? (
                 // 70svh, not 100vh: the navbar already occupies space above this, so a
                 // full-viewport spinner forced a scrollbar on every initial load.
-                <div className="min-h-[70svh] flex flex-col items-center justify-center bg-white px-6 text-center">
+                <div className="min-h-[70svh] flex flex-col items-center justify-center px-6 text-center">
                     <div className="w-14 h-14 md:w-16 md:h-16 border-4 border-[#101848]/10 border-t-[#101848] rounded-full animate-spin mb-4"></div>
                     <p className="text-[#101848]/60 font-serif italic text-base md:text-lg animate-pulse">Welcome to Self Awareness...</p>
                 </div>

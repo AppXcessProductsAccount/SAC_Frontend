@@ -8,8 +8,7 @@ import { usePathname } from "next/navigation";
 import { cmsApi } from "@/lib/cms-api";
 import { applyCmsPageBindings } from "@/lib/cms-pages";
 import { AnimatePresence } from "framer-motion";
-import { useTheme } from "./ThemeProvider";
-import { Sparkles, Layout, User, LogOut, FileText, Menu, X, ChevronDown } from "lucide-react";
+import { User, LogOut, FileText, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AuthModal from "./auth/AuthModal";
 import CompleteProfileModal from "./auth/CompleteProfileModal";
@@ -45,7 +44,6 @@ export default function Navbar() {
     const [activeSection, setActiveSection] = useState("home");
     const [scrolled, setScrolled] = useState(false);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-    const { theme, toggleTheme } = useTheme();
     const { user, isAuthenticated, logout } = useAuth();
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -69,7 +67,12 @@ export default function Navbar() {
             <>
                 {firstWord}
                 {rest.length > 0 && (
-                    <span className={`font-light opacity-80 font-sans tracking-widest ml-1 ${restSizeClass}`}>
+                    /* `font-serif`, matching the first word. This span used to force
+                       `font-sans`, so "SELF" rendered in Lora while "AWARENESS CENTRE"
+                       rendered in a different face beside it. The lighter weight and
+                       wider tracking stay — that hierarchy is intended, the typeface
+                       switch was not. */
+                    <span className={`font-light opacity-80 font-serif tracking-widest ml-1 ${restSizeClass}`}>
                         {rest.join(" ")}
                     </span>
                 )}
@@ -195,7 +198,7 @@ export default function Navbar() {
             window.removeEventListener("resize", publishHeight);
             window.removeEventListener("orientationchange", publishHeight);
         };
-    }, [theme]);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -299,32 +302,18 @@ export default function Navbar() {
 
     return (
         <>
-        <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 ${scrolled && theme === 'classic' ? "backdrop-blur-md bg-white/40 shadow-lg" : ""}`}>
-            {/* Background Image Layer for Classic Theme */}
-            {theme === 'classic' && (
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/header_bg.png"
-                        alt=""
-                        aria-hidden="true"
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                </div>
-            )}
-
-            <div className={`relative z-10 max-w-[1400px] mx-auto flex items-center justify-between gap-3 transition-all duration-300 ${
-                theme === 'modern'
-                ? 'bg-white rounded-[100px] shadow-[0_10px_40px_rgba(0,0,0,0.08)] px-4 py-2 md:px-6'
-                : 'px-1 py-0 md:px-6'
-            }`}>
+        <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 backdrop-blur-md ${scrolled ? "bg-background-light/85 shadow-lg" : "bg-background-light/55"}`}>
+            <div className="relative z-10 max-w-[1400px] mx-auto flex items-center justify-between gap-3 transition-all duration-300 px-1 py-0 md:px-6">
                 {/* Logo Section */}
-                <Link href="/" className="flex items-center gap-2 md:gap-3 shrink-0 lg:w-1/4 relative z-40 group">
+                {/* `min-w-0`, not `shrink-0`: the brand name comes from the CMS and is
+                    set `nowrap`, so an unshrinkable logo block pushed the row wider than
+                    the viewport on phones and the header ran off screen. It may now give
+                    up width, and the name ellipsises rather than forcing the overflow. */}
+                <Link href="/" className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-1/4 relative z-40 group">
                     <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0">
                         <Image src={getFullUrl(logoUrl)} alt={`${brandName} Logo`} fill className="object-cover" />
                     </div>
-                    <span className={`font-serif text-[13px] sm:text-[15px] md:text-[16px] tracking-wide font-medium whitespace-nowrap ${theme === 'modern' ? 'text-[#1b1b2b]' : 'text-[#101848]'}`}>
+                    <span className="font-serif text-[13px] sm:text-[15px] md:text-[16px] tracking-wide font-medium truncate min-w-0 text-[#101848]">
                         {renderBrand("text-[10px] sm:text-[11px] md:text-[12px]")}
                     </span>
                 </Link>
@@ -354,7 +343,7 @@ export default function Navbar() {
                                     }}
                                     className={`text-[13px] xl:text-[14px] font-medium transition-all relative group flex items-center gap-1.5 ${
                                         isActive ? "text-[#101848]" : "text-[#1b1b2b]/70 hover:text-[#101848]"
-                                    } ${theme === 'modern' ? 'font-sans text-[11px] xl:text-[12px] font-bold uppercase tracking-[0.1em]' : ''}`}
+                                    }`}
                                 >
                                     {/* `whitespace-pre`, not the default: a menu label is one line.
                                         As a flex child it could shrink below its own width and break
@@ -367,14 +356,11 @@ export default function Navbar() {
                                             className={`transition-transform duration-300 ${hoveredItem === item.id ? 'rotate-180' : ''}`}
                                         />
                                     )}
-                                    {isActive && theme === 'classic' && (
+                                    {isActive && (
                                         <motion.span
                                             layoutId="activeNav"
                                             className="absolute -bottom-1 left-0 w-full h-[2px] bg-[#101848] rounded-full"
                                         />
-                                    )}
-                                    {theme === 'modern' && (
-                                        <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all group-hover:w-full bg-[#1b1b2b]`} />
                                     )}
                                 </Link>
 
@@ -420,11 +406,7 @@ export default function Navbar() {
                                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                 aria-haspopup="menu"
                                 aria-expanded={isUserMenuOpen}
-                                className={`flex items-center gap-2 p-1 sm:pr-3 rounded-full border transition-all ${
-                                    theme === 'modern'
-                                    ? 'bg-gray-50 hover:bg-gray-100 border-gray-200'
-                                    : 'bg-white/20 hover:bg-white/30 border-white/30'
-                                }`}
+                                className="flex items-center gap-2 p-1 sm:pr-3 rounded-full border transition-all bg-white/20 hover:bg-white/30 border-white/30"
                             >
                                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold overflow-hidden shrink-0">
                                     {user?.profile_image_url ? (
@@ -433,7 +415,7 @@ export default function Navbar() {
                                         user?.full_name?.charAt(0).toUpperCase()
                                     )}
                                 </div>
-                                <span className={`hidden sm:block text-sm font-medium ${theme === 'modern' ? 'text-[#1b1b2b]' : 'text-[#101848]'}`}>
+                                <span className="hidden sm:block text-sm font-medium text-[#101848]">
                                     {user?.full_name?.split(' ')[0]}
                                 </span>
                             </button>
@@ -480,14 +462,9 @@ export default function Navbar() {
                     ) : (
                         <button
                             onClick={() => setIsAuthModalOpen(true)}
-                            className={`hidden lg:flex items-center gap-2 transition-all ${
-                                theme === 'modern'
-                                ? 'bg-white text-[#101848] px-5 py-1.5 rounded-full font-bold text-[11px] xl:text-[12px] shadow-sm hover:shadow-md hover:bg-[#101848] hover:text-white border border-gray-200 group'
-                                : 'bg-[#101848] text-white px-6 py-2 rounded-[10px] font-medium text-[13px] hover:bg-[#1b1b2b] shadow-sm'
-                            }`}
+                            className="hidden lg:flex items-center gap-2 transition-all bg-[#101848] text-white px-6 py-2 rounded-[10px] font-medium text-[13px] hover:bg-[#1b1b2b] shadow-sm"
                         >
                             Sign In
-                            {theme === 'modern' && <div className="w-1.5 h-1.5 rounded-full bg-[#101848] group-hover:bg-white" />}
                         </button>
                     )}
 
@@ -497,11 +474,7 @@ export default function Navbar() {
                         aria-label="Open menu"
                         aria-expanded={isMobileMenuOpen}
                         aria-controls="mobile-menu"
-                        className={`lg:hidden w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 ${
-                            theme === 'modern'
-                            ? 'bg-white text-[#1b1b2b] shadow-sm hover:bg-gray-100 border border-gray-100'
-                            : 'bg-[#101848] text-white shadow-sm hover:bg-[#1b1b2b]'
-                        }`}
+                        className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 bg-[#101848] text-white shadow-sm hover:bg-[#1b1b2b]"
                     >
                         <Menu size={20} />
                     </button>
@@ -641,14 +614,6 @@ export default function Navbar() {
                                         Sign In
                                     </button>
                                 )}
-
-                                <button
-                                    onClick={toggleTheme}
-                                    className="w-full flex items-center justify-center gap-2 border border-black/10 text-[#1b1b2b]/70 py-2.5 rounded-xl font-medium text-[13px] hover:bg-black/[0.03] transition-colors"
-                                >
-                                    {theme === "classic" ? <Layout size={15} /> : <Sparkles size={15} />}
-                                    Switch to {theme === "classic" ? "Modern" : "Classic"}
-                                </button>
                             </div>
                         </motion.div>
                     </>

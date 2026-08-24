@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTheme } from "./ThemeProvider";
 import MiddleSectionClassic from "./MiddleSectionClassic";
-import MiddleSectionModern from "./MiddleSectionModern";
 import { cmsApi } from "@/lib/cms-api";
 
 export interface MiddleSectionContent {
+    /** Optional CMS override for the section backdrop; falls back to the marble plate. */
+    background_image_url?: string;
     title: string;
     text: string;
     youtube_url: string;
@@ -21,10 +21,8 @@ export interface MiddleSectionContent {
     };
 }
 
-export default function MiddleSection({ content, template: propTemplate }: { content?: MiddleSectionContent, template?: string }) {
-    const { theme } = useTheme();
+export default function MiddleSection({ content }: { content?: MiddleSectionContent, template?: string }) {
     const [data, setData] = useState<MiddleSectionContent | null>(content || null);
-    const [template, setTemplate] = useState<string>(propTemplate || "default");
     const [loading, setLoading] = useState(!content);
 
     useEffect(() => {
@@ -38,7 +36,6 @@ export default function MiddleSection({ content, template: propTemplate }: { con
                     : response.content;
                 
                 setData(contentData);
-                setTemplate(response.template_id || "default");
             } catch (error) {
                 console.error("Failed to fetch section2 content:", error);
             } finally {
@@ -55,17 +52,8 @@ export default function MiddleSection({ content, template: propTemplate }: { con
         </div>
     );
 
-    const activeTemplate = template === "default" ? theme : template;
     const displayData = data || content;
 
-    return (
-        <>
-            {activeTemplate === "classic" ? (
-                <MiddleSectionClassic content={displayData || null} />
-            ) : (
-                <MiddleSectionModern content={displayData || null} />
-            )}
-        </>
-    );
+    return <MiddleSectionClassic content={displayData || null} />;
 }
 
