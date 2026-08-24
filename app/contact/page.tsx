@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
 import { cmsApi } from "@/lib/cms-api";
 import { resolveCmsPage } from "@/lib/cms-pages";
 
@@ -12,6 +13,8 @@ export default function ContactPage() {
     const [sections, setSections] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+    const [phone, setPhone] = useState<string | undefined>(undefined);
+    const [phoneError, setPhoneError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchSections = async () => {
@@ -52,6 +55,14 @@ export default function ContactPage() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Country-aware: judged against the rules of the country selected in the field.
+        if (!isValidPhone(phone)) {
+            setPhoneError(phoneErrorMessage(phone));
+            return;
+        }
+        setPhoneError(null);
+
         setStatus("submitting");
         
         const formData = new FormData(e.currentTarget);
@@ -148,15 +159,6 @@ export default function ContactPage() {
 
             {/* Content Section */}
             <section className="py-10 md:py-14 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image 
-                        src={content.background_image_url || "/upcoming_event.png"} 
-                        alt="Content Background" 
-                        fill 
-                        className="object-cover opacity-60"
-                    />
-                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#eeebf0] to-transparent z-10"></div>
-                </div>
                 <div className="relative z-10 max-w-[1400px] mx-auto">
                     <div className="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16">
                         
@@ -298,7 +300,15 @@ export default function ContactPage() {
                                             <div className="grid md:grid-cols-2 gap-4">
                                                 <div className="space-y-1.5">
                                                     <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Phone</label>
-                                                    <input required name="phone" type="tel" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Number" />
+                                                    {/* Country picker + per-country validation. The submit handler reads
+                                                        this form with FormData, so the field mirrors its E.164 value into a
+                                                        hidden input named "phone" to keep the payload shape unchanged. */}
+                                                    <PhoneField
+                                                        name="phone"
+                                                        value={phone}
+                                                        onChange={(v) => { setPhone(v); setPhoneError(null); }}
+                                                        error={phoneError ?? undefined}
+                                                    />
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Email</label>

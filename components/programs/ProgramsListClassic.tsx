@@ -47,18 +47,6 @@ export default function ProgramsListClassic({ programs, loading, error, onRegist
 
     return (
         <div className="relative">
-            {/* Background Texture Layer */}
-            <div className="absolute -inset-x-6 md:-inset-x-20 -top-24 -bottom-24 z-0 pointer-events-none opacity-40">
-                <img
-                    src="/upcoming_event.png"
-                    alt="Section Background"
-                    className="w-full h-full object-cover"
-                    style={{
-                        maskImage: 'radial-gradient(circle at center, black, transparent 80%)',
-                        WebkitMaskImage: 'radial-gradient(circle at center, black, transparent 80%)'
-                    }}
-                />
-            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
                 {programs.map((program, index) => {

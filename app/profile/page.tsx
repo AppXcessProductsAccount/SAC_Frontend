@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { 
     User, 
     Mail, 
-    Phone, 
     Save, 
     ArrowLeft, 
     Loader2, 
@@ -23,6 +22,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { userApi } from "@/lib/api/user";
+import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -32,6 +32,7 @@ export default function ProfilePage() {
     const [nickname, setNickname] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
+    const [phoneError, setPhoneError] = useState<string | null>(null);
     const [gender, setGender] = useState("");
     const [dob, setDob] = useState("");
     const [occupation, setOccupation] = useState("");
@@ -77,6 +78,13 @@ export default function ProfilePage() {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!tokens?.access_token) return;
+
+        // Validated against the selected country's own numbering rules.
+        if (!isValidPhone(phone)) {
+            setPhoneError(phoneErrorMessage(phone));
+            return;
+        }
+        setPhoneError(null);
 
         setLoading(true);
         setMessage(null);
@@ -253,19 +261,13 @@ export default function ProfilePage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <label className="text-sm font-semibold text-[#101848]/80 ml-1">Phone Number</label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#101848]/30">
-                                                <Phone size={20} />
-                                            </div>
-                                            <input 
-                                                type="tel"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all"
-                                                placeholder="+91 phone number"
-                                            />
-                                        </div>
+                                        <label className="text-sm font-semibold text-[#101848]/80 ml-1">Phone Number <span className="text-red-500">*</span></label>
+                                        {/* Country picker with flag and dial code, validated per country. */}
+                                        <PhoneField
+                                            value={phone || undefined}
+                                            onChange={(v) => { setPhone(v || ""); setPhoneError(null); }}
+                                            error={phoneError ?? undefined}
+                                        />
                                     </div>
 
                                     <div className="space-y-2">

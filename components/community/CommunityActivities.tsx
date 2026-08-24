@@ -1,8 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import AuthModal from "@/components/auth/AuthModal";
 
 export default function CommunityActivities({ content }: { content?: any }) {
+    const router = useRouter();
+    const { isAuthenticated } = useAuth();
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+    /* Exploring an activity is a members-only path: signed-in visitors go straight
+       to the membership page, everyone else is asked to sign in first. */
+    const handleExplore = () => {
+        if (!isAuthenticated) {
+            setIsAuthModalOpen(true);
+            return;
+        }
+        router.push("/membership");
+    };
+
     const activities = content?.activities || [
         {
             title: "Transformation Workshops",
@@ -91,15 +109,22 @@ export default function CommunityActivities({ content }: { content?: any }) {
                                     </p>
                                 </div>
 
-                                <div className="pt-4 flex items-center gap-2 text-white/60 group-hover:text-white transition-colors">
+                                <button
+                                    type="button"
+                                    onClick={handleExplore}
+                                    aria-label={`Explore ${activity.title}`}
+                                    className="pt-4 flex items-center gap-2 text-white/60 group-hover:text-white transition-colors w-fit cursor-pointer"
+                                >
                                     <span className="text-xs font-bold tracking-widest uppercase">Explore Activity</span>
                                     <span className="material-icons text-xl">arrow_right_alt</span>
-                                </div>
+                                </button>
                             </div>
                         </motion.div>
                     ))}
                 </div>
             </div>
+
+            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
         </section>
     );
 }

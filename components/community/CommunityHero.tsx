@@ -9,18 +9,6 @@ export default function CommunityHero({ content }: { content?: any }) {
 
     return (
         <section className="relative py-10 md:py-14 lg:py-20 overflow-hidden text-center">
-            {/* Background Texture with Seamless Mask Effect */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/upcoming_event.png"
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                    }}
-                />
-            </div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-6">
                 <motion.span

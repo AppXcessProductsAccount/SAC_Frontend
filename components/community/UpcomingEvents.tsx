@@ -16,18 +16,6 @@ export default function UpcomingEvents({ content }: { content?: any }) {
 
     return (
         <section className="relative py-10 md:py-14 overflow-hidden">
-            {/* Background Texture with Seamless Mask Effect */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src={content?.background_image_url || "/upcoming_event.png"}
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                    }}
-                />
-            </div>
             <div className="max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-12 gap-16 items-start">
                     {/* Left Column - Intro */}

@@ -62,6 +62,8 @@ export default function HeroClassic({ content }: { content?: any }) {
     // Guard against a shrinking CMS slide array leaving the index out of range.
     const safeIndex = Math.min(currentSlide, Math.max(slides.length - 1, 0));
     const slide = slides[safeIndex];
+    // Resolved once: the fitted layer and the blurred filler behind it share a source.
+    const slideSrc = resolveMediaUrl(slide?.image_url || slide?.image) || "/section1_slide1.png";
 
     useEffect(() => {
         if (!slides || slides.length <= 1) return;
@@ -90,12 +92,18 @@ export default function HeroClassic({ content }: { content?: any }) {
             id="home"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
-            /* No negative pull-up here: the classic navbar paints its own textured
-               header above the slide, and tucking under it would hide the top of the
-               image. */
+            /* No negative pull-up: the slide begins where the header ends.
+
+               The height SUBTRACTS the header. The navbar is `sticky`, so it occupies
+               real space above this section and 88svh here meant header + 88svh — taller
+               than the viewport. The bottom of the slide sat below the fold, and reaching
+               it meant scrolling, which slid the top of the image up under the sticky
+               header. Subtracting `--nav-h` (published from the navbar's measured height,
+               so it tracks every breakpoint) makes header + slide fit the viewport exactly:
+               the whole image is visible at rest and nothing has to pass behind the nav. */
             /* svh (not vh) so mobile browser chrome collapsing doesn't resize the hero
                mid-scroll. min/max keep it sane on short landscape phones and 4K. */
-            className="relative w-full h-[88svh] min-h-[520px] max-h-[780px] md:h-[80svh] md:min-h-[600px] md:max-h-[820px] overflow-hidden bg-[#eeebf0]"
+            className="relative w-full h-[calc(100svh-var(--nav-h))] min-h-[440px] max-h-[820px] md:min-h-[520px] md:max-h-[900px] overflow-hidden bg-[#eeebf0]"
         >
             <AnimatePresence mode="wait">
                 <motion.div
@@ -110,14 +118,18 @@ export default function HeroClassic({ content }: { content?: any }) {
                         /* Resolved: a slide image added through the admin is stored as
                            `/uploads/...`, which only exists on the API host — unresolved
                            it 404s against the Next origin and the new slide renders blank. */
-                        src={resolveMediaUrl(slide.image_url || slide.image) || "/section1_slide1.png"}
+                        src={slideSrc}
                         alt=""
                         aria-hidden="true"
                         fill
                         sizes="100vw"
-                        /* Portrait phones crop hard with object-center; biasing the
-                           focal point upward keeps subjects/horizon in frame. */
-                        className="object-cover object-[50%_30%] md:object-center"
+                        /* `cover`: the slide fills the section edge to edge at any window
+                           size or zoom, with no bars. Note this necessarily crops — three
+                           of the four plates are 1024x1024 squares in a ~2:1 band, so
+                           roughly half of each square is outside the frame. The band is
+                           kept as tall as the viewport allows to lose as little as
+                           possible; landscape source crops are the real fix. */
+                        className="object-cover object-[50%_35%] md:object-center"
                         priority
                     />
                 </motion.div>
@@ -131,7 +143,12 @@ export default function HeroClassic({ content }: { content?: any }) {
 
             {/* z-30 keeps the copy above the drifting clouds (z-20), which previously
                 washed straight over the headline. */}
-            <div className="absolute inset-0 z-30 flex items-center justify-start px-5 sm:px-8 md:px-16 lg:px-24 pb-24 md:pb-28">
+            {/* `pt` matters as much as `pb` here. The box is `inset-0` with only bottom
+                padding (to clear the dots and arrows), so centring the copy inside it
+                pushed the block upward by half that padding — a two-line headline then
+                sat hard against the header with no clearance. The top padding gives the
+                centred block a floor it cannot ride above. */}
+            <div className="absolute inset-0 z-30 flex items-center justify-start px-5 sm:px-8 md:px-16 lg:px-24 pt-8 md:pt-12 pb-24 md:pb-28">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={slide.id ?? safeIndex}

@@ -33,6 +33,7 @@ export default function Footer() {
         if (!element) return;
         e.preventDefault();
 
+        // The header is pinned, so clear its measured height or the target lands under it.
         const navHeight = parseInt(
             getComputedStyle(document.documentElement).getPropertyValue("--nav-h"),
             10

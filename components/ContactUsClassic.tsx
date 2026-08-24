@@ -4,10 +4,22 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
+import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
+import { parsePhoneNumber } from "react-phone-number-input";
 
 export default function ContactUsClassic({ data }: { data: any }) {
     const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
     const [redirectUrl, setRedirectUrl] = useState("");
+    const [phone, setPhone] = useState<string | undefined>(undefined);
+    const [phoneError, setPhoneError] = useState<string | null>(null);
+
+    /* This form POSTs natively to Zoho, which expects the dial code and the national
+       number as two separate named fields. The picker holds one E.164 value, so split
+       it back into Zoho's shape for the hidden inputs below — the field NAMES must stay
+       exactly as they were or Zoho drops the submission. */
+    const parsedPhone = phone ? parsePhoneNumber(phone) : undefined;
+    const phoneDialCode = parsedPhone ? `+${parsedPhone.countryCallingCode}` : "";
+    const phoneNationalNumber = parsedPhone ? parsedPhone.nationalNumber : "";
 
     useEffect(() => {
         // Check if we just returned from a successful submission
@@ -120,7 +132,16 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                         encType="multipart/form-data" 
                                         id="form"
                                         className="space-y-5"
-                                        onSubmit={() => setStatus("submitting")}
+                                        onSubmit={(e) => {
+                                            // Native POST, so an invalid number has to be stopped here.
+                                            if (!isValidPhone(phone)) {
+                                                e.preventDefault();
+                                                setPhoneError(phoneErrorMessage(phone));
+                                                return;
+                                            }
+                                            setPhoneError(null);
+                                            setStatus("submitting");
+                                        }}
                                     >
                                         {/* Zoho Hidden Fields */}
                                         <input type="hidden" name="zf_referrer_name" value="" />
@@ -166,24 +187,13 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                             </div>
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Phone Number</label>
-                                                <div className="flex gap-2">
-                                                    <input 
-                                                        required
-                                                        name="PhoneNumber_countrycodeval"
-                                                        type="text" 
-                                                        maxLength={10}
-                                                        className="w-20 bg-white/40 border border-[#101848]/10 rounded-xl px-3 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
-                                                        placeholder="+1"
-                                                    />
-                                                    <input 
-                                                        required
-                                                        name="PhoneNumber_countrycode"
-                                                        type="text" 
-                                                        maxLength={20}
-                                                        className="flex-1 bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
-                                                        placeholder="Number"
-                                                    />
-                                                </div>
+                                                <PhoneField
+                                                    value={phone}
+                                                    onChange={(v) => { setPhone(v); setPhoneError(null); }}
+                                                    error={phoneError ?? undefined}
+                                                />
+                                                <input type="hidden" name="PhoneNumber_countrycodeval" value={phoneDialCode} />
+                                                <input type="hidden" name="PhoneNumber_countrycode" value={phoneNationalNumber} />
                                             </div>
                                         </div>
 

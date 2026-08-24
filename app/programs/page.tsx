@@ -35,22 +35,8 @@ import { useAuth } from "@/hooks/useAuth";
 import CompleteProfileModal from "@/components/auth/CompleteProfileModal";
 import AuthModal from "@/components/auth/AuthModal";
 import ProgramsListClassic from "@/components/programs/ProgramsListClassic";
-
-/**
- * Phone check for the registration form.
- *
- * Deliberately permissive about separators — registrants type "+65 9123 4567",
- * "016-234 5678" and "(65) 91234567" — but strict about the digit count, which is
- * what actually makes a number reachable. E.164 caps a full international number
- * at 15 digits; 7 is the shortest real subscriber number in the regions served
- * (SG is 8, MY 9-10).
- */
-const isValidPhone = (value: string) => {
-    const trimmed = value.trim();
-    if (!/^\+?[\d\s\-()]+$/.test(trimmed)) return false;
-    const digits = trimmed.replace(/\D/g, "");
-    return digits.length >= 7 && digits.length <= 15;
-};
+import { isProfileComplete } from "@/lib/profile";
+import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
 
 const FIELD_BASE = "w-full px-4 py-2.5 bg-gray-50 border rounded-xl focus:border-[#101848] transition-all text-sm font-medium text-[#101848]";
 
@@ -69,6 +55,9 @@ export default function ProgramsPage() {
     const [showRegForm, setShowRegForm] = useState(false);
     const [isCompleteProfileOpen, setIsCompleteProfileOpen] = useState(false);
     const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    /* Held while the completion modal is open so the visitor lands back on the
+       programme they picked instead of an empty page once the profile is saved. */
+    const [pendingProgram, setPendingProgram] = useState<Program | null>(null);
 
     // Registration Form State
     const [regLoading, setRegLoading] = useState(false);
@@ -108,6 +97,15 @@ export default function ProgramsPage() {
     const handleRegisterClick = (program: Program) => {
         if (!isAuthenticated) {
             setIsAuthModalOpen(true);
+            return;
+        }
+        /* Gate on the profile HERE, not at payment. The API rejects an incomplete
+           profile with a 400, but only on submit — so the visitor filled in the whole
+           two-step form and pressed pay before being told to go and complete it. The
+           submit handler still catches that 400 as a backstop. */
+        if (!isProfileComplete(user)) {
+            setPendingProgram(program);
+            setIsCompleteProfileOpen(true);
             return;
         }
         setSelectedProgram(program);
@@ -155,7 +153,9 @@ export default function ProgramsPage() {
         if (!formData.emergency_contact_phone.trim()) {
             errors.emergency_contact_phone = "Required.";
         } else if (!isValidPhone(formData.emergency_contact_phone)) {
-            errors.emergency_contact_phone = "Enter a valid number, e.g. +65 9123 4567.";
+            // Country-aware: judged against the selected country's own rules, and the
+            // message names that country so a number typed under the wrong flag says so.
+            errors.emergency_contact_phone = phoneErrorMessage(formData.emergency_contact_phone);
         }
 
         if (formData.discovery_source === "Introducer") {
@@ -170,7 +170,7 @@ export default function ProgramsPage() {
             if (!introducerPhone.trim()) {
                 errors.introducer_phone = "Required.";
             } else if (!isValidPhone(introducerPhone)) {
-                errors.introducer_phone = "Enter a valid number.";
+                errors.introducer_phone = phoneErrorMessage(introducerPhone);
             }
         }
 
@@ -221,33 +221,40 @@ export default function ProgramsPage() {
         <main className="min-h-screen text-[#1b1b2b] font-sans">
             <Navbar />
 
-            <section className="relative pt-28 md:pt-40 pb-24 overflow-hidden bg-[#101848]">
-                    <div className="absolute inset-0 opacity-20">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,#3b82f6,transparent_50%)]" />
-                        <img src="/upcoming_event.png" className="w-full h-full object-cover mix-blend-overlay" alt="" />
-                    </div>
-                    <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-6"
-                        >
-                            <span className="px-6 py-2 bg-blue-500/10 text-blue-300 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-blue-500/20 inline-block">
-                                Transformative Journeys
-                            </span>
-                            <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif font-bold text-white tracking-tight">
-                                Upcoming Programs
-                            </h1>
-                            <div className="w-24 h-1 bg-blue-500/30 mx-auto rounded-full" />
-                            <p className="text-blue-100/60 max-w-2xl mx-auto text-lg italic font-serif">
-                                "The purpose of life is to be useful, to be honorable, to be compassionate, to have it make some difference that you have lived and lived well."
-                            </p>
-                        </motion.div>
-                    </div>
+            {/* No background of its own — the page marble shows through. The navy
+                panel and its `upcoming_event.png` overlay are gone, so the copy is
+                recoloured to the classic dark-on-light palette; left white it would
+                have been invisible against the pale plate.
+
+                Padding is small because the navbar is STICKY, not fixed: this section
+                already begins below it in normal flow. The old `pt-40` was clearing a
+                navbar that never overlapped it, leaving 160px of blank plate above the
+                heading on desktop. */}
+            <section className="relative pt-10 md:pt-16 pb-8 md:pb-10 overflow-hidden">
+                <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6"
+                    >
+                        <span className="px-6 py-2 bg-[#101848]/5 text-[#101848]/70 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-[#101848]/15 inline-block">
+                            Transformative Journeys
+                        </span>
+                        <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif font-bold text-[#101848] tracking-tight">
+                            Upcoming Programs
+                        </h1>
+                        <div className="w-24 h-1 bg-[#101848]/20 mx-auto rounded-full" />
+                        <p className="text-[#233252]/70 max-w-2xl mx-auto text-base sm:text-lg italic font-serif">
+                            "The purpose of life is to be useful, to be honorable, to be compassionate, to have it make some difference that you have lived and lived well."
+                        </p>
+                    </motion.div>
+                </div>
             </section>
 
-            {/* Programs List Section */}
-            <section className="py-10 md:py-14 max-w-7xl mx-auto px-6">
+            {/* Programs List Section. Only a small top padding — the heading block
+                above supplies the separation, and doubling both sides pushed the first
+                card most of a screen down. */}
+            <section className="pt-2 md:pt-4 pb-10 md:pb-14 max-w-7xl mx-auto px-6">
                 <ProgramsListClassic
                     programs={programs}
                     loading={loading}
@@ -330,7 +337,7 @@ export default function ProgramsPage() {
                                                 {/* Step 1: Info Grid */}
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6">
                                                     {/* Column 1: Personal Preferences */}
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-4 min-w-0">
                                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Preferences</h4>
                                                         <div className="space-y-3">
                                                             <div className="space-y-1.5">
@@ -387,7 +394,7 @@ export default function ProgramsPage() {
                                                     </div>
 
                                                     {/* Column 2: Emergency Contact */}
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-4 min-w-0">
                                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Emergency Contact</h4>
                                                         <div className="space-y-3">
                                                             <div className="space-y-1.5">
@@ -427,19 +434,25 @@ export default function ProgramsPage() {
                                                                     <PhoneCall size={12} className="text-[#101848]/40" />
                                                                     Contact Phone
                                                                 </label>
-                                                                <input
-                                                                    type="tel" inputMode="tel" name="emergency_contact_phone" required value={formData.emergency_contact_phone} onChange={handleFormChange}
-                                                                    aria-invalid={!!fieldErrors.emergency_contact_phone}
-                                                                    className={fieldClass(!!fieldErrors.emergency_contact_phone)}
-                                                                    placeholder="+65 9123 4567"
+                                                                <PhoneField
+                                                                    value={formData.emergency_contact_phone}
+                                                                    onChange={(v) => {
+                                                                        setFormData(prev => ({ ...prev, emergency_contact_phone: v || "" }));
+                                                                        setFieldErrors(prev => {
+                                                                            if (!prev.emergency_contact_phone) return prev;
+                                                                            const next = { ...prev };
+                                                                            delete next.emergency_contact_phone;
+                                                                            return next;
+                                                                        });
+                                                                    }}
+                                                                    error={fieldErrors.emergency_contact_phone}
                                                                 />
-                                                                <FieldError message={fieldErrors.emergency_contact_phone} />
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     {/* Column 3: Misc & Health */}
-                                                    <div className="space-y-4">
+                                                    <div className="space-y-4 min-w-0">
                                                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#101848]/40 mb-3 border-b border-black/5 pb-2">Additional Info</h4>
                                                         <div className="space-y-3">
                                                             <div className="space-y-1.5">
@@ -488,13 +501,19 @@ export default function ProgramsPage() {
                                                                             <PhoneCall size={12} className="text-[#101848]/40" />
                                                                             Phone
                                                                         </label>
-                                                                        <input
-                                                                            type="tel" inputMode="tel" name="introducer_phone" required value={formData.introducer_phone} onChange={handleFormChange}
-                                                                            aria-invalid={!!fieldErrors.introducer_phone}
-                                                                            className={fieldClass(!!fieldErrors.introducer_phone)}
-                                                                            placeholder="+65 9123 4567"
+                                                                        <PhoneField
+                                                                            value={formData.introducer_phone}
+                                                                            onChange={(v) => {
+                                                                                setFormData(prev => ({ ...prev, introducer_phone: v || "" }));
+                                                                                setFieldErrors(prev => {
+                                                                                    if (!prev.introducer_phone) return prev;
+                                                                                    const next = { ...prev };
+                                                                                    delete next.introducer_phone;
+                                                                                    return next;
+                                                                                });
+                                                                            }}
+                                                                            error={fieldErrors.introducer_phone}
                                                                         />
-                                                                        <FieldError message={fieldErrors.introducer_phone} />
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -607,7 +626,17 @@ export default function ProgramsPage() {
 
             <CompleteProfileModal
                 isOpen={isCompleteProfileOpen}
-                onClose={() => setIsCompleteProfileOpen(false)}
+                onClose={() => {
+                    setIsCompleteProfileOpen(false);
+                    /* Resume where they left off: if the profile is now complete, open
+                       the registration form for the programme they originally picked
+                       rather than dropping them back on the list. */
+                    const resume = pendingProgram;
+                    setPendingProgram(null);
+                    if (resume && isProfileComplete(user)) {
+                        handleRegisterClick(resume);
+                    }
+                }}
             />
 
             <AuthModal

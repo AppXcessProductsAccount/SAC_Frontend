@@ -123,17 +123,6 @@ export default function SocietySection({ content, type }: { content?: any, type?
 
     return (
         <section className="relative py-10 md:py-14 overflow-hidden">
-            <div className="absolute inset-0 z-0">
-                <img
-                    src={content?.image_url || "/upcoming_event.png"}
-                    alt="Section Background"
-                    className="w-full h-full object-cover opacity-80"
-                    style={{
-                        maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
-                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)'
-                    }}
-                />
-            </div>
 
             <div className="relative z-10 max-w-[1400px] mx-auto px-5 sm:px-8 md:px-12">
                 {(!type || type === 'SASM') && renderSASM()}

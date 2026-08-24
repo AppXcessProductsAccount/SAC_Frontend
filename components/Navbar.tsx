@@ -56,29 +56,30 @@ export default function Navbar() {
     const [logoUrl, setLogoUrl] = useState("/logo.png");
     const [brandName, setBrandName] = useState("SELF AWARENESS CENTRE");
 
-    /* The wordmark beside the logo. It was two hard-coded words — "SELF AWARENESS" —
-       so the centre's name was cut short, and `brandName` (already fetched from the
-       CMS, already defaulting to the full name) only ever reached the logo's alt text.
-       The first word keeps the serif weight and the rest stays in the light spaced
-       sans, so the look is unchanged apart from the word that was missing. */
-    const renderBrand = (restSizeClass: string) => {
-        const [firstWord, ...rest] = brandName.trim().split(/\s+/);
-        return (
-            <>
-                {firstWord}
-                {rest.length > 0 && (
-                    /* `font-serif`, matching the first word. This span used to force
-                       `font-sans`, so "SELF" rendered in Lora while "AWARENESS CENTRE"
-                       rendered in a different face beside it. The lighter weight and
-                       wider tracking stay — that hierarchy is intended, the typeface
-                       switch was not. */
-                    <span className={`font-light opacity-80 font-serif tracking-widest ml-1 ${restSizeClass}`}>
-                        {rest.join(" ")}
-                    </span>
-                )}
-            </>
-        );
-    };
+    /* The wordmark beside the logo, from `brandName` (CMS-fetched, defaulting to the
+       full centre name).
+
+       It renders as ONE lockup — every word in the same face, weight,
+       size, tracking and opacity — and is styled entirely by its wrapper span.
+
+       It used to split after the first word and render the remainder differently on
+       five axes at once: font-light vs the inherited font-medium, 10/11/12px vs
+       13/15/16px, opacity-80 vs full, tracking-widest vs tracking-wide, and
+       (until recently) font-sans vs font-serif. So "SELF" read as a bolder, larger,
+       darker word sitting next to a different-looking one.
+
+       The weight was the worst of it: Lora is loaded in the root layout at
+       400/500/600/700 only, so `font-light` (300) had no real face to resolve to and
+       the browser substituted the nearest weight or synthesised one — the trailing
+       words were never rendering the weight they asked for. */
+    const renderBrand = () => brandName.trim();
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        handleScroll(); // sync on mount — a reload half-way down the page must not render "unscrolled"
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     useEffect(() => {
         const fetchNavData = async () => {
@@ -166,13 +167,12 @@ export default function Navbar() {
     }, []);
 
     /* Publish the navbar's real height into --nav-h.
-       The variable was a hard-coded guess (76px / 92px) but the bar is not one fixed
-       height: the modern theme wraps its contents in a floating pill with its own
-       padding, and the desktop link row is taller than the logo. The guess fell short
-       of the modern bar, so the hero — which pulls itself up by --nav-h to sit under a
-       transparent navbar — stopped a few pixels below the top of the page and left a
-       strip of background above the slider. Measuring covers every breakpoint, both
-       themes, and a theme switch at runtime. */
+       The variable has hard-coded fallbacks in globals.css (76px / 92px) so CSS depending
+       on it is sane before this runs, but the bar is not one fixed height — the desktop
+       link row is taller than the logo, and padding differs per breakpoint. The hero
+       subtracts --nav-h from its own height so header + slide fill the viewport exactly,
+       so a stale guess there shows up as a slide that overflows the fold or falls short
+       of it. Measuring covers every breakpoint and any runtime reflow. */
     useEffect(() => {
         const nav = navRef.current;
         if (!nav) return;
@@ -198,13 +198,6 @@ export default function Navbar() {
             window.removeEventListener("resize", publishHeight);
             window.removeEventListener("orientationchange", publishHeight);
         };
-    }, []);
-
-    useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        handleScroll(); // sync on mount — a reload half-way down the page must not render "unscrolled"
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     useEffect(() => {
@@ -288,6 +281,8 @@ export default function Navbar() {
         if (!element) return; // let the router handle it — the section isn't on this page
         e.preventDefault();
 
+        /* Subtract the header: it is pinned, so an anchor scrolled flush to the top of
+           the viewport would land underneath it. --nav-h is the measured height. */
         const navHeight = parseInt(
             getComputedStyle(document.documentElement).getPropertyValue("--nav-h"),
             10
@@ -302,19 +297,34 @@ export default function Navbar() {
 
     return (
         <>
-        <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 backdrop-blur-md ${scrolled ? "bg-background-light/85 shadow-lg" : "bg-background-light/55"}`}>
+        {/* Sticky, and shared by every page via this one component.
+
+            Transparent at rest so it sits directly on the fixed marble plate with no
+            band of its own; near-solid once scrolled, so content passing underneath —
+            the hero slide first — is covered cleanly instead of showing through. That
+            opaque scrolled state is what keeps a pinned header from looking like it is
+            hiding part of the image. */}
+        <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 ${scrolled ? "bg-background-light/95 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
             <div className="relative z-10 max-w-[1400px] mx-auto flex items-center justify-between gap-3 transition-all duration-300 px-1 py-0 md:px-6">
                 {/* Logo Section */}
                 {/* `min-w-0`, not `shrink-0`: the brand name comes from the CMS and is
                     set `nowrap`, so an unshrinkable logo block pushed the row wider than
                     the viewport on phones and the header ran off screen. It may now give
-                    up width, and the name ellipsises rather than forcing the overflow. */}
-                <Link href="/" className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-1/4 relative z-40 group">
+                    up width, and the name wraps rather than forcing the overflow.
+
+                    No `lg:w-1/4` cap: at the 1024px breakpoint a quarter is ~240px while
+                    the logo plus the full wordmark needs ~228px, so the name was being
+                    ellipsised on desktop for the sake of a column width nothing needs.
+                    The centre links are `flex-1`, so they still centre without it. */}
+                <Link href="/" className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-auto relative z-40 group">
                     <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0">
                         <Image src={getFullUrl(logoUrl)} alt={`${brandName} Logo`} fill className="object-cover" />
                     </div>
-                    <span className="font-serif text-[13px] sm:text-[15px] md:text-[16px] tracking-wide font-medium truncate min-w-0 text-[#101848]">
-                        {renderBrand("text-[10px] sm:text-[11px] md:text-[12px]")}
+                    {/* No `truncate`: it turned a slightly-too-wide wordmark into "SELF
+                        AWAR…". Without it the name wraps if it ever runs out of room,
+                        which shows every word and still cannot overflow the viewport. */}
+                    <span className="font-serif text-[13px] sm:text-[15px] md:text-[16px] tracking-wide font-medium leading-tight min-w-0 text-[#101848]">
+                        {renderBrand()}
                     </span>
                 </Link>
 
@@ -399,7 +409,7 @@ export default function Navbar() {
                 </div>
 
                 {/* Right Side Actions */}
-                <div className="flex items-center justify-end gap-2 md:gap-3 shrink-0 lg:w-1/4">
+                <div className="flex items-center justify-end gap-2 md:gap-3 shrink-0 lg:w-auto">
                     {isAuthenticated ? (
                         <div className="relative" data-user-menu>
                             <button
@@ -506,7 +516,7 @@ export default function Navbar() {
                         >
                             <div className="flex items-center justify-between px-5 py-4 border-b border-black/5 shrink-0">
                                 <span className="font-serif text-[15px] tracking-wide font-medium text-[#101848]">
-                                    {renderBrand("text-[11px]")}
+                                    {renderBrand()}
                                 </span>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}

@@ -177,9 +177,10 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-bold text-black/70 uppercase">Occupation</label>
+                                            <label className="text-xs font-bold text-black/70 uppercase">Occupation <span className="text-red-500">*</span></label>
                                             <input
                                                 type="text"
+                                                required
                                                 value={occupation}
                                                 onChange={(e) => setOccupation(e.target.value)}
                                                 className="w-full px-4 py-3 bg-gray-50 border border-black/5 focus:border-black focus:outline-none transition-all text-sm rounded-2xl"
@@ -189,9 +190,10 @@ export default function CompleteProfileModal({ isOpen, onClose }: CompleteProfil
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-bold text-black/70 uppercase">Address</label>
+                                        <label className="text-xs font-bold text-black/70 uppercase">Address <span className="text-red-500">*</span></label>
                                         <input
                                             type="text"
+                                            required
                                             value={address}
                                             onChange={(e) => setAddress(e.target.value)}
                                             className="w-full px-4 py-3 bg-gray-50 border border-black/5 focus:border-black focus:outline-none transition-all text-sm rounded-2xl"
