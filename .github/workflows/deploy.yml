@@ -9,6 +9,7 @@ on:
 env:
   DOCKER_IMAGE: meditation-frontend
   DOCKER_VERSION: v1.0
+  DEPLOY_DIR: meditation-frontend
 
 jobs:
   build-and-deploy:
@@ -38,57 +39,90 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE }}:latest
 
       - name: Configure SSH
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          set -euo pipefail
 
-      - name: Create deploy directory on EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
-          "mkdir -p /home/${{ secrets.EC2_USER }}/meditation-frontend"
+          # Trim stray whitespace/newlines that break the user@host target
+          HOST="$(printf '%s' "$EC2_HOST" | tr -d '[:space:]')"
+          USER_NAME="$(printf '%s' "$EC2_USER" | tr -d '[:space:]')"
+
+          if [ -z "$HOST" ]; then echo "::error::Secret EC2_HOST is empty"; exit 1; fi
+          if [ -z "$USER_NAME" ]; then echo "::error::Secret EC2_USER is empty"; exit 1; fi
+          if [ -z "${EC2_SSH_KEY:-}" ]; then echo "::error::Secret EC2_SSH_KEY is empty"; exit 1; fi
+
+          # Safe diagnostics: report secret shape, never the value
+          echo "EC2_HOST   : $(printf %s "$EC2_HOST" | wc -c) bytes raw -> $(printf %s "$HOST" | wc -c) trimmed"
+          echo "EC2_USER   : $(printf %s "$EC2_USER" | wc -c) bytes raw -> $(printf %s "$USER_NAME" | wc -c) trimmed"
+          echo "EC2_SSH_KEY: $(printf %s "$EC2_SSH_KEY" | wc -c) bytes, $(printf %s "$EC2_SSH_KEY" | grep -c BEGIN) BEGIN line(s)"
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # Reusable, whitespace-safe SSH target for later steps
+          echo "SSH_TARGET=${USER_NAME}@${HOST}" >> "$GITHUB_ENV"
 
       - name: Upload docker-compose.yml to EC2
         run: |
-          scp -o StrictHostKeyChecking=no docker-compose.yml \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/meditation-frontend/docker-compose.yml
+          set -euo pipefail
+          # Home-relative path: no assumption that home is /home/<user>.
+          # Streaming over ssh also avoids OpenSSH 9 scp/sftp parent-dir issues.
+          ssh -o StrictHostKeyChecking=no "$SSH_TARGET" \
+            "mkdir -p ~/'${DEPLOY_DIR}' && cat > ~/'${DEPLOY_DIR}'/docker-compose.yml" \
+            < docker-compose.yml
+
+          echo "Uploaded to:"
+          ssh -o StrictHostKeyChecking=no "$SSH_TARGET" \
+            "ls -l ~/'${DEPLOY_DIR}'/docker-compose.yml"
 
       - name: Deploy to EC2 using docker-compose
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} bash << DEPLOY_SCRIPT
-            set -e
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            
-            cd /home/${{ secrets.EC2_USER }}/meditation-frontend
-            
-            # Export variables for docker-compose
-            export DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}'
-            export DOCKER_VERSION='${{ env.DOCKER_VERSION }}'
-            export NEXT_PUBLIC_API_URL='${{ secrets.NEXT_PUBLIC_API_URL }}'
-            
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no "$SSH_TARGET" \
+            DEPLOY_DIR="${DEPLOY_DIR}" \
+            DOCKERHUB_USERNAME='${{ secrets.DOCKERHUB_USERNAME }}' \
+            DOCKERHUB_TOKEN='${{ secrets.DOCKERHUB_TOKEN }}' \
+            DOCKER_VERSION='${{ env.DOCKER_VERSION }}' \
+            NEXT_PUBLIC_API_URL='${{ secrets.NEXT_PUBLIC_API_URL }}' \
+            bash -s << 'DEPLOY_SCRIPT'
+            set -euo pipefail
+
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+            cd ~/"$DEPLOY_DIR"
+
             echo "🛑 Stopping and removing existing containers"
             docker compose stop frontend || true
             docker compose rm -f frontend || true
-            
+
             echo "⬇️ Pulling latest image"
             docker compose pull frontend
-            
+
             echo "🚀 Starting frontend service"
-            docker compose up -d frontend
-            
+            docker compose up -d --no-build frontend
+
             echo "📊 Container status:"
             docker compose ps
           DEPLOY_SCRIPT
 
       - name: Verify deployment
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} bash << VERIFY_SCRIPT
-            cd /home/${{ secrets.EC2_USER }}/meditation-frontend
-            if docker compose ps | grep -q frontend; then
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no "$SSH_TARGET" \
+            DEPLOY_DIR="${DEPLOY_DIR}" bash -s << 'VERIFY_SCRIPT'
+            set -euo pipefail
+            cd ~/"$DEPLOY_DIR"
+            CID="$(docker compose ps -q frontend)"
+            if [ -n "$CID" ] && [ "$(docker inspect -f '{{.State.Running}}' "$CID")" = "true" ]; then
               echo "✅ Frontend running OK"
             else
               echo "❌ Frontend FAILED"
+              docker compose logs --tail 50 frontend || true
               exit 1
             fi
           VERIFY_SCRIPT
