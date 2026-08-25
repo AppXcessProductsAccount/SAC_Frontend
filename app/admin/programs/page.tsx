@@ -25,7 +25,11 @@ export default function ProgramsAdminPage() {
         const fetchData = async () => {
             try {
                 const programs = await cmsApi.getPrograms();
-                setData(programs);
+                // A section that has not been authored yet answers null; keep the
+                // form's own defaults rather than rendering from null.
+                if (programs && typeof programs === "object") {
+                    setData((prev) => ({ ...prev, ...programs }));
+                }
             } catch (error) {
                 console.error("Failed to fetch programs:", error);
             } finally {
@@ -119,13 +123,13 @@ export default function ProgramsAdminPage() {
                     </div>
 
                     <div className="bg-gray-50 rounded-2xl p-6 flex flex-col items-center justify-center border border-dashed border-gray-200">
-                        <span className="text-xs font-semibold test-black uppercase tracking-wider mb-4">Background Preview</span>
+                        <span className="text-xs font-semibold text-black uppercase tracking-wider mb-4">Background Preview</span>
                         {data.background_image_url ? (
                             <div className="relative w-full aspect-video bg-white rounded-xl shadow-sm overflow-hidden">
                                 <img src={getFullUrl(data.background_image_url)} alt="Preview" className="w-full h-full object-cover" />
                             </div>
                         ) : (
-                            <div className="aspect-video w-full flex items-center justify-center test-black">No Image</div>
+                            <div className="aspect-video w-full flex items-center justify-center text-black">No Image</div>
                         )}
                     </div>
                 </div>

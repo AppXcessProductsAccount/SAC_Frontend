@@ -85,12 +85,12 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                     {/* Header */}
                     <div className="p-8 md:p-10 flex justify-between items-start border-b border-gray-50">
                         <div className="space-y-1">
-                            <span className="text-[10px] font-black test-black uppercase tracking-[0.2em] block">Registration Profile</span>
+                            <span className="text-[10px] font-black text-black uppercase tracking-[0.2em] block">Registration Profile</span>
                             <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#101848]">Full Record Details</h2>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 test-black hover:text-gray-800 transition-colors rounded-full hover:bg-gray-50"
+                            className="p-2 text-black hover:text-gray-800 transition-colors rounded-full hover:bg-gray-50"
                         >
                             <X size={24} />
                         </button>
@@ -104,24 +104,24 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                             <div className="space-y-8">
                                 {/* Personal Preferences */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <Info size={14} /> Personal Preferences
                                     </h4>
                                     <div className="bg-white border border-gray-100 rounded-[24px] divide-y divide-gray-50 overflow-hidden">
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Preferred Language</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Preferred Language</span>
                                             <span className="text-sm font-bold text-gray-800">{registration.preferred_language}</span>
                                         </div>
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Meal Preference</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Meal Preference</span>
                                             <span className="text-sm font-bold text-gray-800">{registration.meal_preference}</span>
                                         </div>
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">NRIC (Last 4)</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">NRIC (Last 4)</span>
                                             <span className="text-sm font-bold text-gray-800">{registration.nric_last_4}</span>
                                         </div>
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Status</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Status</span>
                                             <span className={`inline-block text-xs font-bold px-3 py-1 rounded-full border ${getStatusColor(registration.status)}`}>
                                                 {registration.status}
                                             </span>
@@ -131,7 +131,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
 
                                 {/* Health Info */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <HeartPulse size={14} className="text-red-400" /> Health Information
                                     </h4>
                                     <div className="p-6 bg-red-50/30 border border-red-100 rounded-[24px]">
@@ -146,23 +146,23 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                             <div className="space-y-8">
                                 {/* Payment Summary */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <CreditCard size={14} /> Payment Summary
                                     </h4>
                                     <div className="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 divide-x divide-gray-50 border-b border-gray-50">
                                             <div className="p-6">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Amount Paid</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Amount Paid</span>
                                                 <span className="text-lg font-bold text-green-600">MYR {registration.amount_paid.toFixed(2)}</span>
                                             </div>
                                             <div className="p-6">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Balance Due</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Balance Due</span>
                                                 <span className="text-lg font-bold text-red-500">MYR {registration.balance_amount.toFixed(2)}</span>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 divide-x divide-gray-50">
                                             <div className="p-6">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Payment Status</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Payment Status</span>
                                                 <div className="flex items-center gap-2">
                                                     <div className={`w-2 h-2 rounded-full ${registration.payment_status?.toLowerCase() === 'completed' ? 'bg-green-500' :
                                                             registration.payment_status?.toLowerCase() === 'partial' ? 'bg-blue-500' :
@@ -174,7 +174,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                                                 </div>
                                             </div>
                                             <div className="p-6">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Due Date</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Due Date</span>
                                                 <span className="text-sm font-bold text-gray-800">{formatDate(registration.due_date)}</span>
                                             </div>
                                         </div>
@@ -183,21 +183,21 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
 
                                 {/* Source & Referrals */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <Share2 size={14} /> Source & Referrals
                                     </h4>
                                     <div className="bg-white border border-gray-100 rounded-[24px] divide-y divide-gray-50 overflow-hidden">
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Discovery Source</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Discovery Source</span>
                                             <span className="text-sm font-bold text-gray-800">{registration.discovery_source}</span>
                                         </div>
                                         <div className="p-5">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Referred By</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Referred By</span>
                                             <span className="text-sm font-bold text-gray-800">{registration.referred_by || "None"}</span>
                                         </div>
                                         {(registration.introducer_name || registration.introducer_phone) && (
                                             <div className="p-5">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-1">Introducer</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-1">Introducer</span>
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-bold text-[#101848]">{registration.introducer_name}</span>
                                                     <span className="text-xs font-medium text-gray-500">{registration.introducer_phone}</span>
@@ -212,18 +212,18 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                             <div className="space-y-8">
                                 {/* Emergency Contact */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <PhoneCall size={14} /> Emergency Contact
                                     </h4>
                                     <div className="bg-white border border-gray-100 rounded-[32px] p-6 space-y-6">
                                         <div className="flex justify-between items-start">
                                             <div className="space-y-1">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block">Contact Name</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block">Contact Name</span>
                                                 <span className="text-sm font-bold text-[#101848]">{registration.emergency_contact_name}</span>
                                             </div>
                                             <div className="text-right space-y-1">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block">Relation</span>
-                                                <span className="text-[10px] font-black test-black uppercase">{registration.emergency_contact_relation}</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block">Relation</span>
+                                                <span className="text-[10px] font-black text-black uppercase">{registration.emergency_contact_relation}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
@@ -231,7 +231,7 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
                                                 <PhoneCall size={18} />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest">Phone Number</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest">Phone Number</span>
                                                 <span className="text-sm font-bold text-[#101848]">{registration.emergency_contact_phone}</span>
                                             </div>
                                         </div>
@@ -240,27 +240,27 @@ export default function RegistrationDetailsModal({ registration, onClose }: Regi
 
                                 {/* Technical Metadata */}
                                 <div className="space-y-4">
-                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] test-black">
+                                    <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
                                         <FileText size={14} /> Technical Metadata
                                     </h4>
                                     <div className="bg-gray-50/50 border border-gray-100 rounded-[24px] p-6 space-y-4">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest">Applied On</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest">Applied On</span>
                                             <span className="text-[10px] font-bold text-gray-600">{formatFullDate(registration.created_at)}</span>
                                         </div>
                                         <div className="space-y-1">
-                                            <span className="text-[9px] font-black test-black uppercase tracking-widest block">Registration ID</span>
-                                            <span className="text-[10px] font-mono test-black break-all">{registration.id}</span>
+                                            <span className="text-[9px] font-black text-black uppercase tracking-widest block">Registration ID</span>
+                                            <span className="text-[10px] font-mono text-black break-all">{registration.id}</span>
                                         </div>
                                         {(registration.hitpay_payment_id || registration.payment_request_id) && (
                                             <div className="space-y-1">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block">Payment ID</span>
-                                                <span className="text-[10px] font-mono test-black break-all">{registration.hitpay_payment_id || registration.payment_request_id}</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block">Payment ID</span>
+                                                <span className="text-[10px] font-mono text-black break-all">{registration.hitpay_payment_id || registration.payment_request_id}</span>
                                             </div>
                                         )}
                                         {registration.payment_url && (
                                             <div className="pt-2">
-                                                <span className="text-[9px] font-black test-black uppercase tracking-widest block mb-2">Checkout Link</span>
+                                                <span className="text-[9px] font-black text-black uppercase tracking-widest block mb-2">Checkout Link</span>
                                                 <a
                                                     href={registration.payment_url}
                                                     target="_blank"

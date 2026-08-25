@@ -17,7 +17,9 @@ export default function AdminHeroPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await cmsApi.getHero();
+                // Null for a section with no content yet; the field fallbacks below
+                // only apply if we do not throw reaching into it first.
+                const data = (await cmsApi.getHero()) ?? ({} as any);
                 setTitle(data.title || "Awaken to Your True Self");
                 setSubtitle(data.subtitle || "For a Life of Inner Peace, Wisdom, and Transformation");
                 setButtonText(data.button_text || "Explore Programs");
@@ -119,7 +121,7 @@ export default function AdminHeroPage() {
                                     type="text"
                                     value={bgImageUrl}
                                     onChange={(e) => setBgImageUrl(e.target.value)}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-xs test-black"
+                                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-xs text-black"
                                     placeholder="/hero_section.png"
                                 />
                             </div>
@@ -134,7 +136,7 @@ export default function AdminHeroPage() {
                     </div>
 
                     <div className="bg-gray-50 rounded-2xl p-6 flex flex-col items-center justify-center border border-dashed border-gray-200">
-                        <span className="text-xs font-semibold test-black uppercase tracking-wider mb-4">Background Preview</span>
+                        <span className="text-xs font-semibold text-black uppercase tracking-wider mb-4">Background Preview</span>
                         {bgImageUrl ? (
                             <div className="relative w-full aspect-video flex items-center justify-center bg-white rounded-xl shadow-sm overflow-hidden">
                                 <img
@@ -153,11 +155,11 @@ export default function AdminHeroPage() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="aspect-video w-full flex items-center justify-center test-black">
+                            <div className="aspect-video w-full flex items-center justify-center text-black">
                                 No background image selected
                             </div>
                         )}
-                        <p className="mt-4 text-[10px] test-black text-center break-all">{fullBgUrl}</p>
+                        <p className="mt-4 text-[10px] text-black text-center break-all">{fullBgUrl}</p>
                     </div>
                 </div>
 

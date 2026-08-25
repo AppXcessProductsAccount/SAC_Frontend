@@ -22,7 +22,9 @@ export default function AdminNavbarPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await cmsApi.getNavigation();
+                // Null for a section with no content yet; the field fallbacks below
+                // only apply if we do not throw reaching into it first.
+                const data = (await cmsApi.getNavigation()) ?? ({} as any);
                 setLogoUrl(data.logo_url || "/logo.png");
                 setBrandName(data.brand_name || "SELF AWARENESS CENTRE");
                 setLinks(data.links || []);
@@ -73,17 +75,20 @@ export default function AdminNavbarPage() {
     };
 
     const addLink = () => {
-        setLinks([...links, { label: "New Link", url: "#", id: "new-id" }]);
+        setLinks((prev) => [
+            ...prev,
+            { label: "New Link", url: "#", id: `link-${prev.length + 1}` },
+        ]);
     };
 
     const removeLink = (index: number) => {
-        setLinks(links.filter((_, i) => i !== index));
+        setLinks((prev) => prev.filter((_, i) => i !== index));
     };
 
     const updateLink = (index: number, field: keyof NavigationLink, value: string) => {
-        const newLinks = [...links];
-        newLinks[index][field] = value;
-        setLinks(newLinks);
+        // Replace the row rather than writing through the shared reference:
+        // [...links] copies the array, not the objects inside it.
+        setLinks((prev) => prev.map((link, i) => (i === index ? { ...link, [field]: value } : link)));
     };
 
     if (loading) return <div className="text-center py-12 md:py-20">Loading...</div>;
@@ -123,14 +128,14 @@ export default function AdminNavbarPage() {
                                         {uploading ? "Uploading..." : "Upload New Logo"}
                                         <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*" disabled={uploading} />
                                     </label>
-                                    <span className="text-xs test-black">Supported: JPG, PNG, SVG</span>
+                                    <span className="text-xs text-black">Supported: JPG, PNG, SVG</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="bg-gray-50 rounded-2xl p-6 flex flex-col items-center justify-center border border-dashed border-gray-200">
-                        <span className="text-xs font-semibold test-black uppercase tracking-wider mb-4">Logo Preview</span>
+                        <span className="text-xs font-semibold text-black uppercase tracking-wider mb-4">Logo Preview</span>
                         {logoUrl ? (
                             <div className="relative h-32 w-full flex items-center justify-center bg-white rounded-xl shadow-sm p-4 overflow-hidden">
                                 <img
@@ -143,11 +148,11 @@ export default function AdminNavbarPage() {
                                 />
                             </div>
                         ) : (
-                            <div className="h-32 w-full flex items-center justify-center test-black">
+                            <div className="h-32 w-full flex items-center justify-center text-black">
                                 No logo selected
                             </div>
                         )}
-                        <p className="mt-4 text-[10px] test-black text-center break-all">{fullLogoUrl}</p>
+                        <p className="mt-4 text-[10px] text-black text-center break-all">{fullLogoUrl}</p>
                     </div>
                 </div>
 

@@ -32,7 +32,9 @@ export default function TestimonialsAdminPage() {
     const fetchTestimonials = async () => {
         try {
             const data = await cmsApi.getTestimonials();
-            setTestimonials(data);
+            // 404 answers null, and a malformed payload is not iterable either;
+            // both would throw on .map during render.
+            setTestimonials(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch testimonials:", error);
         } finally {

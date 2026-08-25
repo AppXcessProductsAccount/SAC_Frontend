@@ -12,20 +12,31 @@ export default function AdminMembershipsPage() {
     const [activeTab, setActiveTab] = useState<"list" | "applications">("list");
     const [applications, setApplications] = useState<any[]>([]);
 
-    const { tokens, isAuthenticated } = useAuth();
+    const { tokens, loading: authLoading } = useAuth();
     const token = tokens?.access_token || "";
 
+    /* AuthProvider hydrates from localStorage in its own effect, so on the first
+       render `token` is still "". Fetching then sent `Bearer ` and the empty
+       result was never retried, because the effect had no dependencies. Wait for
+       auth to settle, then key the fetch on the token itself. */
     useEffect(() => {
+        if (authLoading) return;
+        if (!token) {
+            setLoading(false);
+            return;
+        }
         fetchMemberships();
         fetchApplications();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authLoading, token]);
 
     const fetchMemberships = async () => {
         try {
             const data = await membershipApi.adminListAll(token);
-            setMemberships(data);
-        } catch (error) {
+            setMemberships(Array.isArray(data) ? data : []);
+        } catch (error: any) {
             console.error(error);
+            setMessage(error?.message || "Could not load memberships.");
         } finally {
             setLoading(false);
         }
@@ -34,9 +45,10 @@ export default function AdminMembershipsPage() {
     const fetchApplications = async () => {
         try {
             const data = await membershipApi.adminListApplications(token);
-            setApplications(data);
-        } catch (error) {
+            setApplications(Array.isArray(data) ? data : []);
+        } catch (error: any) {
             console.error(error);
+            setMessage(error?.message || "Could not load applications.");
         }
     };
 

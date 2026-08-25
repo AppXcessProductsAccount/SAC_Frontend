@@ -4,6 +4,54 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { isAdminRole } from "@/lib/api/token";
+
+/**
+ * Role gate. The middleware already turned away anyone without a session cookie;
+ * this is what distinguishes a signed-in member from an admin, because the role
+ * is not readable at the edge.
+ *
+ * It gates rendering only. Every admin request also carries the bearer token, so
+ * the API stays the actual authority — a tampered localStorage role buys nothing.
+ */
+function AdminGuard({ children }: { children: React.ReactNode }) {
+    const { user, isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6">
+                <div className="w-12 h-12 border-4 border-[#101848]/10 border-t-[#101848] rounded-full animate-spin" />
+                <p className="mt-4 text-sm text-[#101848]/60">Checking your access...</p>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated || !isAdminRole(user?.role)) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 max-w-md text-center">
+                    <h1 className="text-2xl font-serif font-bold text-[#101848] mb-3">
+                        {isAuthenticated ? "You do not have admin access" : "Sign in to continue"}
+                    </h1>
+                    <p className="text-gray-600 text-sm mb-6">
+                        {isAuthenticated
+                            ? "This account is not an administrator. Ask an existing admin to grant you access."
+                            : "The CMS admin is only available to administrators."}
+                    </p>
+                    <Link
+                        href="/"
+                        className="inline-block bg-[#101848] text-white px-6 py-2.5 rounded-xl font-medium hover:bg-[#1b1b2b] transition-colors"
+                    >
+                        Back to Site
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    return <>{children}</>;
+}
 
 export default function AdminLayout({
     children,
@@ -79,6 +127,7 @@ export default function AdminLayout({
     );
 
     return (
+        <AdminGuard>
         <div className="lg:flex min-h-screen bg-gray-50">
             {/* Mobile top bar — the 256px sidebar left only ~100px of usable width
                 on a phone, with no way to collapse it. */}
@@ -126,5 +175,6 @@ export default function AdminLayout({
                 </div>
             </main>
         </div>
+        </AdminGuard>
     );
 }

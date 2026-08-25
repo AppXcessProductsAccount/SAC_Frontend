@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "./api/config";
+import { authHeaders } from "./api/token";
 
 export const cmsApi = {
     // 1. Discovery: List Pages
@@ -137,7 +138,7 @@ export const cmsApi = {
     updateHero: async (data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/hero`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to update hero");
@@ -147,7 +148,7 @@ export const cmsApi = {
     updateNavigation: async (data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/navigation`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to update navigation");
@@ -159,7 +160,7 @@ export const cmsApi = {
     updateSection: async (sectionId: string, data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/sections/${sectionId}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error(`Failed to update section: ${sectionId}`);
@@ -170,7 +171,7 @@ export const cmsApi = {
     createEvent: async (data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to create event");
@@ -179,7 +180,7 @@ export const cmsApi = {
     updateEvent: async (id: number | string, data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events/${id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to update event");
@@ -188,6 +189,7 @@ export const cmsApi = {
     deleteEvent: async (id: number | string) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/events/${id}`, {
             method: "DELETE",
+            headers: authHeaders(),
         });
         if (!res.ok) throw new Error("Failed to delete event");
         return res.json();
@@ -197,7 +199,7 @@ export const cmsApi = {
     createTestimonial: async (data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to create testimonial");
@@ -206,7 +208,7 @@ export const cmsApi = {
     updateTestimonial: async (id: number | string, data: any) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials/${id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...authHeaders() },
             body: JSON.stringify(data),
         });
         if (!res.ok) throw new Error("Failed to update testimonial");
@@ -215,6 +217,7 @@ export const cmsApi = {
     deleteTestimonial: async (id: number | string) => {
         const res = await fetch(`${getApiBaseUrl()}/api/cms/admin/testimonials/${id}`, {
             method: "DELETE",
+            headers: authHeaders(),
         });
         if (!res.ok) throw new Error("Failed to delete testimonial");
         return res.json();
@@ -226,6 +229,7 @@ export const cmsApi = {
         formData.append("file", file);
         const res = await fetch(`${getApiBaseUrl()}/api/upload`, {
             method: "POST",
+            headers: authHeaders(),
             body: formData,
         });
         if (!res.ok) throw new Error("Failed to upload file");

@@ -146,7 +146,7 @@ export default function MyRegistrationsPage() {
                 ) : registrations.length === 0 ? (
                     <div className="text-center py-16 md:py-24 lg:py-32 bg-white rounded-[40px] border border-dashed border-gray-200">
                         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <History className="test-black w-10 h-10" />
+                            <History className="text-black w-10 h-10" />
                         </div>
                         <h3 className="text-2xl font-serif font-bold text-[#101848]">No registrations yet</h3>
                         <p className="text-gray-500 mt-2 max-w-xs mx-auto">

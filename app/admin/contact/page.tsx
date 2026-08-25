@@ -26,7 +26,11 @@ export default function ContactAdminPage() {
         const fetchData = async () => {
             try {
                 const res = await cmsApi.getContactInfo();
-                setData(res);
+                // A section that has not been authored yet answers null; keep the
+                // form's own defaults rather than rendering from null.
+                if (res && typeof res === "object") {
+                    setData((prev) => ({ ...prev, ...res }));
+                }
             } catch (error) {
                 console.error("Failed to fetch contact data:", error);
             } finally {
@@ -190,7 +194,7 @@ export default function ContactAdminPage() {
 
                 {/* Section Preview */}
                 <div className="bg-gray-100/50 rounded-2xl p-6 border border-dashed border-gray-200 mt-8">
-                    <span className="text-xs font-semibold test-black uppercase tracking-wider mb-4 block">Live Section Preview</span>
+                    <span className="text-xs font-semibold text-black uppercase tracking-wider mb-4 block">Live Section Preview</span>
                     <div className="relative w-full bg-[#eeebf0] rounded-xl shadow-lg overflow-hidden min-h-[400px] flex items-center p-8 border border-gray-200">
                         {/* Background Image Layer */}
                         <div className="absolute inset-0 z-0">

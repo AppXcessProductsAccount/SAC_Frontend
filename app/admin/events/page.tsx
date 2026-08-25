@@ -18,7 +18,9 @@ export default function EventsAdminPage() {
     const fetchEvents = async () => {
         try {
             const data = await cmsApi.getEvents();
-            setEvents(data);
+            // 404 answers null, and a malformed payload is not iterable either;
+            // both would throw on .map during render.
+            setEvents(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Failed to fetch events:", error);
         } finally {
@@ -152,7 +154,7 @@ export default function EventsAdminPage() {
                                         Delete
                                     </button>
                                 </div>
-                                <div className="text-xs test-black">ID: {event.id} | Order: {event.order}</div>
+                                <div className="text-xs text-black">ID: {event.id} | Order: {event.order}</div>
                             </div>
                         </div>
                     </div>

@@ -26,7 +26,11 @@ export default function FooterAdminPage() {
         const fetchData = async () => {
             try {
                 const res = await cmsApi.getFooterInfo();
-                setData(res);
+                // A section that has not been authored yet answers null; keep the
+                // form's own defaults rather than rendering from null.
+                if (res && typeof res === "object") {
+                    setData((prev) => ({ ...prev, ...res }));
+                }
             } catch (error) {
                 console.error("Failed to fetch footer data:", error);
             } finally {
@@ -186,7 +190,7 @@ export default function FooterAdminPage() {
 
                 {/* Footer Preview */}
                 <div className="bg-gray-100/50 rounded-2xl p-6 border border-dashed border-gray-200 mt-8">
-                    <span className="text-xs font-semibold test-black uppercase tracking-wider mb-4 block">Live Footer Preview</span>
+                    <span className="text-xs font-semibold text-black uppercase tracking-wider mb-4 block">Live Footer Preview</span>
                     <footer className="relative w-full bg-[#101848] rounded-xl shadow-lg overflow-hidden py-8 px-6 border border-gray-200">
                         {/* Background Overlay */}
                         <div className="absolute inset-0 z-0">

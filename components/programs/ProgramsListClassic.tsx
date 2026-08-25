@@ -81,7 +81,7 @@ export default function ProgramsListClassic({ programs, loading, error, onRegist
                                             <Calendar size={18} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[11px] font-bold uppercase test-black">Duration</span>
+                                            <span className="text-[11px] font-bold uppercase text-black">Duration</span>
                                             <span className="text-sm font-semibold font-serif">{program.date_range}</span>
                                         </div>
                                     </div>
@@ -91,7 +91,7 @@ export default function ProgramsListClassic({ programs, loading, error, onRegist
                                             <MapPin size={18} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[11px] font-bold uppercase test-black">Location</span>
+                                            <span className="text-[11px] font-bold uppercase text-black">Location</span>
                                             <span className="text-sm font-semibold font-serif">{program.city}</span>
                                         </div>
                                     </div>
