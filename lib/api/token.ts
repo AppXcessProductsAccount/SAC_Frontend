@@ -34,8 +34,11 @@ export const authHeaders = (token?: string): Record<string, string> => {
     return value ? { Authorization: `Bearer ${value}` } : {};
 };
 
-/** Roles allowed into /admin. Case-insensitive; adjust if the backend renames them. */
-export const ADMIN_ROLES = new Set(["admin", "superadmin", "super_admin", "staff"]);
+/**
+ * Roles allowed into /admin, matching the backend's UserRole enum
+ * (SUPER_ADMIN | ADMIN | USER). Compared case-insensitively.
+ */
+export const ADMIN_ROLES = new Set(["super_admin", "admin"]);
 
 export const isAdminRole = (role?: string | null): boolean =>
     !!role && ADMIN_ROLES.has(role.trim().toLowerCase());

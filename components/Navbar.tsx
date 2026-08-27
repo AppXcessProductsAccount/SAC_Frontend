@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { cmsApi } from "@/lib/cms-api";
-import { applyCmsPageBindings } from "@/lib/cms-pages";
+import { applyCmsPageBindings, routeKeyForUrl } from "@/lib/cms-pages";
 import { AnimatePresence } from "framer-motion";
 import { User, LogOut, FileText, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -39,6 +39,142 @@ const DEFAULT_NAV: NavigationItem[] = [
     { label: "Contact", url: "/contact", id: "contact" },
 ];
 
+interface NavData {
+    links: NavigationItem[];
+    logoUrl?: string;
+    brandName?: string;
+}
+
+/**
+ * The menu, resolved once per page load and shared by every mount of the bar.
+ *
+ * Each page renders its own <Navbar />, so a client-side navigation unmounts one
+ * and mounts another. Without this cache that new bar started from DEFAULT_NAV
+ * and refetched, so for as long as the two requests took it showed the
+ * hard-coded labels — a page the admin had renamed flashed its old name
+ * ("Paranjothi" where it should read "Our Spiritual Master") on the way into
+ * every page, then corrected itself.
+ *
+ * The PROMISE is cached, not only its result, so a navigation that happens while
+ * the first request is still in flight joins it rather than starting a second.
+ *
+ * Nothing is persisted to storage: a full reload refetches, which is what keeps
+ * an admin's rename from being stuck behind a stale menu.
+ */
+let navDataPromise: Promise<NavData> | null = null;
+let navDataResolved: NavData | null = null;
+
+const fetchNavData = async (): Promise<NavData> => {
+    let links: NavigationItem[] = DEFAULT_NAV;
+    let logoUrl: string | undefined;
+    let brandName: string | undefined;
+
+    try {
+        const data = await cmsApi.getNavigation();
+        // Merge CMS links if they exist, otherwise use default structure
+        if (data) {
+            if (data.links) {
+                /* Every lookup below keys on the destination URL, never on the
+                   label. The label is what an editor renames in the CMS ("Paranjothi"
+                   -> "Our Spiritual Master"); matching on it meant a rename read as
+                   "this link is missing" and the menu grew a duplicate entry back to
+                   the same page. The URL is what actually identifies the link. */
+                const sameUrl = (a: unknown, b: unknown) => {
+                    const clean = (url: unknown) => {
+                        const value = typeof url === "string" ? url.trim().toLowerCase() : "";
+                        return value.length > 1 ? value.replace(/\/+$/, "") : value;
+                    };
+                    return clean(a) === clean(b);
+                };
+                const findByUrl = (url: string) => data.links.find((l: NavigationItem) => sameUrl(l.url, url));
+                const indexByUrl = (url: string) => data.links.findIndex((l: NavigationItem) => sameUrl(l.url, url));
+
+                /* Insert a link the CMS doesn't carry, next to an anchor link —
+                   keeping whatever label the editor gave the anchor. */
+                const ensureLink = (item: NavigationItem, anchorUrl: string, offset: number) => {
+                    if (findByUrl(item.url)) return;
+                    const anchorIndex = indexByUrl(anchorUrl);
+                    if (anchorIndex !== -1) {
+                        data.links.splice(anchorIndex + offset, 0, item);
+                    } else {
+                        data.links.push(item);
+                    }
+                };
+
+                /* The Testimonials submenu hangs off the Home link, and that link's
+                   URL is editable in the admin like any other. Matching it exactly
+                   against "/" therefore lost the submenu the moment anyone saved the
+                   link as "/#home" or with a trailing slash: the dropdown stopped
+                   existing altogether, on desktop and in the mobile menu both.
+                   `routeKeyForUrl` normalises case, hash and trailing slashes, so it
+                   recognises every spelling of the front page. */
+                let homeItem =
+                    data.links.find((l: NavigationItem) => routeKeyForUrl(l.url) === "home") ??
+                    findByUrl("/");
+
+                /* No home link at all in the CMS: add one rather than silently drop
+                   the submenu, since the site always has a front page. */
+                if (!homeItem) {
+                    homeItem = { label: "Home", url: "/", id: "home" };
+                    data.links.unshift(homeItem);
+                }
+
+                homeItem.children = [
+                    { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
+                ];
+
+                // Ensure Programs is present at top level if not in CMS
+                ensureLink({ label: "Programs", url: "/programs", id: "programs" }, "/about", 1);
+
+                // Logic for About (no children now)
+                const aboutItem = findByUrl("/about");
+                if (aboutItem) {
+                    aboutItem.children = [];
+                }
+
+                // Ensure Paranjothi is present at top level if not in CMS
+                ensureLink({ label: "Paranjothi", url: "/paranjothi", id: "paranjothi" }, "/about", 1);
+
+                // Ensure Membership is present if not in CMS
+                ensureLink({ label: "Membership", url: "/membership", id: "membership" }, "/contact", 0);
+
+                links = data.links;
+            }
+            if (data.logo_url) logoUrl = data.logo_url;
+            if (data.brand_name) brandName = data.brand_name;
+        }
+    } catch (error) {
+        console.error("Failed to fetch navigation data:", error);
+    }
+
+    /* Menu labels and hrefs follow the CMS page names, so renaming a page in the
+       admin shows up here and points at its new URL. Kept separate from the block
+       above because the menu falls back to DEFAULT_NAV whenever there is no
+       navigation section to merge — a rename has to reach the menu in that case
+       too. */
+    try {
+        const pages = await cmsApi.getPages();
+        links = applyCmsPageBindings(links, pages);
+    } catch (error) {
+        console.warn("Could not apply CMS page names to the menu:", error);
+    }
+
+    navDataResolved = { links, logoUrl, brandName };
+    return navDataResolved;
+};
+
+const loadNavData = (): Promise<NavData> => {
+    if (!navDataPromise) {
+        navDataPromise = fetchNavData().catch((error) => {
+            // A failed load must not stay cached, or the menu would keep its
+            // defaults for the rest of the session with no way to recover.
+            navDataPromise = null;
+            throw error;
+        });
+    }
+    return navDataPromise;
+};
+
 export default function Navbar() {
     const pathname = usePathname();
     const [activeSection, setActiveSection] = useState("home");
@@ -52,9 +188,11 @@ export default function Navbar() {
     const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
 
     const navRef = useRef<HTMLElement>(null);
-    const [navItems, setNavItems] = useState<NavigationItem[]>(DEFAULT_NAV);
-    const [logoUrl, setLogoUrl] = useState("/logo.png");
-    const [brandName, setBrandName] = useState("SELF AWARENESS CENTRE");
+    /* Seeded from the cache so a remount paints the real labels immediately;
+       DEFAULT_NAV is only ever shown before the first load has finished. */
+    const [navItems, setNavItems] = useState<NavigationItem[]>(() => navDataResolved?.links ?? DEFAULT_NAV);
+    const [logoUrl, setLogoUrl] = useState(() => navDataResolved?.logoUrl ?? "/logo.png");
+    const [brandName, setBrandName] = useState(() => navDataResolved?.brandName ?? "SELF AWARENESS CENTRE");
 
     /* The wordmark beside the logo, from `brandName` (CMS-fetched, defaulting to the
        full centre name).
@@ -82,88 +220,20 @@ export default function Navbar() {
     }, []);
 
     useEffect(() => {
-        const fetchNavData = async () => {
-            let links: NavigationItem[] = DEFAULT_NAV;
+        let cancelled = false;
 
-            try {
-                const data = await cmsApi.getNavigation();
-                // Merge CMS links if they exist, otherwise use default structure
-                if (data) {
-                    if (data.links) {
-                        /* Every lookup below keys on the destination URL, never on the
-                           label. The label is what an editor renames in the CMS ("Paranjothi"
-                           -> "Our Spiritual Master"); matching on it meant a rename read as
-                           "this link is missing" and the menu grew a duplicate entry back to
-                           the same page. The URL is what actually identifies the link. */
-                        const sameUrl = (a: unknown, b: unknown) => {
-                            const clean = (url: unknown) => {
-                                const value = typeof url === "string" ? url.trim().toLowerCase() : "";
-                                return value.length > 1 ? value.replace(/\/+$/, "") : value;
-                            };
-                            return clean(a) === clean(b);
-                        };
-                        const findByUrl = (url: string) => data.links.find((l: NavigationItem) => sameUrl(l.url, url));
-                        const indexByUrl = (url: string) => data.links.findIndex((l: NavigationItem) => sameUrl(l.url, url));
+        loadNavData()
+            .then((data) => {
+                if (cancelled) return;
+                setNavItems(data.links);
+                if (data.logoUrl) setLogoUrl(data.logoUrl);
+                if (data.brandName) setBrandName(data.brandName);
+            })
+            .catch((error) => console.error("Failed to fetch navigation data:", error));
 
-                        /* Insert a link the CMS doesn't carry, next to an anchor link —
-                           keeping whatever label the editor gave the anchor. */
-                        const ensureLink = (item: NavigationItem, anchorUrl: string, offset: number) => {
-                            if (findByUrl(item.url)) return;
-                            const anchorIndex = indexByUrl(anchorUrl);
-                            if (anchorIndex !== -1) {
-                                data.links.splice(anchorIndex + offset, 0, item);
-                            } else {
-                                data.links.push(item);
-                            }
-                        };
-
-                        // Logic to maintain the dropdown if CMS data doesn't have it
-                        const homeItem = findByUrl("/");
-                        if (homeItem) {
-                            homeItem.children = [
-                                { label: "Testimonials", url: "/#testimonials", id: "testimonials" },
-                            ];
-                        }
-
-                        // Ensure Programs is present at top level if not in CMS
-                        ensureLink({ label: "Programs", url: "/programs", id: "programs" }, "/about", 1);
-
-                        // Logic for About (no children now)
-                        const aboutItem = findByUrl("/about");
-                        if (aboutItem) {
-                            aboutItem.children = [];
-                        }
-
-                        // Ensure Paranjothi is present at top level if not in CMS
-                        ensureLink({ label: "Paranjothi", url: "/paranjothi", id: "paranjothi" }, "/about", 1);
-
-                        // Ensure Membership is present if not in CMS
-                        ensureLink({ label: "Membership", url: "/membership", id: "membership" }, "/contact", 0);
-
-                        links = data.links;
-                    }
-                    if (data.logo_url) setLogoUrl(data.logo_url);
-                    if (data.brand_name) setBrandName(data.brand_name);
-                }
-            } catch (error) {
-                console.error("Failed to fetch navigation data:", error);
-            }
-
-            /* Menu labels and hrefs follow the CMS page names, so renaming a page in the
-               admin shows up here and points at its new URL. Kept separate from the block
-               above because the menu falls back to DEFAULT_NAV whenever there is no
-               navigation section to merge — a rename has to reach the menu in that case
-               too. */
-            try {
-                const pages = await cmsApi.getPages();
-                links = applyCmsPageBindings(links, pages);
-            } catch (error) {
-                console.warn("Could not apply CMS page names to the menu:", error);
-            }
-
-            setNavItems(links);
+        return () => {
+            cancelled = true;
         };
-        fetchNavData();
     }, []);
 
     /* Publish the navbar's real height into --nav-h.
@@ -293,6 +363,34 @@ export default function Navbar() {
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
     };
 
+    /**
+     * The logo, clicked while already on the home page.
+     *
+     * `href="/"` is a no-op when the URL is already "/", so from the landing page
+     * the logo did nothing at all — and the landing page is exactly where people
+     * click it, usually scrolled down into a section with "/#contact" in the
+     * address bar. Nothing navigated because there was nowhere to navigate to.
+     *
+     * On that page the logo means "back to the top", so that is what it does. The
+     * section hash goes with it, or a later reload would jump straight back down
+     * to where they just left.
+     *
+     * Every other page still navigates normally, and a modified click (new tab,
+     * middle button) is left entirely to the browser.
+     */
+    const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        if (pathname !== "/") return;
+
+        e.preventDefault();
+        setIsMobileMenuOpen(false);
+
+        if (window.location.hash) {
+            window.history.replaceState(null, "", "/");
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     const isStandalonePage = pathname !== "/";
 
     return (
@@ -305,7 +403,7 @@ export default function Navbar() {
             opaque scrolled state is what keeps a pinned header from looking like it is
             hiding part of the image. */}
         <nav ref={navRef} className={`sticky top-0 z-[100] w-full pt-4 md:pt-6 pb-2 px-4 md:px-8 transition-all duration-300 ${scrolled ? "bg-background-light/95 backdrop-blur-md shadow-lg" : "bg-transparent"}`}>
-            <div className="relative z-10 max-w-[1400px] mx-auto flex items-center justify-between gap-3 transition-all duration-300 px-1 py-0 md:px-6">
+            <div className="relative z-10 max-w-[1400px] mx-auto flex items-center justify-between gap-3 transition-all duration-300 px-1 py-0 md:px-0">
                 {/* Logo Section */}
                 {/* `min-w-0`, not `shrink-0`: the brand name comes from the CMS and is
                     set `nowrap`, so an unshrinkable logo block pushed the row wider than
@@ -316,7 +414,7 @@ export default function Navbar() {
                     the logo plus the full wordmark needs ~228px, so the name was being
                     ellipsised on desktop for the sake of a column width nothing needs.
                     The centre links are `flex-1`, so they still centre without it. */}
-                <Link href="/" className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-auto relative z-40 group">
+                <Link href="/" onClick={handleLogoClick} className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-auto relative z-40 group">
                     <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0">
                         <Image src={getFullUrl(logoUrl)} alt={`${brandName} Logo`} fill className="object-cover" />
                     </div>
@@ -515,9 +613,17 @@ export default function Navbar() {
                             className="fixed top-0 right-0 bottom-0 w-[86%] max-w-[360px] bg-white z-[200] lg:hidden flex flex-col shadow-2xl"
                         >
                             <div className="flex items-center justify-between px-5 py-4 border-b border-black/5 shrink-0">
-                                <span className="font-serif text-[15px] tracking-wide font-medium text-[#101848]">
+                                {/* A link, not the plain text it used to be: the header
+                                    logo is the way home everywhere else on the site, so
+                                    tapping the name here did nothing and read as a dead
+                                    control. Closes the drawer on the way. */}
+                                <Link
+                                    href="/"
+                                    onClick={handleLogoClick}
+                                    className="font-serif text-[15px] tracking-wide font-medium text-[#101848]"
+                                >
                                     {renderBrand()}
-                                </span>
+                                </Link>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     aria-label="Close menu"

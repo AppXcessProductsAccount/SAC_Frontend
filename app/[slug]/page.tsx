@@ -9,6 +9,8 @@ import ParanjothiPage from "../paranjothi/page";
 import CommunityPage from "../community/page";
 import ProgramsPage from "../programs/page";
 import ContactPage from "../contact/page";
+import PrivacyPolicyPage from "../privacy-policy/page";
+import TermsOfServicePage from "../terms-of-service/page";
 
 /**
  * Serves a CMS page that has been renamed.
@@ -28,6 +30,8 @@ const RENDERERS: Record<CmsRouteKey, ComponentType> = {
     community: CommunityPage,
     programs: ProgramsPage,
     contact: ContactPage,
+    privacy: PrivacyPolicyPage,
+    terms: TermsOfServicePage,
 };
 
 /* Resolved on the server so an unknown slug answers with a real 404 instead of a

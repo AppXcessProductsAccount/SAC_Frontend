@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, Lock, Loader2, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { authApi } from "@/lib/api/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { isValidEmail, emailErrorMessage, normaliseEmail } from "@/lib/email";
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -45,12 +46,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
     const handleSendOtp = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email) return;
+
+        /* `type="email"` only asks for an @, so `abc@abc` reached this point and
+           the sign-in code was sent to an address that cannot receive it. */
+        const address = normaliseEmail(email);
+        if (!isValidEmail(address)) {
+            setError(emailErrorMessage(address));
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            await authApi.sendOtp(email);
+            await authApi.sendOtp(address);
             setStep("otp");
             setCountdown(60);
         } catch (err: any) {
@@ -149,7 +157,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                                                 type="email"
                                                 required
                                                 value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
+                                                onChange={(e) => { setEmail(e.target.value); setError(null); }}
                                                 className="block w-full pl-12 pr-4 py-4 bg-gray-50 border border-black/5 rounded-2xl text-[#101848] font-medium placeholder-black/20 focus:outline-none focus:ring-2 focus:ring-[#101848]/5 focus:border-[#101848] transition-all"
                                                 placeholder="name@example.com"
                                             />

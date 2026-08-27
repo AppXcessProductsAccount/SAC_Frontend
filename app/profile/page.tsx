@@ -23,6 +23,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { userApi } from "@/lib/api/user";
 import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
+import { isValidEmail, emailErrorMessage, normaliseEmail } from "@/lib/email";
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -33,6 +34,7 @@ export default function ProfilePage() {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [phoneError, setPhoneError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
     const [gender, setGender] = useState("");
     const [dob, setDob] = useState("");
     const [occupation, setOccupation] = useState("");
@@ -86,13 +88,22 @@ export default function ProfilePage() {
         }
         setPhoneError(null);
 
+        /* The address here is what sign-in codes are sent to, so an unreachable
+           one locks the account out at the next login rather than failing now. */
+        const address = normaliseEmail(email);
+        if (address && !isValidEmail(address)) {
+            setEmailError(emailErrorMessage(address));
+            return;
+        }
+        setEmailError(null);
+
         setLoading(true);
         setMessage(null);
         try {
             const updatedUser = await userApi.updateMe(tokens.access_token, {
                 full_name: fullName,
                 nickname,
-                email,
+                email: address,
                 phone_number: phone,
                 gender,
                 dob,
@@ -253,11 +264,13 @@ export default function ProfilePage() {
                                             <input 
                                                 type="email"
                                                 value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all"
+                                                onChange={(e) => { setEmail(e.target.value); setEmailError(null); }}
+                                                aria-invalid={!!emailError}
+                                                className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all ${emailError ? "border-red-400" : "border-gray-100"}`}
                                                 placeholder="email@example.com"
                                             />
                                         </div>
+                                        {emailError && <p className="text-[11px] font-bold text-red-600 mt-1 ml-1">{emailError}</p>}
                                     </div>
 
                                     <div className="space-y-2">

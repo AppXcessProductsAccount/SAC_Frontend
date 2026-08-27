@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import PhoneInput, { isValidPhoneNumber, getCountryCallingCode, parsePhoneNumber } from "react-phone-number-input";
 import type { Country } from "react-phone-number-input";
 import countryLabels from "react-phone-number-input/locale/en.json";
+import { validatePhoneNumberLength } from "libphonenumber-js";
 import { Check, ChevronDown, Search } from "lucide-react";
 import "react-phone-number-input/style.css";
 
@@ -24,22 +25,78 @@ export const isValidPhone = (value?: string | null) =>
     !!value && isValidPhoneNumber(value);
 
 /**
- * The message to show for a number that fails `isValidPhone`.
+ * Whether a longer real number for this country begins with `value`.
  *
- * Names the country the number is actually being judged against, because the field
- * opens on a default country and the commonest failure by far is a real number typed
- * under the wrong flag — every foreign number then looks "invalid" with no clue why.
- * The country comes from the value's own dial code, so it is what libphonenumber used.
+ * The reason the cap cannot simply be a maximum length: India's plan runs from 8
+ * to 13 digits, because alongside its 10-digit mobiles it has real 11-digit
+ * toll-free and 12-digit service numbers. Any fixed cap is therefore either too
+ * short for one of those or too long for a mobile. What actually distinguishes
+ * them is the prefix, so the question asked here is about this number, not about
+ * its country.
  *
- * Exported so a form's submit-time check words it the same way as the field's own
- * on-blur check.
+ * Two digits of lookahead, because a country's number lengths can step by two —
+ * one is not always enough to see the next valid length from the current one.
+ */
+const hasLongerValidNumber = (value: string, lookahead = 2): boolean => {
+    if (lookahead === 0) return false;
+
+    for (const digit of "0123456789") {
+        const next = value + digit;
+        if (validatePhoneNumberLength(next) === "TOO_LONG") continue;
+        if (isValidPhoneNumber(next)) return true;
+        if (hasLongerValidNumber(next, lookahead - 1)) return true;
+    }
+    return false;
+};
+
+/**
+ * True when `value` is a real number that no further digit could extend into a
+ * different real number — in other words, the person has finished typing.
+ */
+const isCompleteNumber = (value: string): boolean =>
+    isValidPhoneNumber(value) && !hasLongerValidNumber(value);
+
+/**
+ * Whether one more digit may be added to `value`.
+ *
+ * A number that is still being typed always accepts more, so an unfinished
+ * number is never fought with while it is being entered. It is only once the
+ * number is complete — or past every length its country allows — that the next
+ * keystroke is refused.
+ *
+ * The library's own `limitMaxLength` is the second clause of this and stays
+ * switched on; it is the first clause that it cannot do, because it caps on the
+ * lengths a country finds POSSIBLE rather than the ones it finds VALID, and for
+ * India those are 8-13 either way.
+ */
+const canAcceptAnotherDigit = (value: string, digit: string): boolean =>
+    !isCompleteNumber(value) && validatePhoneNumberLength(value + digit) !== "TOO_LONG";
+
+/** Drops trailing digits until nothing is left that the field would have refused. */
+const trimToAcceptable = (value: string): string => {
+    let trimmed = value;
+    while (trimmed.length > 2 && !canAcceptAnotherDigit(trimmed.slice(0, -1), trimmed.slice(-1))) {
+        trimmed = trimmed.slice(0, -1);
+    }
+    return trimmed;
+};
+
+/**
+ * The message a form shows when it is submitted with an unusable number.
+ *
+ * Deliberately plain. The field now refuses a digit that could never belong to a
+ * real number, so "too long" cannot reach a form at all and the only case left is
+ * a number the person has not finished typing — which is worth a nudge, not an
+ * accusation that their number is wrong.
+ *
+ * Names the country only to say which set of rules the number is short of.
  */
 export const phoneErrorMessage = (value?: string | null) => {
     const country = value ? parsePhoneNumber(value)?.country : undefined;
     const label = country ? (countryLabels as Record<string, string>)[country] : undefined;
     return label
-        ? `That is not a valid ${label} number. If the number is from another country, pick it from the flag first.`
-        : "Enter a valid phone number, including its country code.";
+        ? `Enter a complete ${label} phone number.`
+        : "Enter a phone number, including its country code.";
 };
 
 /* React warns when `useLayoutEffect` is called during a server render, and these
@@ -269,7 +326,6 @@ export default function PhoneField({
     name,
     className = "",
 }: Props) {
-    const [touched, setTouched] = useState(false);
     /* The library does not type a ref through to its <input>, so the number input is
        reached through the wrapper instead. `PhoneInputInput` is the class the library
        puts on it. */
@@ -332,21 +388,69 @@ export default function PhoneField({
         const national = prevDial && digits.startsWith(prevDial) ? digits.slice(prevDial.length) : digits;
         if (!national) return;
 
-        const carried = `+${getCountryCallingCode(nextCountry)}${national}`;
+        /* Trimmed for the country being moved to: carrying ten digits onto a
+           country that never has more than eight would otherwise hand the field a
+           number it will not let the next keystroke extend or the form accept. */
+        const carried = trimToAcceptable(`+${getCountryCallingCode(nextCountry)}${national}`);
         setTimeout(() => onChange(carried), 0);
     };
 
-    /* Per-country check, surfaced as soon as the field is left rather than only on
-       submit. libphonenumber knows each country's own rules — India is 10 national
-       digits, Singapore 8, Malaysia 9-10 — so selecting a country changes what counts
-       as valid here. A caller-supplied `error` always wins, since that one comes from
-       the form's own submit validation. */
-    const selfError =
-        !error && touched && value && !isValidPhone(value)
-            ? phoneErrorMessage(value)
-            : undefined;
+    /**
+     * Refuses a digit that could not belong to a real number for the country in
+     * the flag — so an Indian mobile simply stops taking input after its tenth
+     * digit rather than accepting an eleventh and being rejected later.
+     *
+     * This runs on keydown and calls `preventDefault`, so the library never sees
+     * the keystroke. Gating inside `onChange` instead would desync it, for the
+     * same reason `limitMaxLength` has to be the library's own: the library sets
+     * its internal state from the digit it has already accepted and re-derives it
+     * only when the `value` PROPERTY changes — which is exactly what swallowing a
+     * keystroke fails to do.
+     */
+    const refuseImpossibleDigit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Shortcuts and IME composition are not digits being typed.
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (!/^[0-9]$/.test(e.key)) return;
 
-    const shownError = error ?? selfError;
+        const el = e.currentTarget;
+        // Typing over a selection replaces digits rather than adding one.
+        if (el.selectionStart !== el.selectionEnd) return;
+
+        const current = value ?? "";
+        // Nothing to measure against until a country code is in place.
+        if (!current.startsWith("+")) return;
+
+        if (!canAcceptAnotherDigit(current, e.key)) e.preventDefault();
+    };
+
+    /**
+     * Paste takes the same cap, and for the same reason is handled before the
+     * library sees it. A pasted number carrying its own "+" replaces the field;
+     * bare digits extend what is already there.
+     *
+     * An empty field is left to the library: with nothing typed yet there is no
+     * country code to measure the digits against, and guessing one would turn a
+     * pasted local number into a foreign one.
+     */
+    const pasteWithinLimit = (e: React.ClipboardEvent<HTMLInputElement>) => {
+        const current = value ?? "";
+        if (!current.startsWith("+")) return;
+
+        const pasted = e.clipboardData.getData("text");
+        const digits = pasted.replace(/[^0-9]/g, "");
+        if (!digits) return;
+
+        e.preventDefault();
+        const merged = pasted.trimStart().startsWith("+") ? `+${digits}` : `${current}${digits}`;
+        onChange(trimToAcceptable(merged));
+    };
+
+    /* Only the form's own submit-time error is shown now. The field used to run
+       its own check the moment it lost focus, so a number that was merely
+       unfinished was called invalid while the person was still working on it. The
+       digit cap prevents the over-long case outright, which was the case that
+       check mostly caught, so there is nothing left worth interrupting for. */
+    const shownError = error;
 
     return (
         <div ref={fieldRef} className={className}>
@@ -391,7 +495,8 @@ export default function PhoneField({
                    reach our own country trigger with an extra prop. */
                 countrySelectProps={{ onCountrySelected: carryDigitsToNewCountry }}
                 onFocus={() => caretToEnd()}
-                onBlur={() => setTouched(true)}
+                onKeyDown={refuseImpossibleDigit}
+                onPaste={pasteWithinLimit}
                 aria-invalid={!!shownError}
                 /* `phone-field` is styled in globals.css — the library ships structural
                    CSS only, so the country control and the text input need to be matched

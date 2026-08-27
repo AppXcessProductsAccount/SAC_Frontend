@@ -6,6 +6,7 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
+import { isValidEmail, emailErrorMessage, normaliseEmail } from "@/lib/email";
 import { cmsApi } from "@/lib/cms-api";
 import { resolveCmsPage } from "@/lib/cms-pages";
 
@@ -15,6 +16,7 @@ export default function ContactPage() {
     const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
     const [phone, setPhone] = useState<string | undefined>(undefined);
     const [phoneError, setPhoneError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchSections = async () => {
@@ -63,13 +65,23 @@ export default function ContactPage() {
         }
         setPhoneError(null);
 
-        setStatus("submitting");
-        
         const formData = new FormData(e.currentTarget);
+
+        /* The browser's own email check passes anything with an @ in it, so an
+           enquiry could arrive with no working address to reply to. */
+        const email = normaliseEmail(String(formData.get("email") ?? ""));
+        if (!isValidEmail(email)) {
+            setEmailError(emailErrorMessage(email));
+            return;
+        }
+        setEmailError(null);
+
+        setStatus("submitting");
+
         const payload = {
             full_name: formData.get("full_name"),
             phone: formData.get("phone"),
-            email: formData.get("email"),
+            email,
             address: formData.get("address"),
             subject: formData.get("subject"),
             message: formData.get("message"),
@@ -218,43 +230,74 @@ export default function ContactPage() {
                                 </div>
                             )}
 
-                            {/* Malaysia Grid */}
-                            <div className="grid md:grid-cols-2 gap-6">
+                            {/* Malaysia Grid — branch cards, aligned row by row.
+
+                                Each branch carries a different amount of detail: one has a
+                                Tel, a Fax and an Hp, the next only a Tel; one lists two
+                                named contacts, the next none. Stacking those sections
+                                normally left every card's email, contacts and map link at
+                                a different height from the card beside it.
+
+                                So each card is a `subgrid` over the SAME six rows of the
+                                parent grid, which makes the two cards in a pair share one
+                                set of row heights — the addresses line up, the numbers line
+                                up, and the emails line up, whatever each branch has.
+
+                                All six slots are always rendered, empty ones included:
+                                auto-placement would otherwise pull the map link up into the
+                                contacts row on a branch with no contacts, which is the
+                                misalignment this is here to prevent.
+
+                                A subgrid takes its gutters from its parent, so the parent's
+                                `gap-y-3` is what spaces the rows INSIDE each card; `mb-3` on
+                                the cards puts the wider gap back between one pair and the
+                                next. Below `md` there is one column and nothing to align, so
+                                the subgrid only applies from `md` up. */}
+                            <div className="grid md:grid-cols-2 gap-x-6 gap-y-3">
                                 {content.malaysia?.map((loc: any, idx: number) => (
-                                    <div key={idx} className="bg-white/40 p-6 rounded-[24px] border border-white/60 hover:bg-white/60 transition-all">
-                                        <h4 className="text-lg font-serif text-[#101848] mb-4 border-b border-[#101848]/5 pb-2">{loc.name}</h4>
-                                        <div className="space-y-3 text-xs md:text-sm text-[#233252]/70 font-sans">
-                                            <p className="flex gap-2">
-                                                <span className="material-icons text-xs text-[#101848]/40">location_on</span>
-                                                {loc.address}
-                                            </p>
-                                            <div className="space-y-1">
-                                                {loc.tel && <p>Tel: {loc.tel}</p>}
-                                                {loc.fax && <p>Fax: {loc.fax}</p>}
-                                                {loc.hp && <p>Hp: {loc.hp}</p>}
-                                            </div>
-                                            <p className="text-[#101848] font-bold break-all">{loc.email}</p>
-                                            <div className="pt-2 space-y-2">
-                                                {loc.contacts?.map((c: any, i: number) => (
-                                                    <p key={i} className="flex flex-col border-l-2 border-[#101848]/10 pl-3">
-                                                        <span className="text-[10px] uppercase opacity-50 tracking-wider">Contact</span>
-                                                        <span className="font-bold">{c.name}</span>
-                                                        <span>{c.mobile}</span>
-                                                    </p>
-                                                ))}
-                                            </div>
+                                    <div
+                                        key={idx}
+                                        className="grid gap-y-3 md:grid-rows-subgrid md:row-span-6 mb-3 text-xs md:text-sm text-[#233252]/70 font-sans bg-white/40 p-6 rounded-[24px] border border-white/60 hover:bg-white/60 transition-all"
+                                    >
+                                        <h4 className="text-lg font-serif text-[#101848] border-b border-[#101848]/5 pb-2">{loc.name}</h4>
+
+                                        <p className="flex gap-2">
+                                            <span className="material-icons text-xs text-[#101848]/40">location_on</span>
+                                            {loc.address}
+                                        </p>
+
+                                        <div className="space-y-1">
+                                            {loc.tel && <p>Tel: {loc.tel}</p>}
+                                            {loc.fax && <p>Fax: {loc.fax}</p>}
+                                            {loc.hp && <p>Hp: {loc.hp}</p>}
+                                        </div>
+
+                                        <p className="text-[#101848] font-bold break-all">{loc.email}</p>
+
+                                        <div className="space-y-2">
+                                            {loc.contacts?.map((c: any, i: number) => (
+                                                <p key={i} className="flex flex-col border-l-2 border-[#101848]/10 pl-3">
+                                                    <span className="text-[10px] uppercase opacity-50 tracking-wider">Contact</span>
+                                                    <span className="font-bold">{c.name}</span>
+                                                    <span>{c.mobile}</span>
+                                                </p>
+                                            ))}
+                                        </div>
+
+                                        {/* `self-end` keeps the link at the foot of the shared
+                                            row instead of floating mid-gap when the card beside
+                                            it is the taller one. */}
+                                        <div className="self-end">
                                             {loc.google_map_url && (
-                                                <div className="pt-4">
-                                                    <a 
-                                                        href={loc.google_map_url} 
-                                                        target="_blank" 
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center gap-2 text-[#101848] font-bold text-[10px] uppercase tracking-widest hover:opacity-70 transition-opacity"
-                                                    >
-                                                        <span className="material-icons text-xs">map</span>
-                                                        Google Map
-                                                    </a>
-                                                </div>
+                                                <a
+                                                    href={loc.google_map_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-2 text-[#101848] font-bold text-[10px] uppercase tracking-widest hover:opacity-70 transition-opacity"
+                                                >
+                                                    <span className="material-icons text-xs">map</span>
+                                                    Google Map
+                                                </a>
                                             )}
                                         </div>
                                     </div>
@@ -312,7 +355,16 @@ export default function ContactPage() {
                                                 </div>
                                                 <div className="space-y-1.5">
                                                     <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Email</label>
-                                                    <input required name="email" type="email" className="w-full bg-[#f5f6f6] border border-transparent rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white focus:border-[#101848]/10 transition-all font-sans" placeholder="Email address" />
+                                                    <input
+                                                        required
+                                                        name="email"
+                                                        type="email"
+                                                        onChange={() => setEmailError(null)}
+                                                        aria-invalid={!!emailError}
+                                                        className={`w-full bg-[#f5f6f6] border rounded-xl px-4 sm:px-5 py-3.5 sm:py-4 text-[#101848] focus:bg-white transition-all font-sans ${emailError ? "border-red-400" : "border-transparent focus:border-[#101848]/10"}`}
+                                                        placeholder="Email address"
+                                                    />
+                                                    {emailError && <p className="text-[11px] font-bold text-red-600 mt-1">{emailError}</p>}
                                                 </div>
                                             </div>
 

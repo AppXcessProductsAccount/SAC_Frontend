@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
+import { isValidEmail, emailErrorMessage, normaliseEmail } from "@/lib/email";
 import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 
 export default function ContactAdminPage() {
@@ -58,12 +59,26 @@ export default function ContactAdminPage() {
         }
     };
 
+    const [emailError, setEmailError] = useState<string | null>(null);
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        /* This address is published on the contact page as the way to reach the
+           centre, so a typo here is a dead end for every visitor until someone
+           notices. The CMS stores sections as free-form JSON and cannot check it
+           server-side, which makes this the only place it can be caught. */
+        const address = normaliseEmail(data.email);
+        if (address && !isValidEmail(address)) {
+            setEmailError(emailErrorMessage(address));
+            return;
+        }
+        setEmailError(null);
+
         setSaving(true);
         setMessage("");
         try {
-            await cmsApi.updateContactInfo(data);
+            await cmsApi.updateContactInfo({ ...data, email: address });
             setMessage("Contact information updated successfully!");
         } catch (error) {
             console.error("Failed to save:", error);
@@ -125,9 +140,11 @@ export default function ContactAdminPage() {
                                 <input
                                     type="email"
                                     value={data.email}
-                                    onChange={(e) => setData({ ...data, email: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-black transition-all"
+                                    onChange={(e) => { setData({ ...data, email: e.target.value }); setEmailError(null); }}
+                                    aria-invalid={!!emailError}
+                                    className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-black transition-all ${emailError ? "border-red-400" : "border-gray-200"}`}
                                 />
+                                {emailError && <p className="text-xs font-bold text-red-600 mt-1">{emailError}</p>}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>

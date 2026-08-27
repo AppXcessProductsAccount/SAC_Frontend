@@ -50,9 +50,17 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
-        <script dangerouslySetInnerHTML={{
-          __html: `window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}`
-        }} />
+        {/* Keeps the SalesIQ chat window shut until someone clicks its bubble.
+            The widget is set in the SalesIQ console to open on page load, which
+            put a real 361x640 panel over every page: it swallowed clicks meant
+            for the page underneath and covered the Privacy and Terms text.
+
+            Loaded as a plain file from /public with a `src`, because that is the
+            only form that actually executes here — an inline
+            `<script dangerouslySetInnerHTML>` in this head is never run, and
+            neither a bundled client component nor a Script tag reached every
+            route. See public/salesiq-guard.js for the rest. */}
+        <script id="salesiq-guard" src="/salesiq-guard.js" defer />
         <script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqe285e07adbf5666a58719e70ddbce7cb" defer />
         {/* HitPay SDK */}
         <script src="https://js.hit-pay.com/sdk.js" defer />

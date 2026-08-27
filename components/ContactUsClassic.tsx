@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
 import PhoneField, { isValidPhone, phoneErrorMessage } from "@/components/forms/PhoneField";
+import { isValidEmail, emailErrorMessage, normaliseEmail } from "@/lib/email";
 import { parsePhoneNumber } from "react-phone-number-input";
 
 export default function ContactUsClassic({ data }: { data: any }) {
@@ -12,6 +13,7 @@ export default function ContactUsClassic({ data }: { data: any }) {
     const [redirectUrl, setRedirectUrl] = useState("");
     const [phone, setPhone] = useState<string | undefined>(undefined);
     const [phoneError, setPhoneError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | null>(null);
 
     /* This form POSTs natively to Zoho, which expects the dial code and the national
        number as two separate named fields. The picker holds one E.164 value, so split
@@ -140,6 +142,20 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                 return;
                                             }
                                             setPhoneError(null);
+
+                                            /* Same reason as the number: this posts
+                                               natively to Zoho, and `type="email"`
+                                               waves through anything with an @. */
+                                            const email = normaliseEmail(
+                                                String(new FormData(e.currentTarget).get("Email") ?? "")
+                                            );
+                                            if (!isValidEmail(email)) {
+                                                e.preventDefault();
+                                                setEmailError(emailErrorMessage(email));
+                                                return;
+                                            }
+                                            setEmailError(null);
+
                                             setStatus("submitting");
                                         }}
                                     >
@@ -179,11 +195,14 @@ export default function ContactUsClassic({ data }: { data: any }) {
                                                 <input 
                                                     required
                                                     name="Email"
-                                                    type="email" 
+                                                    type="email"
                                                     maxLength={255}
-                                                    className="w-full bg-white/40 border border-[#101848]/10 rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans" 
+                                                    onChange={() => setEmailError(null)}
+                                                    aria-invalid={!!emailError}
+                                                    className={`w-full bg-white/40 border rounded-xl px-4 sm:px-5 py-3 text-[#101848] placeholder:text-[#101848]/30 focus:outline-none focus:ring-2 focus:ring-[#101848]/10 transition-all font-sans ${emailError ? "border-red-400" : "border-[#101848]/10"}`}
                                                     placeholder="Enter email"
                                                 />
+                                                {emailError && <p className="text-[11px] font-bold text-red-600 mt-1">{emailError}</p>}
                                             </div>
                                             <div className="space-y-1.5">
                                                 <label className="text-[11px] font-sans font-bold uppercase tracking-widest text-[#101848]/60 ml-1">Phone Number</label>

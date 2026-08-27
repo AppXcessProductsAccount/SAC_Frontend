@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
 import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
+import { resolveCopyrightText } from "@/lib/copyright";
 
 export default function FooterAdminPage() {
     const [loading, setLoading] = useState(true);
@@ -108,8 +109,16 @@ export default function FooterAdminPage() {
                                 type="text"
                                 value={data.copyright_text}
                                 onChange={(e) => setData({ ...data, copyright_text: e.target.value })}
+                                placeholder="© {year} SelfAwareness Inc. All rights reserved."
                                 className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#101848] outline-none text-black transition-all"
                             />
+                            {/* Without this note the year gets typed as a literal and
+                                quietly goes stale on 1 January. */}
+                            <p className="mt-2 text-xs text-gray-500">
+                                Write <code className="px-1 py-0.5 bg-gray-100 rounded font-mono">{"{year}"}</code> where the
+                                year belongs and the site fills in the current one. A year typed
+                                by hand is moved forward automatically once it falls behind.
+                            </p>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
@@ -238,7 +247,7 @@ export default function FooterAdminPage() {
                         </div>
 
                         <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-center text-[7px] text-white/30 uppercase tracking-widest">
-                            <p>{data.copyright_text || "© 2024 All rights reserved."}</p>
+                            <p>{resolveCopyrightText(data.copyright_text)}</p>
                             <div className="flex gap-4">
                                 <span>Privacy</span>
                                 <span>Terms</span>

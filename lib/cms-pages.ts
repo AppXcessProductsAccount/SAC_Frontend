@@ -14,7 +14,15 @@
 
 export type CmsPage = { id: number; name: string };
 
-export type CmsRouteKey = "home" | "about" | "paranjothi" | "community" | "programs" | "contact";
+export type CmsRouteKey =
+    | "home"
+    | "about"
+    | "paranjothi"
+    | "community"
+    | "programs"
+    | "contact"
+    | "privacy"
+    | "terms";
 
 type CmsRoute = { id: number; route: string; aliases: string[] };
 
@@ -34,6 +42,27 @@ export const CMS_ROUTES: Record<CmsRouteKey, CmsRoute> = {
     community: { id: 4, route: "/community", aliases: ["community", "community events", "community_events"] },
     programs: { id: 5, route: "/programs", aliases: ["program", "programs", "our programs"] },
     contact: { id: 6, route: "/contact", aliases: ["contact", "contact us", "contact_us"] },
+    /* Seeded after the six original pages. Their ids come from the seed migration,
+       which inserts them by name and lets the sequence assign the id — so on a
+       database that already had rows the ids may differ, and name matching is what
+       actually resolves these two. */
+    privacy: {
+        id: 7,
+        route: "/privacy-policy",
+        aliases: ["privacy", "privacy policy", "privacy_policy", "privacy-policy"],
+    },
+    terms: {
+        id: 8,
+        route: "/terms-of-service",
+        aliases: [
+            "terms",
+            "terms of service",
+            "terms_of_service",
+            "terms-of-service",
+            "terms and conditions",
+            "terms of use",
+        ],
+    },
 };
 
 /** Case, spacing, underscore, hyphen and trailing-"page" insensitive. */

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { cmsApi } from "@/lib/cms-api";
 import { resolveMediaUrl as getFullUrl } from "@/lib/api/config";
+import { resolveCopyrightText } from "@/lib/copyright";
 
 export default function Footer() {
     const [data, setData] = useState<any>(null);
@@ -64,7 +65,7 @@ export default function Footer() {
         twitter_url: "#",
         mail_url: "#",
         logo_url: "/logo.png",
-        copyright_text: "© 2024 SelfAwareness Inc. All rights reserved.",
+        copyright_text: "© {year} SelfAwareness Inc. All rights reserved.",
         background_image_url: "/testimonial.png"
     };
 
@@ -196,10 +197,10 @@ export default function Footer() {
 
                 {/* Bottom Footer */}
                 <div className="mt-10 md:mt-16 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-white/30 text-[10px] font-sans tracking-widest uppercase text-center md:text-left">
-                    <p>{displayData.copyright_text}</p>
+                    <p>{resolveCopyrightText(displayData.copyright_text)}</p>
                     <div className="flex gap-6">
-                        <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+                        <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                        <Link href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
                     </div>
                 </div>
             </motion.div>
