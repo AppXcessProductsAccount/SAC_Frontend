@@ -18,6 +18,8 @@ export interface MiddleSectionContent {
     group_meditation?: {
         title: string;
         description: string;
+        /** The card's backdrop. Named *_image_url so the admin draws an upload widget. */
+        image_url?: string;
     };
 }
 

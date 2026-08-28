@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { MiddleSectionContent } from "./MiddleSection";
 import { toYouTubeEmbedUrl } from "@/lib/youtube";
+import { resolveMediaUrl } from "@/lib/api/config";
 
 interface Props {
     content: MiddleSectionContent | null;
@@ -21,7 +22,13 @@ export default function MiddleSectionClassic({ content }: Props) {
         },
         group_meditation: {
             title: content?.group_meditation?.title || "Group Meditation",
-            description: content?.group_meditation?.description || "Join our weekly sessions to experience the collective energy of collective consciousness and deep silence."
+            description: content?.group_meditation?.description || "Join our weekly sessions to experience the collective energy of collective consciousness and deep silence.",
+            /* The card's backdrop, editable like the words on top of it. It was
+               hardcoded while the title and description beside it came from the
+               CMS, so this one card could be reworded but never re-illustrated.
+               resolveMediaUrl because an uploaded file arrives as /uploads/... ,
+               which is served by the API rather than by this app's /public. */
+            image_url: resolveMediaUrl(content?.group_meditation?.image_url) || "/event_meditation.png"
         }
     };
 
@@ -93,7 +100,7 @@ export default function MiddleSectionClassic({ content }: Props) {
                                 on narrow screens. The box now grows to fit the words. */}
                             <div className="relative min-h-[220px] sm:min-h-[250px] w-full flex">
                                 <Image
-                                    src="/event_meditation.png"
+                                    src={displayData.group_meditation.image_url}
                                     alt={displayData.group_meditation.title}
                                     fill
                                     sizes="(max-width: 1024px) 100vw, 700px"

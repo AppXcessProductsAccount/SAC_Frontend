@@ -72,7 +72,8 @@
         },
         "group_meditation": {
           "title": "Group Meditation",
-          "description": "Join our weekly sessions to experience the collective energy of collective consciousness and deep silence."
+          "description": "Join our weekly sessions to experience the collective energy of collective consciousness and deep silence.",
+          "image_url": "/event_meditation.png"
         }
       }
     },
