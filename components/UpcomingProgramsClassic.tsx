@@ -47,19 +47,10 @@ export default function UpcomingProgramsClassic({ content }: Props) {
         ]
     };
 
-    // We add the preview item if it's not already there (UX choice to keep consistency)
-    const events = [
-        {
-            id: 'preview',
-            title: "Free Online Preview",
-            date_text: "Anytime",
-            image_url: "/hero_slider_preview.png",
-            tags: ["Experimental", "Online"],
-            location: "Virtual",
-            isPreview: true
-        },
-        ...displayData.programs
-    ];
+    /* Every card here comes from the CMS. A "Free Online Preview" card used to be
+       prepended in code, so it showed on the site whether or not such a session was
+       running, and no admin edit could change or remove it. */
+    const events = displayData.programs;
 
     /* The rail is a native horizontally-scrolling, scroll-snapped list.
        The previous implementation translated the track by a hard-coded

@@ -1,6 +1,45 @@
 import { getApiBaseUrl } from "./api/config";
 import { authHeaders } from "./api/token";
 
+/* The public content route is /website/{page_id}/{section_id}/content, but every
+   helper below knows only its section id. section_id is unique across the whole
+   sections table, so the page it belongs to can be resolved once and reused: this
+   builds a section -> page index on first use and caches the promise, so the
+   lookup costs one round of requests per page load rather than one per section.
+
+   Before this, getSectionContent called /website/{section_id}/content, which
+   matches no route on the API. Every section 404'd, every component fell back to
+   its hardcoded defaults, and nothing edited in the admin ever reached the site. */
+let sectionPageIndex: Promise<Record<string, number>> | null = null;
+
+const buildSectionPageIndex = async (): Promise<Record<string, number>> => {
+    const index: Record<string, number> = {};
+    const pages = await cmsApi.getPages();
+    const lists = await Promise.all(
+        (pages as any[]).map((page) => cmsApi.getPageSections(page.id))
+    );
+    for (const sections of lists) {
+        for (const section of ((sections as any[]) ?? [])) {
+            if (section?.section_id && typeof section.page_id === "number") {
+                index[section.section_id] = section.page_id;
+            }
+        }
+    }
+    return index;
+};
+
+const getSectionPageIndex = () => {
+    if (!sectionPageIndex) {
+        sectionPageIndex = buildSectionPageIndex().catch((err) => {
+            /* Never cache a failure: one blocked request would otherwise pin every
+               section to its defaults for the rest of the page's life. */
+            sectionPageIndex = null;
+            throw err;
+        });
+    }
+    return sectionPageIndex;
+};
+
 export const cmsApi = {
     // 1. Discovery: List Pages
     getPages: async () => {
@@ -32,14 +71,18 @@ export const cmsApi = {
 
     // Generic Section Content Fetcher (Legacy/Backward Compatibility)
     getSectionContent: async (sectionId: string) => {
-        const res = await fetch(`${getApiBaseUrl()}/api/cms/website/${sectionId}/content`, { cache: 'no-store' });
-        if (!res.ok) {
+        let pageId: number | undefined;
+        try {
+            pageId = (await getSectionPageIndex())[sectionId];
+        } catch {
+            console.warn(`CMS index unavailable, section skipped: ${sectionId}`);
+            return null;
+        }
+        if (pageId === undefined) {
             console.warn(`CMS section not found: ${sectionId}`);
             return null;
         }
-        const data = await res.json();
-        // The actual content is usually nested in data.content
-        return (data && data.content) ? data.content : data;
+        return await cmsApi.getSpecificSection(pageId, sectionId);
     },
 
     // Site Settings

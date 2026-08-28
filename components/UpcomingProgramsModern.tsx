@@ -46,19 +46,10 @@ export default function UpcomingProgramsModern({ content }: Props) {
         ]
     };
 
-    // We add the preview item
-    const events = [
-        {
-            id: 'preview',
-            title: "Free Online Preview",
-            date_text: "Anytime",
-            image_url: "/hero_slider_preview.png",
-            tags: ["Experimental", "Online"],
-            location: "Virtual",
-            isPreview: true
-        },
-        ...displayData.programs
-    ];
+    /* Every card here comes from the CMS. A "Free Online Preview" card used to be
+       prepended in code, so it showed on the site whether or not such a session was
+       running, and no admin edit could change or remove it. */
+    const events = displayData.programs;
 
     /* Native scroll-snap rail. The old version animated the track by a fixed
        340+24px per step while the cards were 280px wide below `md`, so every
