@@ -54,11 +54,13 @@ export default function FAQ({ content }: { content?: FAQContent, template?: stri
         const fetchContent = async () => {
             try {
                 const response = await cmsApi.getSectionContent("faq");
-                const contentData = (response.content?.content && typeof response.content.content === 'object') 
-                    ? response.content.content 
-                    : response.content;
-                
-                setData(contentData);
+                // response is null when the section isn't published in the CMS; the
+                // optional chaining keeps that from throwing so the defaults show.
+                const contentData = (response?.content?.content && typeof response.content.content === 'object')
+                    ? response.content.content
+                    : response?.content ?? null;
+
+                setData(contentData ?? defaultData);
             } catch (error) {
                 console.error("Failed to fetch FAQ content:", error);
                 setData(defaultData);

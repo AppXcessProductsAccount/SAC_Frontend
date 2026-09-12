@@ -135,7 +135,7 @@ export default function Footer() {
                     <div className="flex flex-col items-center justify-center lg:pb-6 lg:border-r lg:border-white/10 h-full">
                         <div className="relative w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-2xl overflow-hidden border-4 md:border-6 border-[#101848]/20">
                             <Image
-                                src={getFullUrl(displayData.logo_url)}
+                                src={getFullUrl(displayData.logo_url) || "/logo.png"}
                                 alt="Self Awareness Centre Logo"
                                 width={80}
                                 height={80}

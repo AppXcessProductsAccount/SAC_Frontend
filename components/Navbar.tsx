@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { cmsApi } from "@/lib/cms-api";
 import { applyCmsPageBindings, routeKeyForUrl } from "@/lib/cms-pages";
+import { useEventGrandMeditationEnabled } from "@/hooks/useSiteSettings";
+import { GRAND_MEDITATION_PATH, GRAND_MEDITATION_NAV_LABEL } from "@/lib/site-settings";
 import { AnimatePresence } from "framer-motion";
 import { User, LogOut, FileText, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,6 +46,33 @@ interface NavData {
     logoUrl?: string;
     brandName?: string;
 }
+
+/**
+ * Hangs the Grand Group Meditation page off the Events menu as a dropdown child,
+ * but only while the admin has the feature switched on. When it's off the Events
+ * item is returned untouched, so the dropdown disappears with it. Matching on the
+ * route key (not the label) means an admin rename of "Events" keeps working.
+ */
+const withEventDropdown = (items: NavigationItem[], enabled: boolean): NavigationItem[] => {
+    if (!enabled) return items;
+    return items.map((item) => {
+        const isEvents =
+            item.id === "events" ||
+            item.url.toLowerCase().includes("/#events") ||
+            item.url.toLowerCase().replace(/\/+$/, "").endsWith("/events");
+        if (!isEvents) return item;
+
+        const children = item.children ? [...item.children] : [];
+        if (!children.some((c) => c.url === GRAND_MEDITATION_PATH)) {
+            children.push({
+                label: GRAND_MEDITATION_NAV_LABEL,
+                url: GRAND_MEDITATION_PATH,
+                id: "grand-group-meditation",
+            });
+        }
+        return { ...item, children };
+    });
+};
 
 /**
  * The menu, resolved once per page load and shared by every mount of the bar.
@@ -211,6 +240,15 @@ export default function Navbar() {
        the browser substituted the nearest weight or synthesised one — the trailing
        words were never rendering the weight they asked for. */
     const renderBrand = () => brandName.trim();
+
+    /* The Events menu gains a dropdown to the event page only while the feature
+       is enabled. `null` (still loading) is treated as off so nothing flickers in
+       before the flag is known. */
+    const eventEnabled = useEventGrandMeditationEnabled();
+    const displayNavItems = useMemo(
+        () => withEventDropdown(navItems, eventEnabled === true),
+        [navItems, eventEnabled]
+    );
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -416,7 +454,10 @@ export default function Navbar() {
                     The centre links are `flex-1`, so they still centre without it. */}
                 <Link href="/" onClick={handleLogoClick} className="flex items-center gap-2 md:gap-3 min-w-0 shrink lg:w-auto relative z-40 group">
                     <div className="relative w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105 shrink-0">
-                        <Image src={getFullUrl(logoUrl)} alt={`${brandName} Logo`} fill className="object-cover" />
+                        {/* Fall back to the bundled logo: a missing CMS nav section
+                            leaves logoUrl undefined, and Next's <Image> throws on an
+                            empty src ("An empty string was passed to the src attribute"). */}
+                        <Image src={getFullUrl(logoUrl) || "/logo.png"} alt={`${brandName} Logo`} fill className="object-cover" />
                     </div>
                     {/* No `truncate`: it turned a slightly-too-wide wordmark into "SELF
                         AWAR…". Without it the name wraps if it ever runs out of room,
@@ -430,7 +471,7 @@ export default function Navbar() {
                 {/* Tighter gap at lg: labels come from CMS page names now, so a renamed
                     page ("Our Spiritual Master") needs the room the gap was using. */}
                 <div className="hidden lg:flex items-center justify-center gap-4 xl:gap-8 flex-1">
-                    {navItems.map((item, index) => {
+                    {displayNavItems.map((item, index) => {
                         const isHashLink = item.url.startsWith("/#");
                         const isActive = (pathname === item.url) || (item.id === activeSection && !isStandalonePage);
                         const hasChildren = item.children && item.children.length > 0;
@@ -479,7 +520,7 @@ export default function Navbar() {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
-                                            className="absolute top-full left-1/2 -translate-x-1/2 w-48 bg-white/95 backdrop-blur-md rounded-[16px] shadow-xl border border-[#101848]/5 py-3 z-50 overflow-hidden"
+                                            className="absolute top-full left-0 mt-1 min-w-[12rem] max-w-[16rem] w-max bg-white/95 backdrop-blur-md rounded-[16px] shadow-xl border border-[#101848]/5 py-2 z-50 overflow-hidden"
                                         >
                                             <div className="relative z-10 flex flex-col">
                                                 {item.children?.map((child, cIdx) => (
@@ -492,7 +533,7 @@ export default function Navbar() {
                                                                 setHoveredItem(null);
                                                             }
                                                         }}
-                                                        className="px-5 py-2 text-[13px] text-[#1b1b2b]/70 hover:text-[#101848] hover:bg-[#101848]/5 transition-all text-left font-medium whitespace-pre"
+                                                        className="px-5 py-2.5 text-[13px] text-[#1b1b2b]/70 hover:text-[#101848] hover:bg-[#101848]/5 transition-all text-left font-medium whitespace-pre-line leading-snug"
                                                     >
                                                         {child.label}
                                                     </Link>
@@ -634,7 +675,7 @@ export default function Navbar() {
                             </div>
 
                             <div className="flex-1 overflow-y-auto overscroll-contain px-2 py-3">
-                                {navItems.map((item, index) => {
+                                {displayNavItems.map((item, index) => {
                                     const hasChildren = !!item.children?.length;
                                     const isOpen = openMobileGroup === item.id;
                                     const isActive = pathname === item.url;
@@ -691,7 +732,7 @@ export default function Navbar() {
                                                                         }
                                                                         setIsMobileMenuOpen(false);
                                                                     }}
-                                                                    className="block px-4 py-2.5 text-[14px] text-[#1b1b2b]/60 hover:text-[#101848] transition-colors whitespace-pre"
+                                                                    className="block px-4 py-2.5 text-[14px] text-[#1b1b2b]/60 hover:text-[#101848] transition-colors whitespace-pre-line leading-snug"
                                                                 >
                                                                     {child.label}
                                                                 </Link>

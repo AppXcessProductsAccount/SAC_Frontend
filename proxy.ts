@@ -13,7 +13,7 @@ import type { NextRequest } from "next/server";
  * and the API rejects a token that is missing, expired, or not an admin's. This
  * exists so an anonymous visitor never reaches the panel at all.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const token = request.cookies.get("access_token")?.value;
 
     if (!token) {

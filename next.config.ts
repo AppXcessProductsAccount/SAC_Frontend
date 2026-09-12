@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   images: {
@@ -11,9 +12,10 @@ const nextConfig: NextConfig = {
     ],
   },
   output: "standalone",
-  // @ts-ignore - Turbopack config to fix workspace root issues on Windows
+  // Pin the workspace root to this folder so Turbopack doesn't guess a parent
+  // directory when several lockfiles exist up the tree. Must be absolute.
   turbopack: {
-    root: ".",
+    root: path.resolve(process.cwd()),
   },
 };
 

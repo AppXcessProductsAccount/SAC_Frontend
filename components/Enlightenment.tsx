@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
 import EnlightenmentClassic from "./EnlightenmentClassic";
-import { getFullUrl } from "@/lib/api/config";
 
 export interface EnlightenmentContent {
     title: string;
@@ -31,13 +30,13 @@ export default function Enlightenment({ content }: { content?: EnlightenmentCont
 
         const fetchContent = async () => {
             try {
-                const res = await fetch(getFullUrl("/api/cms/website/enlightenment/content"), { cache: 'no-store' });
-                if (!res.ok) throw new Error("Failed to fetch");
-                const sectionData = await res.json();
-                
-                setData(sectionData.content);
+                // getEnlightenment resolves the real /website/{page_id}/{section_id}/content
+                // route via the shared section index and returns null (with a warning)
+                // when the section isn't published, instead of hitting a URL that 404s.
+                const sectionData = await cmsApi.getEnlightenment();
+                setData(sectionData ?? defaultData);
             } catch (error) {
-                console.error("Failed to fetch enlightenment content:", error);
+                console.warn("Enlightenment content unavailable, using defaults:", error);
                 setData(defaultData);
             } finally {
                 setLoading(false);
