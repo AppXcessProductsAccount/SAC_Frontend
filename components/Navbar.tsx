@@ -58,8 +58,8 @@ const withEventDropdown = (items: NavigationItem[], enabled: boolean): Navigatio
     return items.map((item) => {
         const isEvents =
             item.id === "events" ||
-            routeKeyForUrl(item.url) === "events" ||
-            item.url.toLowerCase().includes("/#events");
+            item.url.toLowerCase().includes("/#events") ||
+            item.url.toLowerCase().replace(/\/+$/, "").endsWith("/events");
         if (!isEvents) return item;
 
         const children = item.children ? [...item.children] : [];
