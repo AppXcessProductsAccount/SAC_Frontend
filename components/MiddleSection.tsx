@@ -33,10 +33,12 @@ export default function MiddleSection({ content }: { content?: MiddleSectionCont
         const fetchContent = async () => {
             try {
                 const response = await cmsApi.getSectionContent("section2");
-                const contentData = (response.content?.content && typeof response.content.content === 'object') 
-                    ? response.content.content 
-                    : response.content;
-                
+                // response is null when the section isn't published in the CMS; the
+                // optional chaining keeps that from throwing so the defaults show.
+                const contentData = (response?.content?.content && typeof response.content.content === 'object')
+                    ? response.content.content
+                    : response?.content ?? null;
+
                 setData(contentData);
             } catch (error) {
                 console.error("Failed to fetch section2 content:", error);

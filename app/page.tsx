@@ -5,6 +5,7 @@ import { cmsApi } from "@/lib/cms-api";
 import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import EventAnnouncementBar from "@/components/EventAnnouncementBar";
 import Hero from "@/components/Hero";
 import MiddleSection from "@/components/MiddleSection";
 import UpcomingPrograms from "@/components/UpcomingPrograms";
@@ -80,6 +81,7 @@ export default function Home() {
 
     return (
         <main className="min-h-screen text-[#1b1b2b] selection:bg-[#101848]/10 font-sans overflow-x-clip">
+            <EventAnnouncementBar />
             <Navbar />
 
             {loading ? (

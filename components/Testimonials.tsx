@@ -50,11 +50,13 @@ export default function Testimonials({ content }: { content?: TestimonialsConten
         const fetchContent = async () => {
             try {
                 const response = await cmsApi.getSectionContent("testimonials");
-                const contentData = (response.content?.content && typeof response.content.content === 'object') 
-                    ? response.content.content 
-                    : response.content;
-                
-                setData(contentData);
+                // response is null when the section isn't published in the CMS; the
+                // optional chaining keeps that from throwing so the defaults show.
+                const contentData = (response?.content?.content && typeof response.content.content === 'object')
+                    ? response.content.content
+                    : response?.content ?? null;
+
+                setData(contentData ?? defaultData);
             } catch (error) {
                 console.error("Failed to fetch testimonials content:", error);
                 setData(defaultData);
