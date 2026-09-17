@@ -6,6 +6,7 @@ import { resolveCmsPage } from "@/lib/cms-pages";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EventAnnouncementBar from "@/components/EventAnnouncementBar";
+import HomeVideos from "@/components/HomeVideos";
 import Hero from "@/components/Hero";
 import MiddleSection from "@/components/MiddleSection";
 import UpcomingPrograms from "@/components/UpcomingPrograms";
@@ -104,7 +105,10 @@ export default function Home() {
                     <FAQ />
                 </>
             )}
-            
+
+            {/* Admin-managed YouTube + TikTok rails; renders nothing until videos exist. */}
+            <HomeVideos />
+
             <Footer />
         </main>
     );

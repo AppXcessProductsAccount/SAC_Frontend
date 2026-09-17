@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import {
     getPublicSettings,
     mergeGrandMeditationContent,
+    normalizeHomeVideos,
     DEFAULT_GRAND_MEDITATION_CONTENT,
     type GrandMeditationContent,
+    type HomeVideos,
 } from "@/lib/site-settings";
 
 /**
@@ -66,4 +68,26 @@ export function useGrandMeditationEvent(): {
     }, []);
 
     return { enabled, announcementEnabled, content };
+}
+
+/**
+ * The landing-page video rails (YouTube + TikTok), admin-editable. Returns empty
+ * lists until loaded, so a section renders nothing rather than flashing empty.
+ */
+export function useHomeVideos(): { videos: HomeVideos; loaded: boolean } {
+    const [videos, setVideos] = useState<HomeVideos>({ youtube: [], tiktok: [] });
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(() => {
+        let active = true;
+        getPublicSettings()
+            .then((s) => active && setVideos(normalizeHomeVideos(s.home_videos)))
+            .catch(() => {})
+            .finally(() => active && setLoaded(true));
+        return () => {
+            active = false;
+        };
+    }, []);
+
+    return { videos, loaded };
 }
