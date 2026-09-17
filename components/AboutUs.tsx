@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
 import AmbientBackground from "./AmbientBackground";
@@ -52,7 +53,7 @@ export default function AboutUs() {
                         <div className="absolute -inset-4 bg-[var(--site-primary)]/10 rounded-2xl blur-2xl group-hover:bg-[var(--site-primary)]/20 transition-all duration-700"></div>
                         <div className="relative aspect-video rounded-2xl overflow-hidden border border-[var(--site-secondary)]/5 shadow-xl">
                             <img
-                                src={about.image_url}
+                                src={resolveMediaUrl(about.image_url)}
                                 alt="About SelfAwareness"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />

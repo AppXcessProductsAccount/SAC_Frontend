@@ -5,6 +5,7 @@ import {
     getPublicSettings,
     mergeGrandMeditationContent,
     normalizeHomeVideos,
+    isGrandMeditationExpired,
     DEFAULT_GRAND_MEDITATION_CONTENT,
     type GrandMeditationContent,
     type HomeVideos,
@@ -23,7 +24,12 @@ export function useEventGrandMeditationEnabled(): boolean | null {
     useEffect(() => {
         let active = true;
         getPublicSettings()
-            .then((s) => active && setEnabled(!!s.event_grand_meditation_enabled))
+            // Off if the admin disabled it OR the event ended more than 3 days ago.
+            .then((s) => {
+                if (!active) return;
+                const content = mergeGrandMeditationContent(s.event_grand_meditation_content);
+                setEnabled(!!s.event_grand_meditation_enabled && !isGrandMeditationExpired(content));
+            })
             // A failed fetch already defaults to on inside getPublicSettings; if it
             // rejects entirely, hide the extra nav entry rather than link to a page
             // that might 404.
@@ -57,9 +63,11 @@ export function useGrandMeditationEvent(): {
         getPublicSettings()
             .then((s) => {
                 if (!active) return;
-                setEnabled(!!s.event_grand_meditation_enabled);
-                setAnnouncementEnabled(!!s.event_announcement_enabled);
-                setContent(mergeGrandMeditationContent(s.event_grand_meditation_content));
+                const merged = mergeGrandMeditationContent(s.event_grand_meditation_content);
+                const expired = isGrandMeditationExpired(merged);
+                setEnabled(!!s.event_grand_meditation_enabled && !expired);
+                setAnnouncementEnabled(!!s.event_announcement_enabled && !expired);
+                setContent(merged);
             })
             .catch(() => active && setEnabled(false));
         return () => {

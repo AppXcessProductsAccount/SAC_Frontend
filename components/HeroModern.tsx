@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
@@ -115,7 +116,7 @@ export default function HeroModern({ content }: { content?: any }) {
                         className="absolute inset-0"
                     >
                         <Image
-                            src={slide.image_url || slide.image}
+                            src={resolveMediaUrl(slide.image_url || slide.image)}
                             alt=""
                             aria-hidden="true"
                             fill

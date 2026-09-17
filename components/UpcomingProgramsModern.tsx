@@ -1,3 +1,4 @@
+import { resolveMediaUrl } from "@/lib/api/config";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -143,7 +144,7 @@ export default function UpcomingProgramsModern({ content }: Props) {
                                 {/* Image Container */}
                                 <div className="relative w-full h-[60%] overflow-hidden rounded-b-[48px] shadow-sm">
                                     <Image
-                                        src={event.image_url}
+                                        src={resolveMediaUrl(event.image_url)}
                                         alt={event.title}
                                         fill
                                         sizes="(max-width: 640px) 78vw, 340px"

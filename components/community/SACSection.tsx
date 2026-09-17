@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { motion } from "framer-motion";
 
 export default function SACSection({ content }: { content?: any }) {
@@ -135,7 +136,7 @@ export default function SACSection({ content }: { content?: any }) {
                         </div>
                         {content?.image_url && (
                             <div className="w-full md:w-1/3 aspect-video rounded-[30px] overflow-hidden shadow-xl flex-shrink-0">
-                                <img src={content.image_url} alt={title} className="w-full h-full object-cover" />
+                                <img src={resolveMediaUrl(content.image_url)} alt={title} className="w-full h-full object-cover" />
                             </div>
                         )}
                     </div>

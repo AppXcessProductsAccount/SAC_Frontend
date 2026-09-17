@@ -69,6 +69,25 @@ export const mergeGrandMeditationContent = (
     };
 };
 
+/**
+ * When the Grand Group Meditation auto-hides: 3 days (72h) after the event ends.
+ * `starts_at` is a wall-time in Singapore (UTC+8); we convert to UTC so the
+ * cut-off is correct regardless of the viewer's timezone. Returns epoch ms.
+ */
+export function grandMeditationDisabledAt(c: { starts_at?: string; duration_hours?: number }): number {
+    const [d, t] = (c?.starts_at || "2027-01-09T15:00").split("T");
+    const [y, mo, da] = (d || "2027-01-09").split("-").map(Number);
+    const [h, mi] = (t || "15:00").split(":").map(Number);
+    const startUTC = Date.UTC(y, mo - 1, da, (h || 0) - 8, mi || 0); // SGT -> UTC
+    const dur = Number(c?.duration_hours) > 0 ? Number(c?.duration_hours) : 3;
+    return startUTC + (dur + 72) * 3600 * 1000;
+}
+
+/** True once the event has been over for more than 3 days. */
+export function isGrandMeditationExpired(c: { starts_at?: string; duration_hours?: number }): boolean {
+    return Date.now() > grandMeditationDisabledAt(c);
+}
+
 export interface HomeVideos {
     youtube: string[];
     tiktok: string[];

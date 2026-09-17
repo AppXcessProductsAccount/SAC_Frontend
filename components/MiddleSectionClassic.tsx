@@ -100,7 +100,7 @@ export default function MiddleSectionClassic({ content }: Props) {
                                 on narrow screens. The box now grows to fit the words. */}
                             <div className="relative min-h-[220px] sm:min-h-[250px] w-full flex">
                                 <Image
-                                    src={displayData.group_meditation.image_url}
+                                    src={resolveMediaUrl(displayData.group_meditation.image_url)}
                                     alt={displayData.group_meditation.title}
                                     fill
                                     sizes="(max-width: 1024px) 100vw, 700px"

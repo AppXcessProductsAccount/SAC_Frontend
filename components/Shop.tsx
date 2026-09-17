@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
 import AmbientBackground from "./AmbientBackground";
@@ -109,7 +110,7 @@ export default function Shop() {
                                 <img
                                     alt={product.name}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    src={product.image_url}
+                                    src={resolveMediaUrl(product.image_url)}
                                 />
                                 <div className="absolute top-3 right-3">
                                     <button className="w-10 h-10 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center text-secondary hover:text-[var(--site-primary)] transition-colors">

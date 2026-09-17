@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { useState, useEffect } from "react";
 import { cmsApi } from "@/lib/cms-api";
 import AmbientBackground from "./AmbientBackground";
@@ -111,7 +112,7 @@ export default function Blog() {
                                 <img
                                     alt={post.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    src={post.image_url}
+                                    src={resolveMediaUrl(post.image_url)}
                                 />
                                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold text-[var(--site-primary)] shadow-sm">
                                     {post.category}
