@@ -132,7 +132,7 @@ function Mandala({ className = "" }: { className?: string }) {
 }
 
 /** Circular gold-ringed portrait for each remembered master. */
-function MasterMedallion({ name, image }: { name: string; image?: string | null }) {
+function MasterMedallion({ name, image, fit = "cover", pos = "center" }: { name: string; image?: string | null; fit?: string; pos?: string }) {
     const src = image ? resolveMediaUrl(image) : "";
     return (
         <motion.div variants={fadeUp} className="flex flex-col items-center text-center w-28 sm:w-32">
@@ -142,7 +142,7 @@ function MasterMedallion({ name, image }: { name: string; image?: string | null 
                     <div className="w-full h-full rounded-full overflow-hidden bg-[#0a0e27] flex items-center justify-center">
                         {src ? (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={src} alt={name} className="w-full h-full object-cover" />
+                            <img src={src} alt={name} className="w-full h-full" style={{ objectFit: fit as "cover" | "contain", objectPosition: pos }} />
                         ) : (
                             <Flower2 className="text-[#E8C766]" size={24} />
                         )}
@@ -222,7 +222,7 @@ export default function GrandGroupMeditationPage() {
                                     animate={{ rotate: 360 }} transition={{ duration: 16, repeat: Infinity, ease: "linear" }} />
                                 <div className="absolute inset-0 rounded-full overflow-hidden bg-[#0a0e27] ring-1 ring-[#0a0e27]">
                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={guruSrc} alt={content.guru_name} className="w-full h-full object-cover object-top" />
+                                    <img src={guruSrc} alt={content.guru_name} className="w-full h-full" style={{ objectFit: (content.guru_fit as "cover" | "contain") || "cover", objectPosition: content.guru_pos || "center" }} />
                                 </div>
                             </motion.div>
                             <p style={SERIF} className="mt-4 text-[#F5E6A8] text-lg font-semibold tracking-wide text-center">{content.guru_name}</p>
@@ -230,7 +230,7 @@ export default function GrandGroupMeditationPage() {
 
                         {/* Masters row */}
                         <motion.div variants={stagger} initial="hidden" animate="show" className="flex items-start justify-center gap-4 sm:gap-7">
-                            {content.masters.map((m, i) => (<MasterMedallion key={i} name={m.name} image={m.image} />))}
+                            {content.masters.map((m, i) => (<MasterMedallion key={i} name={m.name} image={m.image} fit={m.fit} pos={m.pos} />))}
                         </motion.div>
                     </motion.div>
 
