@@ -14,11 +14,15 @@ export const GRAND_MEDITATION_NAV_LABEL = "Grand Group Meditation";
 export interface EventMaster {
     name: string;
     image?: string | null;
+    fit?: string;
+    pos?: string;
 }
 
 export interface GrandMeditationContent {
     guru_name: string;
     guru_image?: string | null;
+    guru_fit?: string;
+    guru_pos?: string;
     masters: EventMaster[];
     /** Local wall-time "YYYY-MM-DDTHH:MM" in the venue's timezone (SGT). */
     starts_at: string;
@@ -55,10 +59,14 @@ export const mergeGrandMeditationContent = (
     const masters = base.masters.map((def, i) => ({
         name: raw?.masters?.[i]?.name?.trim() || def.name,
         image: raw?.masters?.[i]?.image ?? def.image,
+        fit: raw?.masters?.[i]?.fit || "cover",
+        pos: raw?.masters?.[i]?.pos || "center",
     }));
     return {
         guru_name: raw?.guru_name?.trim() || base.guru_name,
         guru_image: raw?.guru_image ?? base.guru_image,
+        guru_fit: raw?.guru_fit || "cover",
+        guru_pos: raw?.guru_pos || "center",
         masters,
         starts_at: raw?.starts_at?.trim() || base.starts_at,
         duration_hours: Number(raw?.duration_hours) > 0 ? Number(raw?.duration_hours) : base.duration_hours,
