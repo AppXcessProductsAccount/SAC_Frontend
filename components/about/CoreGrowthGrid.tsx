@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveMediaUrl } from "@/lib/api/config";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -93,7 +94,7 @@ export default function CoreGrowthGrid({ content }: { content?: any }) {
                                 <div className="absolute inset-0 z-0">
                                     {area.image_url && (
                                         <img
-                                            src={area.image_url}
+                                            src={resolveMediaUrl(area.image_url)}
                                             alt={area.title}
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />
