@@ -3,7 +3,7 @@
 :root {
   --site-primary: #101848;
   --site-secondary: #233252;
-  --site-bg-light: #eeebf0;
+  --site-bg-light: #F7F5F0;
   --site-bg-dark: #1b1b2b;
   --accent-brown: #866050;
   --accent-muted: #8d93a4;
@@ -53,12 +53,20 @@
   }
 
   body {
-    font-family: var(--font-display);
-    background-color: var(--site-bg-light);
+    /* Body copy is the clean sans for readability; headings stay serif below.
+       Previously everything inherited Lora, so paragraphs and UI text rendered
+       in a display serif. */
+    font-family: var(--font-sans);
+    background-color: #F7F5F0;
     color: var(--site-primary);
     /* Full-bleed decorations (parallax layers, blob tails, clouds) must never
        create a horizontal scrollbar on small screens. */
     overflow-x: hidden;
+  }
+
+  /* Headings keep the elegant serif. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
   }
 
   /* CMS copy is authored in admin textareas, so the line breaks an editor types

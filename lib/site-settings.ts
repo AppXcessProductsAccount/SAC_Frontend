@@ -69,10 +69,21 @@ export const mergeGrandMeditationContent = (
     };
 };
 
+export interface HomeVideos {
+    youtube: string[];
+    tiktok: string[];
+}
+
+export const normalizeHomeVideos = (raw?: Partial<HomeVideos> | null): HomeVideos => ({
+    youtube: Array.isArray(raw?.youtube) ? raw!.youtube.filter((v) => typeof v === "string" && v.trim()) : [],
+    tiktok: Array.isArray(raw?.tiktok) ? raw!.tiktok.filter((v) => typeof v === "string" && v.trim()) : [],
+});
+
 export interface PublicSiteSettings {
     event_grand_meditation_enabled: boolean;
     event_announcement_enabled?: boolean;
     event_grand_meditation_content?: GrandMeditationContent | null;
+    home_videos?: HomeVideos | null;
     organisation_name?: string | null;
     default_currency?: string;
     timezone?: string;
